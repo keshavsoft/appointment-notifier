@@ -30,10 +30,22 @@ flowchart LR
 - **In-memory channel sets:** the server tracks currently connected display and reception screens. There is no database, login, persistence, or audit log.
 - **npm:** installs the dependency and runs the app. This code is an application rather than a reusable npm library, and `package.json` marks it private to prevent accidental publication.
 
+## Server code layout
+
+The server is split by responsibility so the startup path reads in order:
+
+1. **app.js** loads the port configuration, creates the HTTP server, attaches the WebSocket endpoint, and starts listening.
+2. **server/config.js** validates the port setting.
+3. **server/http/createHttpServer.js** creates the HTTP server; **pageRoutes.js** maps friendly URLs to versioned pages, and **serveStaticFile.js** serves pages and browser assets from public/.
+4. **ws/attachWebSocketServer.js** accepts the /ws upgrade and directs each connection to the matching handler. **handleConnection.js** and **handleV3Connection.js** contain the messaging behavior for the existing flows.
+5. **server/startServer.js** binds the configured port and prints the local entry points.
+
+This keeps the entry file focused on how the pieces fit together while the modules explain what each part does.
+
 ## Frontend versions
 
 The browser screens are kept in `public/v1/`, `public/v2/`, and `public/v3/`. V1 preserves the earlier layout. V2 keeps the Display and Reception flow and is still served by the standard `/doctor`, `/display`, and `/reception` routes. V3 is a separate, single-Display flow at `/v3/doctor` and `/v3/display`: Doctor has a Call tab and a live Display preview tab, and the external screen focuses on the number and elapsed time. The server holds one current announcement in memory so both views stay in sync; a newer external Display connection replaces the previous one.
 
 ## Current limits
 
-The `role` value in a WebSocket URL only selects a screen channel; it is not authentication. The server uses plain HTTP/WebSocket without TLS and has no access control. Binding to a specific address limits the network interface that accepts traffic, but it does not protect the app from other clients that can reach that address. Keep it on a trusted network until authentication and HTTPS/WSS are added.
+The `role` value in a WebSocket URL only selects a screen channel; it does not authenticate users. The server listens on all network interfaces and uses plain HTTP/WebSocket without TLS or access control. Keep it on a trusted network, and use firewall rules to limit access. For a VPS, put it behind a reverse proxy with HTTPS/WSS until authentication is added.
