@@ -7,6 +7,15 @@ import { handleConnection } from "./ws/handleConnection.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.join(__dirname, "public");
+const HOST = process.env.HOST?.trim() || "127.0.0.1";
+const PORT = Number(process.env.PORT ?? 3000);
+
+if (!Number.isInteger(PORT) || PORT < 1 || PORT > 65535) {
+    console.error("PORT must be an integer between 1 and 65535.");
+    process.exit(1);
+}
+
+const urlHost = HOST.includes(":") && !HOST.startsWith("[") ? `[${HOST}]` : HOST;
 const mimeTypes = {
     ".html": "text/html; charset=utf-8",
     ".css": "text/css; charset=utf-8",
@@ -69,10 +78,9 @@ server.on("upgrade", (req, socket, head) => {
     wss.handleUpgrade(req, socket, head, (ws) => wss.emit("connection", ws, req));
 });
 
-const PORT = Number(process.env.PORT) || 3000;
-server.listen(PORT, "0.0.0.0", () => {
-    console.log(`Appointment notifier running on http://localhost:${PORT}`);
-    console.log(`Doctor:    http://localhost:${PORT}/doctor`);
-    console.log(`Display:   http://localhost:${PORT}/display`);
-    console.log(`Reception: http://localhost:${PORT}/reception`);
+server.listen(PORT, HOST, () => {
+    console.log(`Appointment notifier listening on ${HOST}:${PORT}`);
+    console.log(`Doctor:    http://${urlHost}:${PORT}/doctor`);
+    console.log(`Display:   http://${urlHost}:${PORT}/display`);
+    console.log(`Reception: http://${urlHost}:${PORT}/reception`);
 });
