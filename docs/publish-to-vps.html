@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Publish to VPS &amp; Caddy Integration — CareCall Appointment Notifier</title>
+  <meta name="description" content="Step-by-step guideline for publishing CareCall Appointment Notifier to your VPS and integrating with Caddy JSON using the KeshavSoft Caddy Suite.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: #111827;
+      --card-border: #1f2937;
+      --card-hover: #1e293b;
+      --text: #f3f4f6;
+      --text-muted: #94a3b8;
+      --primary: #38bdf8;
+      --primary-glow: rgba(56, 189, 248, 0.18);
+      --secondary: #818cf8;
+      --accent: #34d399;
+      --warning: #fbbf24;
+      --code-bg: #030712;
+      --header-bg: rgba(11, 15, 25, 0.88);
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    [data-theme="light"] {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --card-border: #e2e8f0;
+      --card-hover: #f1f5f9;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --primary: #0284c7;
+      --primary-glow: rgba(2, 132, 199, 0.12);
+      --secondary: #6366f1;
+      --accent: #059669;
+      --warning: #d97706;
+      --code-bg: #0f172a;
+      --header-bg: rgba(248, 250, 252, 0.88);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: var(--header-bg);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--card-border);
+      padding: 0.85rem 1.5rem;
+    }
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 700;
+      font-size: 1.15rem;
+    }
+    .brand-badge {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
+      letter-spacing: 0.05em;
+    }
+    .header-nav {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+    .header-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.15s;
+    }
+    .header-link:hover { color: var(--primary); }
+    .btn-theme {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      padding: 0.4rem 0.75rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 5rem;
+      width: 100%;
+      min-width: 0;
+    }
+
+    .breadcrumb {
+      display: flex;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+    .breadcrumb a { color: var(--primary); text-decoration: none; }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+    h1 {
+      font-size: clamp(2rem, 4.5vw, 2.7rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      word-break: break-word;
+    }
+    .lead {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    /* Suite Overview Box */
+    .suite-box {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.08), rgba(129, 140, 248, 0.08));
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+    .suite-title {
+      font-size: 0.85rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--primary);
+      margin-bottom: 0.75rem;
+    }
+    .suite-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+    .suite-item {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 0.85rem;
+      font-size: 0.85rem;
+    }
+    .suite-item strong { display: block; color: var(--text); margin-bottom: 0.2rem; }
+    .suite-item span { color: var(--text-muted); font-size: 0.8rem; }
+
+    /* Steps */
+    .step-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      position: relative;
+    }
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .step-badge {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #041a2b;
+      font-weight: 800;
+      font-size: 1.15rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .step-header h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+    p { margin-bottom: 1rem; color: var(--text-muted); font-size: 0.98rem; }
+    strong { color: var(--text); }
+
+    .callout {
+      background: rgba(3, 7, 18, 0.4);
+      border-left: 4px solid var(--primary);
+      border-radius: 0 8px 8px 0;
+      padding: 1rem 1.25rem;
+      margin: 1.25rem 0;
+      font-size: 0.92rem;
+    }
+    .callout-success { border-left-color: var(--accent); }
+    .callout-warning { border-left-color: var(--warning); }
+    .callout-title {
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    /* Code Blocks */
+    .code-container {
+      background: var(--code-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      margin: 1rem 0;
+      overflow: hidden;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+    }
+    .code-header {
+      background: rgba(255, 255, 255, 0.04);
+      padding: 0.5rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--card-border);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+    .copy-btn {
+      background: none;
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.75rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      transition: all 0.15s;
+    }
+    .copy-btn:hover { color: var(--text); border-color: var(--primary); }
+    pre {
+      padding: 1.25rem;
+      overflow-x: auto;
+      line-height: 1.5;
+      color: #e2e8f0;
+    }
+    .term-prompt { color: var(--accent); }
+    .term-comment { color: #6b7280; }
+
+    footer {
+      border-top: 1px solid var(--card-border);
+      background: var(--card-bg);
+      padding: 2rem 1.5rem;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="header-inner">
+      <a href="index.html" class="brand">
+        <span class="brand-badge">KS</span>
+        <span>CareCall Notifier</span>
+      </a>
+      <div class="header-nav">
+        <a href="index.html" class="header-link">← Story Overview</a>
+        <a href="https://keshavsoft.github.io/caddy-hosting/" target="_blank" rel="noopener" class="header-link">Caddy Hosting Hub ↗</a>
+        <a href="https://keshavsoft.github.io/caddy-template-knowledge/" target="_blank" rel="noopener" class="header-link">Handbook ↗</a>
+        <button id="themeToggle" class="btn-theme" title="Toggle theme">
+          <span id="themeIcon">☀️</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Container -->
+  <main class="container">
+
+    <div class="breadcrumb">
+      <a href="index.html">Docs</a>
+      <span>/</span>
+      <span>Publishing to VPS</span>
+    </div>
+
+    <span class="badge-pill">Step-by-Step Production Runbook</span>
+    <h1>How to Publish <code>appointment-notifier</code> to Your VPS</h1>
+    <p class="lead">
+      Follow these exact steps while connected to your VPS terminal (<code>root@server6358:/etc/caddy#</code>). This runbook uses the entire KeshavSoft Caddy toolkit to inspect open ports, generate the route block, safely insert it into <code>/etc/caddy/caddy.json</code>, and launch the service with zero downtime.
+    </p>
+
+    <!-- Suite Summary -->
+    <div class="suite-box">
+      <div class="suite-title">The KeshavSoft Caddy Suite In Action</div>
+      <div class="suite-grid">
+        <div class="suite-item">
+          <strong>1. caddy-cli</strong>
+          <span>Inspects running routes and occupied ports on the server.</span>
+        </div>
+        <div class="suite-item">
+          <strong>2. caddy-template</strong>
+          <span>Generates the validated Caddy JSON route block for port 3000.</span>
+        </div>
+        <div class="suite-item">
+          <strong>3. caddy-template-knowledge</strong>
+          <span>Explains why single-port proxy handles both HTTP and WebSockets.</span>
+        </div>
+        <div class="suite-item">
+          <strong>4. caddy-hosting</strong>
+          <span>The overarching ecosystem hub and architecture dashboard.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 1 -->
+    <article class="step-card">
+      <div class="step-header">
+        <div class="step-badge">1</div>
+        <h2>Inspect Occupied Ports on the VPS</h2>
+      </div>
+      <p>
+        On your VPS terminal, navigate to <code>/etc/caddy</code> and run our <code>caddy-cli</code> tool:
+      </p>
+      <div class="code-container">
+        <div class="code-header">
+          <span>SSH: root@server6358:/etc/caddy#</span>
+          <button class="copy-btn" onclick="copySnippet('npx caddy-cli -p', this)">Copy</button>
+        </div>
+        <pre><code><span class="term-prompt">root@server6358:/etc/caddy#</span> npx caddy-cli -p</code></pre>
+      </div>
+
+      <div class="callout callout-success">
+        <div class="callout-title">Confirmed on Your Server:</div>
+        Your VPS currently occupies ports <code>3001</code>, <code>3025</code>, <code>8080</code>, <code>9010</code>, <code>9011</code>, <code>9012</code>, and <code>9328</code>.<br>
+        👉 <strong>Port <code>3000</code> is completely unallocated and ready for use!</strong>
+      </div>
+    </article>
+
+    <!-- Step 2 -->
+    <article class="step-card">
+      <div class="step-header">
+        <div class="step-badge">2</div>
+        <h2>Generate the Route JSON Block with caddy-template</h2>
+      </div>
+      <p>
+        Use <code>caddy-template</code> to generate the unified reverse proxy route block for <code>appointment.keshavsoft.com</code> on port <code>3000</code>, and save it to a temporary file:
+      </p>
+      <div class="code-container">
+        <div class="code-header">
+          <span>SSH: root@server6358:/etc/caddy#</span>
+          <button class="copy-btn" onclick="copySnippet('npx caddy-template proxy appointment.keshavsoft.com 3000 > /tmp/appointment-route.json', this)">Copy</button>
+        </div>
+        <pre><code><span class="term-prompt">root@server6358:/etc/caddy#</span> npx caddy-template proxy appointment.keshavsoft.com 3000 > /tmp/appointment-route.json</code></pre>
+      </div>
+      <p>
+        You can verify the generated file by running <code>cat /tmp/appointment-route.json</code>:
+      </p>
+      <div class="code-container">
+        <div class="code-header"><span>/tmp/appointment-route.json</span></div>
+        <pre><code>{
+  "match": [
+    {
+      "host": [
+        "appointment.keshavsoft.com"
+      ]
+    }
+  ],
+  "handle": [
+    {
+      "handler": "subroute",
+      "routes": [
+        {
+          "handle": [
+            {
+              "handler": "reverse_proxy",
+              "upstreams": [
+                {
+                  "dial": "localhost:3000"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "terminal": true
+}</code></pre>
+      </div>
+    </article>
+
+    <!-- Step 3 -->
+    <article class="step-card">
+      <div class="step-header">
+        <div class="step-badge">3</div>
+        <h2>Insert the Route into /etc/caddy/caddy.json</h2>
+      </div>
+      <p>
+        To avoid syntax errors, missing commas, or misplaced braces when manually editing JSON files, use this <strong>foolproof Node.js one-liner</strong> directly on your VPS. It automatically creates a timestamped backup, appends the new route, and writes it back cleanly:
+      </p>
+
+      <div class="code-container">
+        <div class="code-header">
+          <span>SSH: Safe Automated Append (Recommended)</span>
+          <button class="copy-btn" onclick="copySnippet(document.getElementById('nodeAppendCmd').innerText, this)">Copy Command</button>
+        </div>
+        <pre id="nodeAppendCmd"><code>node -e '
+const fs = require("fs");
+const caddyFile = "/etc/caddy/caddy.json";
+const routeFile = "/tmp/appointment-route.json";
+
+const config = JSON.parse(fs.readFileSync(caddyFile, "utf8"));
+const route = JSON.parse(fs.readFileSync(routeFile, "utf8"));
+
+// 1. Create a safe backup first
+const backupFile = caddyFile + ".bak." + Date.now();
+fs.writeFileSync(backupFile, JSON.stringify(config, null, 2));
+console.log("Backup created at:", backupFile);
+
+// 2. Append route to apps.http.servers.srv0.routes
+config.apps.http.servers.srv0.routes.push(route);
+
+// 3. Write back updated config
+fs.writeFileSync(caddyFile, JSON.stringify(config, null, 2));
+console.log("Successfully appended appointment.keshavsoft.com to " + caddyFile + "!");
+'</code></pre>
+      </div>
+
+      <div class="callout callout-warning">
+        <div class="callout-title">Alternative (Manual Editing with nano):</div>
+        If you prefer manual editing:
+        <ol style="margin: 0.5rem 0 0 1.5rem; font-size: 0.9rem;">
+          <li>Run: <code>cp /etc/caddy/caddy.json /etc/caddy/caddy.json.bak</code></li>
+          <li>Run: <code>nano /etc/caddy/caddy.json</code></li>
+          <li>Scroll to the end of <code>apps.http.servers.srv0.routes</code> (after the <code>cc9.keshavsoft.com</code> block).</li>
+          <li>Add a comma <code>,</code> after the previous route object, and paste the contents of <code>/tmp/appointment-route.json</code> before the closing bracket <code>]</code>.</li>
+        </ol>
+      </div>
+    </article>
+
+    <!-- Step 4 -->
+    <article class="step-card">
+      <div class="step-header">
+        <div class="step-badge">4</div>
+        <h2>Reload Caddy &amp; Verify with caddy-cli</h2>
+      </div>
+      <p>
+        Reload Caddy configuration without dropping any active connections:
+      </p>
+      <div class="code-container">
+        <div class="code-header">
+          <span>SSH: root@server6358:/etc/caddy#</span>
+          <button class="copy-btn" onclick="copySnippet('caddy reload --config /etc/caddy/caddy.json', this)">Copy</button>
+        </div>
+        <pre><code><span class="term-prompt">root@server6358:/etc/caddy#</span> caddy reload --config /etc/caddy/caddy.json</code></pre>
+      </div>
+
+      <p>
+        Now verify that our new route is active by running <code>caddy-cli</code>:
+      </p>
+      <div class="code-container">
+        <div class="code-header">
+          <span>SSH: root@server6358:/etc/caddy#</span>
+          <button class="copy-btn" onclick="copySnippet('npx caddy-cli', this)">Copy</button>
+        </div>
+        <pre><code><span class="term-prompt">root@server6358:/etc/caddy#</span> npx caddy-cli</code></pre>
+      </div>
+
+      <div class="callout callout-success">
+        <div class="callout-title">Expected Output:</div>
+        You will see row <code>10</code>: <strong><code>'appointment.keshavsoft.com'</code></strong> mapped to <strong><code>'localhost:3000'</code></strong>!
+      </div>
+    </article>
+
+    <!-- Step 5 -->
+    <article class="step-card">
+      <div class="step-header">
+        <div class="step-badge">5</div>
+        <h2>Clone &amp; Start appointment-notifier with PM2</h2>
+      </div>
+      <p>
+        Now clone the app repository and launch it on port <code>3000</code>:
+      </p>
+      <div class="code-container">
+        <div class="code-header">
+          <span>SSH: Terminal Commands</span>
+          <button class="copy-btn" onclick="copySnippet(document.getElementById('pm2Commands').innerText, this)">Copy</button>
+        </div>
+        <pre id="pm2Commands"><code># 1. Create and enter web directory
+mkdir -p /var/www
+cd /var/www
+
+# 2. Clone repository from GitHub
+git clone https://github.com/keshavsoft/appointment-notifier.git
+cd appointment-notifier
+
+# 3. Install dependencies
+npm install --production
+
+# 4. Start service with PM2 on port 3000
+PORT=3000 pm2 start app.js --name appointment-notifier
+pm2 save</code></pre>
+      </div>
+    </article>
+
+    <!-- Step 6 -->
+    <article class="step-card">
+      <div class="step-header">
+        <div class="step-badge">6</div>
+        <h2>Test Live over HTTPS &amp; WSS</h2>
+      </div>
+      <p>
+        Open your browser and test your live deployment:
+      </p>
+      <ul style="margin: 0.5rem 0 1.5rem 1.5rem; color: var(--text-muted); font-size: 0.95rem;">
+        <li>Doctor Calling Portal: <a href="https://appointment.keshavsoft.com/doctor" target="_blank" rel="noopener" style="color: var(--primary); font-weight: 600;">https://appointment.keshavsoft.com/doctor ↗</a></li>
+        <li>Patient Queue Display: <a href="https://appointment.keshavsoft.com/display" target="_blank" rel="noopener" style="color: var(--primary); font-weight: 600;">https://appointment.keshavsoft.com/display ↗</a></li>
+        <li>Reception Desk: <a href="https://appointment.keshavsoft.com/reception" target="_blank" rel="noopener" style="color: var(--primary); font-weight: 600;">https://appointment.keshavsoft.com/reception ↗</a></li>
+      </ul>
+
+      <div class="callout callout-success">
+        <div class="callout-title">Testing Real-Time Speech Synthesis:</div>
+        Open the <strong>Display Board</strong> on one tab, click <strong>"Enable Voice"</strong>. Open the <strong>Doctor Portal</strong> on another tab and call Token <code>101</code>. The display board will update instantly over secure WebSocket and speak the announcement aloud!
+      </div>
+    </article>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div style="max-width: 960px; margin: 0 auto;">
+      <strong>KeshavSoft Caddy Hosting Ecosystem</strong> • Production Runbook
+    </div>
+  </footer>
+
+  <script>
+    function copySnippet(text, btn) {
+      navigator.clipboard.writeText(text).then(() => {
+        const orig = btn.innerText;
+        btn.innerText = 'Copied!';
+        setTimeout(() => btn.innerText = orig, 1800);
+      });
+    }
+
+    const themeBtn = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    const storedTheme = localStorage.getItem('ks-caddy-theme') || 'dark';
+
+    function setTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('ks-caddy-theme', theme);
+      themeIcon.innerText = theme === 'dark' ? '☀️' : '🌙';
+    }
+
+    setTheme(storedTheme);
+
+    themeBtn.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme') || 'dark';
+      setTheme(current === 'dark' ? 'light' : 'dark');
+    });
+  </script>
+
+</body>
+</html>
