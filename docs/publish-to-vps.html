@@ -436,30 +436,73 @@
     <article class="step-card">
       <div class="step-header">
         <div class="step-badge">4</div>
-        <h2>Clone &amp; Start appointment-notifier with PM2</h2>
+        <h2>Clone &amp; Start as a Systemd Service (Native Linux Supervisor)</h2>
       </div>
       <p>
-        Now clone the app repository and launch it on port <code>3000</code>:
+        In accordance with KeshavSoft VPS architecture, place the repository in <code>/root/KeshavSoft/</code> and manage it via a native systemd unit file (matching the 1-to-1 domain naming convention):
+      </p>
+
+      <h3 style="font-size: 1.05rem; margin: 1.25rem 0 0.5rem; color: var(--text);">A. Clone &amp; Install</h3>
+      <div class="code-container">
+        <div class="code-header">
+          <span>SSH: root@server6358:/root/KeshavSoft#</span>
+          <button class="copy-btn" onclick="copySnippet(document.getElementById('cloneCommands').innerText, this)">Copy</button>
+        </div>
+        <pre id="cloneCommands"><code>cd /root/KeshavSoft
+git clone https://github.com/keshavsoft/appointment-notifier.git
+cd appointment-notifier
+npm install --production</code></pre>
+      </div>
+
+      <h3 style="font-size: 1.05rem; margin: 1.25rem 0 0.5rem; color: var(--text);">B. Create Systemd Service File</h3>
+      <p>
+        Create <code>/etc/systemd/system/appointment.keshavsoft.com.service</code>:
       </p>
       <div class="code-container">
         <div class="code-header">
-          <span>SSH: Terminal Commands</span>
-          <button class="copy-btn" onclick="copySnippet(document.getElementById('pm2Commands').innerText, this)">Copy</button>
+          <span>/etc/systemd/system/appointment.keshavsoft.com.service</span>
+          <button class="copy-btn" onclick="copySnippet(document.getElementById('systemdUnit').innerText, this)">Copy Unit</button>
         </div>
-        <pre id="pm2Commands"><code># 1. Create and enter web directory
-mkdir -p /var/www
-cd /var/www
+        <pre id="systemdUnit"><code>[Unit]
+Description=appointment.keshavsoft.com Node Service
+After=network.target
 
-# 2. Clone repository from GitHub
-git clone https://github.com/keshavsoft/appointment-notifier.git
-cd appointment-notifier
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/KeshavSoft/appointment-notifier
 
-# 3. Install dependencies
-npm install --production
+Environment=NODE_ENV=production
+Environment=PORT=3000
+EnvironmentFile=/root/KeshavSoft/appointment-notifier/.env
 
-# 4. Start service with PM2 on port 3000
-PORT=3000 pm2 start app.js --name appointment-notifier
-pm2 save</code></pre>
+ExecStart=/root/.nvm/versions/node/v24.13.0/bin/node app.js
+
+Restart=on-failure
+RestartSec=5
+
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target</code></pre>
+      </div>
+
+      <h3 style="font-size: 1.05rem; margin: 1.25rem 0 0.5rem; color: var(--text);">C. Enable &amp; Start</h3>
+      <div class="code-container">
+        <div class="code-header">
+          <span>SSH: Terminal Commands</span>
+          <button class="copy-btn" onclick="copySnippet(document.getElementById('systemctlCommands').innerText, this)">Copy</button>
+        </div>
+        <pre id="systemctlCommands"><code>systemctl daemon-reload
+systemctl enable appointment.keshavsoft.com.service
+systemctl start appointment.keshavsoft.com.service
+systemctl status appointment.keshavsoft.com.service</code></pre>
+      </div>
+
+      <div class="callout callout-success">
+        <div class="callout-title">Why Native Systemd Beats Third-Party Managers:</div>
+        Zero extra memory overhead, starts automatically on every VPS reboot, revives in 5 seconds if a crash occurs, and logs cleanly into <code>journalctl -u appointment.keshavsoft.com.service -f</code>.
       </div>
     </article>
 
