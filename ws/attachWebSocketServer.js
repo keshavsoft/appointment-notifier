@@ -9,12 +9,24 @@ export function attachWebSocketServer(server) {
         reception: new Set()
     };
     const v3State = createV3State();
+    const v4State = createV3State();
+    const versionedRoles = new Map([
+        ["doctor-v3", { role: "doctor-v3", state: v3State }],
+        ["display-v3", { role: "display-v3", state: v3State }],
+        ["doctor-v4", { role: "doctor-v3", state: v4State }],
+        ["display-v4", { role: "display-v3", state: v4State }]
+    ]);
 
     webSocketServer.on("connection", (ws, request) => {
         const role = new URL(request.url, "http://localhost").searchParams.get("role");
+        const versionedConnection = versionedRoles.get(role);
 
-        if (role === "doctor-v3" || role === "display-v3") {
-            handleV3Connection({ ws, role, state: v3State });
+        if (versionedConnection) {
+            handleV3Connection({
+                ws,
+                role: versionedConnection.role,
+                state: versionedConnection.state
+            });
             return;
         }
 

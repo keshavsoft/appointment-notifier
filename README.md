@@ -27,7 +27,7 @@ The server uses Node.js's built-in `http` module to serve the static browser scr
 
 ## Frontend versions
 
-The frontend is kept in `public/v1/`, `public/v2/`, and `public/v3/`. V1 and V2 remain available; the usual `/doctor`, `/display`, and `/reception` routes still open V2. The separate V3 Doctor-and-Display flow is at `/v3/doctor` and `/v3/display`. Doctor has a `Call` tab and a live `Display preview` tab. V3 removes Reception and keeps the latest number and timestamp in server memory so the Doctor preview and external Display show the same state. It allows one connected external Display; a newer display connection replaces the previous one.
+The frontend is kept in `public/v1/`, `public/v2/`, `public/v3/`, and `public/v4/`. V1 and V2 remain available; the usual `/doctor`, `/display`, and `/reception` routes still open V2. V3 and V4 keep the focused Doctor-and-Display flow at `/v3/doctor`, `/v3/display`, `/v4/doctor`, and `/v4/display`. Both have a `Call` tab and a live `Display preview` tab, with separate live state. V4 adds a voice toggle and English speech; Telugu is reserved for supplied WAV files.
 
 See [the project story and architecture](docs/overview.md) for the request flow and current limits.
 

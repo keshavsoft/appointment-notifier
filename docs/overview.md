@@ -44,7 +44,7 @@ This keeps the entry file focused on how the pieces fit together while the modul
 
 ## Frontend versions
 
-The browser screens are kept in `public/v1/`, `public/v2/`, and `public/v3/`. V1 preserves the earlier layout. V2 keeps the Display and Reception flow and is still served by the standard `/doctor`, `/display`, and `/reception` routes. V3 is a separate, single-Display flow at `/v3/doctor` and `/v3/display`: Doctor has a Call tab and a live Display preview tab, and the external screen focuses on the number and elapsed time. The server holds one current announcement in memory so both views stay in sync; a newer external Display connection replaces the previous one.
+The browser screens are kept in `public/v1/`, `public/v2/`, `public/v3/`, and `public/v4/`. V1 preserves the earlier layout. V2 keeps the Display and Reception flow and is still served by the standard `/doctor`, `/display`, and `/reception` routes. V3 is a focused Doctor-and-Display flow at `/v3/doctor` and `/v3/display`. V4 carries that flow forward at `/v4/doctor` and `/v4/display`, adds a persistent voice toggle, and speaks announcements in English. Telugu is listed in the language control and will be enabled when its WAV files are supplied. V3 and V4 each keep one current announcement in separate server memory state, so a newer Display connection replaces the previous one only within its version.
 
 ## Current limits
 

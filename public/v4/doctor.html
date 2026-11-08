@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f2f5f8">
+  <title>Doctor Console V4 | CareCall</title>
+  <link rel="stylesheet" href="/v4/css/v4.css">
+</head>
+<body class="v4-doctor-page">
+  <main class="doctor-app">
+    <nav class="doctor-tabs" role="tablist" aria-label="Doctor console views">
+      <button class="doctor-tab active" id="call-tab" type="button" role="tab" aria-selected="true" aria-controls="call-panel" data-tab="call">Call</button>
+      <button class="doctor-tab" id="preview-tab" type="button" role="tab" aria-selected="false" aria-controls="preview-panel" data-tab="preview">Display preview</button>
+    </nav>
+
+    <section class="doctor-panel call-panel" id="call-panel" role="tabpanel" aria-labelledby="call-tab">
+      <div class="connection-row">
+        <span class="status-pill" id="serverStatus"><i></i>Connecting</span>
+        <span class="status-pill" id="displayStatus"><i></i>Display offline</span>
+      </div>
+
+      <div class="number-entry">
+        <output class="selected-number" id="selectedNumber" aria-live="polite">—</output>
+        <span class="selected-label">NUMBER TO CALL</span>
+      </div>
+
+      <div class="keypad" aria-label="Number keypad">
+        <button type="button" data-digit="1">1</button>
+        <button type="button" data-digit="2">2</button>
+        <button type="button" data-digit="3">3</button>
+        <button type="button" data-digit="4">4</button>
+        <button type="button" data-digit="5">5</button>
+        <button type="button" data-digit="6">6</button>
+        <button type="button" data-digit="7">7</button>
+        <button type="button" data-digit="8">8</button>
+        <button type="button" data-digit="9">9</button>
+        <button type="button" class="key-muted" data-action="clear">Clear</button>
+        <button type="button" data-digit="0">0</button>
+        <button type="button" class="key-muted" data-action="backspace" aria-label="Delete last digit">⌫</button>
+      </div>
+
+      <button class="send-button" id="sendCall" type="button" disabled>Send to display <span aria-hidden="true">→</span></button>
+      <p class="feedback" id="feedback" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="doctor-panel preview-panel" id="preview-panel" role="tabpanel" aria-labelledby="preview-tab" hidden>
+      <div class="preview-heading">
+        <div>
+          <p class="eyebrow">LIVE MIRROR</p>
+          <h1>What is on the display?</h1>
+        </div>
+        <span class="status-pill" id="previewDisplayStatus"><i></i>Display offline</span>
+      </div>
+      <div class="preview-frame">
+        <div class="display-view display-preview" id="displayPreview" data-display-view aria-label="Same number and elapsed time shown on the external display">
+          <div class="display-number" data-display-number aria-live="polite">—</div>
+          <p class="display-elapsed" data-display-elapsed aria-live="off">Waiting for next call</p>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script type="module" src="/v4/js/doctor.js"></script>
+</body>
+</html>
