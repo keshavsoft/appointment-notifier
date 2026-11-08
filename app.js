@@ -4,6 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { WebSocketServer } from "ws";
 import { handleConnection } from "./ws/handleConnection.js";
+import { createV3State, handleV3Connection } from "./ws/handleV3Connection.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.join(__dirname, "public");
@@ -47,7 +48,13 @@ const routes = {
     "/v2/display": "v2/display.html",
     "/v2/display.html": "v2/display.html",
     "/v2/reception": "v2/reception.html",
-    "/v2/reception.html": "v2/reception.html"
+    "/v2/reception.html": "v2/reception.html",
+    "/v3": "v3/doctor.html",
+    "/v3/": "v3/doctor.html",
+    "/v3/doctor": "v3/doctor.html",
+    "/v3/doctor.html": "v3/doctor.html",
+    "/v3/display": "v3/display.html",
+    "/v3/display.html": "v3/display.html"
 };
 
 const server = http.createServer((req, res) => {
@@ -79,9 +86,14 @@ const channels = {
     display: new Set(),
     reception: new Set()
 };
+const v3State = createV3State();
 
 wss.on("connection", (ws, request) => {
     const role = new URL(request.url, "http://localhost").searchParams.get("role");
+    if (role === "doctor-v3" || role === "display-v3") {
+        handleV3Connection({ ws, role, state: v3State });
+        return;
+    }
     handleConnection({ ws, role, channels });
 });
 
@@ -99,4 +111,6 @@ server.listen(PORT, HOST, () => {
     console.log(`Doctor:    http://${urlHost}:${PORT}/doctor`);
     console.log(`Display:   http://${urlHost}:${PORT}/display`);
     console.log(`Reception: http://${urlHost}:${PORT}/reception`);
+    console.log(`V3 Doctor: http://${urlHost}:${PORT}/v3/doctor`);
+    console.log(`V3 Display: http://${urlHost}:${PORT}/v3/display`);
 });

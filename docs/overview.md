@@ -32,7 +32,7 @@ flowchart LR
 
 ## Frontend versions
 
-The browser screens are kept in `public/v1/` and `public/v2/`. V1 preserves the earlier layout. V2 is the default and has a mobile-focused Doctor screen: on narrow screens it opens with the Display and Reception tabs, the number keypad, and the send action. The standard `/doctor`, `/display`, and `/reception` routes open V2; `/v1/doctor`, `/v1/display`, and `/v1/reception` keep V1 available for comparison.
+The browser screens are kept in `public/v1/`, `public/v2/`, and `public/v3/`. V1 preserves the earlier layout. V2 keeps the Display and Reception flow and is still served by the standard `/doctor`, `/display`, and `/reception` routes. V3 is a separate, single-Display flow at `/v3/doctor` and `/v3/display`: Doctor has a Call tab and a live Display preview tab, and the external screen focuses on the number and elapsed time. The server holds one current announcement in memory so both views stay in sync; a newer external Display connection replaces the previous one.
 
 ## Current limits
 

@@ -20,7 +20,7 @@ npm start
 
 The actual `.env` is intentionally ignored by Git. Edit it for this machine; `.env.example` documents the settings without carrying machine-specific addresses into the repository.
 
-By default, open `http://127.0.0.1:3000/doctor`. For other devices on your trusted LAN, set `HOST` in `.env` to this computer's private LAN IPv4 address and open `/doctor`, `/display`, or `/reception` at that address and port. See [configuration](docs/configuration.md).
+By default, open `http://127.0.0.1:3000/doctor`. For other devices on your trusted LAN, set `HOST` in `.env` to this computer's private LAN IPv4 address and open the app at that address and port. See [configuration](docs/configuration.md).
 
 ## What runs here
 
@@ -28,7 +28,7 @@ The server uses Node.js's built-in `http` module to serve the static browser scr
 
 ## Frontend versions
 
-The frontend is kept in `public/v1/` and `public/v2/`. V1 preserves the earlier layout; V2 is the active version and places the two destination tabs and keypad first on mobile. The usual `/doctor`, `/display`, and `/reception` routes open V2. Use `/v1/doctor`, `/v1/display`, or `/v1/reception` to view V1.
+The frontend is kept in `public/v1/`, `public/v2/`, and `public/v3/`. V1 and V2 remain available; the usual `/doctor`, `/display`, and `/reception` routes still open V2. The separate V3 Doctor-and-Display flow is at `/v3/doctor` and `/v3/display`. Doctor has a `Call` tab and a live `Display preview` tab. V3 removes Reception and keeps the latest number and timestamp in server memory so the Doctor preview and external Display show the same state. It allows one connected external Display; a newer display connection replaces the previous one.
 
 See [the project story and architecture](docs/overview.md) for the request flow and current limits.
 
