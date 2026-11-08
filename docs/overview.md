@@ -35,7 +35,7 @@ flowchart LR
 The server is split by responsibility so the startup path reads in order:
 
 1. **app.js** loads the port configuration, creates the HTTP server, attaches the WebSocket endpoint, and starts listening.
-2. **server/config.js** validates the port setting.
+2. **server/config.js** reads an optional .env port and validates the final port setting.
 3. **server/http/createHttpServer.js** creates the HTTP server; **pageRoutes.js** maps friendly URLs to versioned pages, and **serveStaticFile.js** serves pages and browser assets from public/.
 4. **ws/attachWebSocketServer.js** accepts the /ws upgrade and directs each connection to the matching handler. **handleConnection.js** and **handleV3Connection.js** contain the messaging behavior for the existing flows.
 5. **server/startServer.js** binds the configured port and prints the local entry points.

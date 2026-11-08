@@ -10,17 +10,16 @@ This is not a booking or patient-record system. It does not manage appointments,
 
 Requires Node.js 20.6 or later and npm.
 
-Create a local `.env` from the checked-in template, then install and start:
+Install and start:
 
 ```powershell
-Copy-Item .env.example .env
 npm install
 npm start
 ```
 
-The actual `.env` is intentionally ignored by Git. It contains only the port setting; `.env.example` is the tracked template.
+The `.env` file is optional. To choose a custom port, copy `.env.example` to `.env` and edit `PORT`. If neither `.env` nor the process environment sets `PORT`, the server uses port 2004. The real `.env` is ignored by Git.
 
-By default, open `http://localhost:3000/doctor`. The server listens on all network interfaces, so other devices can use this computer's IP address with the configured port. See [configuration](docs/configuration.md).
+By default, open `http://localhost:2004/doctor`. The server listens on all network interfaces, so other devices can use this computer's IP address with the configured port. See [configuration](docs/configuration.md).
 
 ## What runs here
 
