@@ -384,52 +384,28 @@
     <article class="step-card">
       <div class="step-header">
         <div class="step-badge">2</div>
-        <h2>Generate the Route JSON Block with caddy-template</h2>
+        <h2>Programmatically Add Route &amp; Hot Reload in One Command</h2>
       </div>
       <p>
-        Use <code>caddy-template</code> to generate the unified reverse proxy route block for <code>appointment.keshavsoft.com</code> on port <code>3000</code>, and save it to a temporary file:
+        Use <code>caddy-cli add</code> to programmatically insert the new route into <code>/etc/caddy/caddy.json</code> and reload Caddy with zero downtime:
       </p>
       <div class="code-container">
         <div class="code-header">
           <span>SSH: root@server6358:/etc/caddy#</span>
-          <button class="copy-btn" onclick="copySnippet('npx caddy-template proxy appointment.keshavsoft.com 3000 > /tmp/appointment-route.json', this)">Copy</button>
+          <button class="copy-btn" onclick="copySnippet('npx caddy-cli add proxy appointment.keshavsoft.com 3000 --reload', this)">Copy Command</button>
         </div>
-        <pre><code><span class="term-prompt">root@server6358:/etc/caddy#</span> npx caddy-template proxy appointment.keshavsoft.com 3000 > /tmp/appointment-route.json</code></pre>
+        <pre><code><span class="term-prompt">root@server6358:/etc/caddy#</span> npx caddy-cli add proxy appointment.keshavsoft.com 3000 --reload</code></pre>
       </div>
-      <p>
-        You can verify the generated file by running <code>cat /tmp/appointment-route.json</code>:
-      </p>
-      <div class="code-container">
-        <div class="code-header"><span>/tmp/appointment-route.json</span></div>
-        <pre><code>{
-  "match": [
-    {
-      "host": [
-        "appointment.keshavsoft.com"
-      ]
-    }
-  ],
-  "handle": [
-    {
-      "handler": "subroute",
-      "routes": [
-        {
-          "handle": [
-            {
-              "handler": "reverse_proxy",
-              "upstreams": [
-                {
-                  "dial": "localhost:3000"
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    }
-  ],
-  "terminal": true
-}</code></pre>
+
+      <div class="callout callout-success">
+        <div class="callout-title">What this single command handles automatically:</div>
+        <ol style="margin: 0.5rem 0 0 1.5rem; font-size: 0.92rem;">
+          <li><strong>Safety Check:</strong> Confirms <code>appointment.keshavsoft.com</code> doesn't already exist to prevent duplicate collisions.</li>
+          <li><strong>Automatic Backup:</strong> Creates <code>/etc/caddy/caddy.json.bak.&lt;timestamp&gt;</code> before touching the file.</li>
+          <li><strong>Template Injection:</strong> Uses <code>caddy-template</code> to generate and append the pristine route block into <code>apps.http.servers.srv0.routes</code>.</li>
+          <li><strong>Zero-Downtime Reload:</strong> Triggers <code>caddy reload</code> in-memory without dropping active connections.</li>
+          <li><strong>Instant Verification:</strong> Displays the updated route table with row 10 active!</li>
+        </ol>
       </div>
     </article>
 
@@ -437,70 +413,10 @@
     <article class="step-card">
       <div class="step-header">
         <div class="step-badge">3</div>
-        <h2>Insert the Route into /etc/caddy/caddy.json</h2>
+        <h2>Verify Route with caddy-cli</h2>
       </div>
       <p>
-        To avoid syntax errors, missing commas, or misplaced braces when manually editing JSON files, use this <strong>foolproof Node.js one-liner</strong> directly on your VPS. It automatically creates a timestamped backup, appends the new route, and writes it back cleanly:
-      </p>
-
-      <div class="code-container">
-        <div class="code-header">
-          <span>SSH: Safe Automated Append (Recommended)</span>
-          <button class="copy-btn" onclick="copySnippet(document.getElementById('nodeAppendCmd').innerText, this)">Copy Command</button>
-        </div>
-        <pre id="nodeAppendCmd"><code>node -e '
-const fs = require("fs");
-const caddyFile = "/etc/caddy/caddy.json";
-const routeFile = "/tmp/appointment-route.json";
-
-const config = JSON.parse(fs.readFileSync(caddyFile, "utf8"));
-const route = JSON.parse(fs.readFileSync(routeFile, "utf8"));
-
-// 1. Create a safe backup first
-const backupFile = caddyFile + ".bak." + Date.now();
-fs.writeFileSync(backupFile, JSON.stringify(config, null, 2));
-console.log("Backup created at:", backupFile);
-
-// 2. Append route to apps.http.servers.srv0.routes
-config.apps.http.servers.srv0.routes.push(route);
-
-// 3. Write back updated config
-fs.writeFileSync(caddyFile, JSON.stringify(config, null, 2));
-console.log("Successfully appended appointment.keshavsoft.com to " + caddyFile + "!");
-'</code></pre>
-      </div>
-
-      <div class="callout callout-warning">
-        <div class="callout-title">Alternative (Manual Editing with nano):</div>
-        If you prefer manual editing:
-        <ol style="margin: 0.5rem 0 0 1.5rem; font-size: 0.9rem;">
-          <li>Run: <code>cp /etc/caddy/caddy.json /etc/caddy/caddy.json.bak</code></li>
-          <li>Run: <code>nano /etc/caddy/caddy.json</code></li>
-          <li>Scroll to the end of <code>apps.http.servers.srv0.routes</code> (after the <code>cc9.keshavsoft.com</code> block).</li>
-          <li>Add a comma <code>,</code> after the previous route object, and paste the contents of <code>/tmp/appointment-route.json</code> before the closing bracket <code>]</code>.</li>
-        </ol>
-      </div>
-    </article>
-
-    <!-- Step 4 -->
-    <article class="step-card">
-      <div class="step-header">
-        <div class="step-badge">4</div>
-        <h2>Reload Caddy &amp; Verify with caddy-cli</h2>
-      </div>
-      <p>
-        Reload Caddy configuration without dropping any active connections:
-      </p>
-      <div class="code-container">
-        <div class="code-header">
-          <span>SSH: root@server6358:/etc/caddy#</span>
-          <button class="copy-btn" onclick="copySnippet('caddy reload --config /etc/caddy/caddy.json', this)">Copy</button>
-        </div>
-        <pre><code><span class="term-prompt">root@server6358:/etc/caddy#</span> caddy reload --config /etc/caddy/caddy.json</code></pre>
-      </div>
-
-      <p>
-        Now verify that our new route is active by running <code>caddy-cli</code>:
+        Verify that <code>appointment.keshavsoft.com</code> is active in the Caddy table:
       </p>
       <div class="code-container">
         <div class="code-header">
@@ -511,15 +427,15 @@ console.log("Successfully appended appointment.keshavsoft.com to " + caddyFile +
       </div>
 
       <div class="callout callout-success">
-        <div class="callout-title">Expected Output:</div>
-        You will see row <code>10</code>: <strong><code>'appointment.keshavsoft.com'</code></strong> mapped to <strong><code>'localhost:3000'</code></strong>!
+        <div class="callout-title">Active Row in Caddy Table:</div>
+        Row 10: <strong><code>'appointment.keshavsoft.com'</code></strong> | <code>'reverse_proxy'</code> | <strong><code>'localhost:3000'</code></strong> | <code>'*'</code>
       </div>
     </article>
 
-    <!-- Step 5 -->
+    <!-- Step 4 -->
     <article class="step-card">
       <div class="step-header">
-        <div class="step-badge">5</div>
+        <div class="step-badge">4</div>
         <h2>Clone &amp; Start appointment-notifier with PM2</h2>
       </div>
       <p>
@@ -547,10 +463,10 @@ pm2 save</code></pre>
       </div>
     </article>
 
-    <!-- Step 6 -->
+    <!-- Step 5 -->
     <article class="step-card">
       <div class="step-header">
-        <div class="step-badge">6</div>
+        <div class="step-badge">5</div>
         <h2>Test Live over HTTPS &amp; WSS</h2>
       </div>
       <p>
