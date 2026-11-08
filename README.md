@@ -26,6 +26,10 @@ By default, open `http://127.0.0.1:3000/doctor`. For other devices on your trust
 
 The server uses Node.js's built-in `http` module to serve the static browser screens. The `ws` package provides a WebSocket endpoint on the same server for real-time announcements. The screens are plain HTML, CSS, and JavaScript; voice announcements use the browser's speech synthesis. There is no Express, database, or persistent storage.
 
+## Frontend versions
+
+The frontend is kept in `public/v1/` and `public/v2/`. V1 preserves the earlier layout; V2 is the active version and places the two destination tabs and keypad first on mobile. The usual `/doctor`, `/display`, and `/reception` routes open V2. Use `/v1/doctor`, `/v1/display`, or `/v1/reception` to view V1.
+
 See [the project story and architecture](docs/overview.md) for the request flow and current limits.
 
 ## npm

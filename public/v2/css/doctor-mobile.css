@@ -1,0 +1,127 @@
+/* V2 doctor console: put the destination controls first on phones. */
+@media (max-width: 600px) {
+  body.doctor-page {
+    min-height: 100vh;
+    min-height: 100svh;
+    overflow-x: hidden;
+  }
+
+  .doctor-shell {
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100svh;
+    padding: 0;
+  }
+
+  .topbar,
+  .doctor-intro,
+  .doctor-footer {
+    display: none;
+  }
+
+  .composer-card {
+    display: flex;
+    min-height: 100vh;
+    min-height: 100svh;
+    flex-direction: column;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .tabs {
+    position: sticky;
+    z-index: 5;
+    top: 0;
+    gap: 8px;
+    padding: max(8px, env(safe-area-inset-top)) 10px 8px;
+  }
+
+  .tab {
+    min-height: 58px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    padding: 12px 8px;
+    font-size: 16px;
+    touch-action: manipulation;
+  }
+
+  .tab.active {
+    border-color: #dce6f0;
+  }
+
+  .tab:focus-visible,
+  .keypad button:focus-visible,
+  .send-button:focus-visible {
+    outline: 3px solid #8ab4e8;
+    outline-offset: 2px;
+  }
+
+  .tab-panel {
+    flex: 1;
+    padding: 12px 16px max(12px, env(safe-area-inset-bottom));
+  }
+
+  .panel-heading {
+    display: none;
+  }
+
+  .number-display {
+    flex-direction: column;
+    gap: 0;
+    padding: 2px 0 12px;
+  }
+
+  .number-display span {
+    min-height: 1em;
+    font-size: clamp(48px, 12vw, 68px);
+  }
+
+  .number-display small {
+    font-size: 9px;
+  }
+
+  .keypad {
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .keypad button {
+    height: clamp(54px, 9svh, 68px);
+    border-radius: 14px;
+    font-size: 22px;
+    touch-action: manipulation;
+  }
+
+  .keypad .key-muted {
+    font-size: 14px;
+  }
+
+  .send-button {
+    min-height: 58px;
+    margin-top: 2px;
+    touch-action: manipulation;
+  }
+
+  .connection-status {
+    padding: 9px 8px;
+  }
+
+  .feedback {
+    padding-bottom: max(10px, env(safe-area-inset-bottom));
+  }
+}
+
+@media (max-width: 380px) {
+  .tabs { padding-inline: 8px; }
+  .tab { min-height: 54px; font-size: 14px; }
+  .tab-panel { padding-inline: 12px; }
+  .keypad { gap: 6px; }
+}
+
+@media (max-width: 600px) and (max-height: 700px) {
+  .tab-panel { padding-top: 8px; }
+  .number-display { padding-bottom: 8px; }
+  .keypad button { height: 52px; }
+  .send-button { min-height: 52px; }
+}

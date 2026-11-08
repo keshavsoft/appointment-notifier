@@ -30,6 +30,10 @@ flowchart LR
 - **In-memory channel sets:** the server tracks currently connected display and reception screens. There is no database, login, persistence, or audit log.
 - **npm:** installs the dependency and runs the app. This code is an application rather than a reusable npm library, and `package.json` marks it private to prevent accidental publication.
 
+## Frontend versions
+
+The browser screens are kept in `public/v1/` and `public/v2/`. V1 preserves the earlier layout. V2 is the default and has a mobile-focused Doctor screen: on narrow screens it opens with the Display and Reception tabs, the number keypad, and the send action. The standard `/doctor`, `/display`, and `/reception` routes open V2; `/v1/doctor`, `/v1/display`, and `/v1/reception` keep V1 available for comparison.
+
 ## Current limits
 
 The `role` value in a WebSocket URL only selects a screen channel; it is not authentication. The server uses plain HTTP/WebSocket without TLS and has no access control. Binding to a specific address limits the network interface that accepts traffic, but it does not protect the app from other clients that can reach that address. Keep it on a trusted network until authentication and HTTPS/WSS are added.
