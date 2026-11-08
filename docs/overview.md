@@ -26,7 +26,7 @@ flowchart LR
 
 - **Node.js built-in `http`:** serves the static files and handles the WebSocket upgrade on one port. Express is not used.
 - **`ws`:** the only runtime dependency. It implements the WebSocket server and keeps a live connection open so announcements can be pushed immediately.
-- **Plain browser code:** HTML and CSS define the screens; JavaScript sends and receives messages. Speech comes from the browser's built-in speech synthesis.
+- **Plain browser code:** HTML and CSS define the screens; JavaScript sends and receives messages. English speech uses the browser's built-in speech synthesis. V4 Telugu speech plays WAV files served locally from `public/v4/audio/te/`.
 - **In-memory channel sets:** the server tracks currently connected display and reception screens. There is no database, login, persistence, or audit log.
 - **npm:** installs the dependency and runs the app. This code is an application rather than a reusable npm library, and `package.json` marks it private to prevent accidental publication.
 
@@ -44,7 +44,9 @@ This keeps the entry file focused on how the pieces fit together while the modul
 
 ## Frontend versions
 
-The browser screens are kept in `public/v1/`, `public/v2/`, `public/v3/`, and `public/v4/`. V1 preserves the earlier layout. V2 keeps the Display and Reception flow and is still served by the standard `/doctor`, `/display`, and `/reception` routes. V3 is a focused Doctor-and-Display flow at `/v3/doctor` and `/v3/display`. V4 carries that flow forward at `/v4/doctor` and `/v4/display`, adds a persistent voice toggle, and speaks announcements in English. Telugu is listed in the language control and will be enabled when its WAV files are supplied. V3 and V4 each keep one current announcement in separate server memory state, so a newer Display connection replaces the previous one only within its version.
+The browser screens are kept in `public/v1/`, `public/v2/`, `public/v3/`, and `public/v4/`. V1 preserves the earlier layout. V2 keeps the Display and Reception flow and is still served by the standard `/doctor`, `/display`, and `/reception` routes. V3 is a focused Doctor-and-Display flow at `/v3/doctor` and `/v3/display`. V4 carries that flow forward at `/v4/doctor` and `/v4/display`, adds a persistent voice toggle, speaks English through browser speech synthesis, and plays Telugu WAV clips for numbers 1–10. The files are `public/v4/audio/te/01.wav` through `10.wav`; Telugu playback reports that clips above 10 are unavailable. V3 and V4 each keep one current announcement in separate server memory state, so a newer Display connection replaces the previous one only within its version.
+
+The Telugu clips say “నంబర్” followed by each number word, from one through ten. They were generated with TTSForge's Aishwarya Telugu (India) voice; its [terms of service](https://ttsforge.com/terms/) describe usage rights for generated audio. Listen to the clips on the intended speakers and confirm pronunciation before using them with patients.
 
 ## Current limits
 

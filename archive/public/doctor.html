@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#10243a">
+  <title>Doctor Console V2 | CareCall</title><link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="doctor-page">
+<main class="doctor-shell">
+  <header class="topbar"><a class="brand" href="/doctor"><span class="brand-mark">✚</span><span>Care<span class="brand-light">Call</span></span></a><span class="live-pill"><i></i> LIVE SYSTEM</span></header>
+  <section class="doctor-intro"><p class="eyebrow">CLINIC COMMUNICATION · V2</p><h1>Doctor console</h1><p class="subheading">Choose a destination, select a number, and send.</p></section>
+  <section class="composer-card">
+    <nav class="tabs" aria-label="Message destination"><button class="tab active" data-tab="display" type="button">▣ Display</button><button class="tab" data-tab="reception" type="button">⌂ Reception</button></nav>
+    <section class="tab-panel active" id="display-panel"><div class="panel-heading"><div><p class="eyebrow">WAITING AREA</p><h2>Call a number</h2></div><span class="destination-tag">DISPLAY SCREEN</span></div>
+      <div class="number-display"><span id="displaySelectedNumber">—</span><small>SELECTED NUMBER</small></div>
+      <div class="keypad" data-keypad="display" aria-label="Display number keypad">
+        <button data-digit="1">1</button><button data-digit="2">2</button><button data-digit="3">3</button><button data-digit="4">4</button><button data-digit="5">5</button><button data-digit="6">6</button><button data-digit="7">7</button><button data-digit="8">8</button><button data-digit="9">9</button><button class="key-muted" data-action="clear">Clear</button><button data-digit="0">0</button><button class="key-muted" data-action="backspace">⌫</button>
+      </div><button class="send-button" id="sendDisplay" disabled>Send to display <span>→</span></button>
+    </section>
+    <section class="tab-panel" id="reception-panel" hidden><div class="panel-heading"><div><p class="eyebrow">RECEPTION COUNTER</p><h2>Call a number</h2></div><span class="destination-tag">RECEPTION SCREEN</span></div>
+      <div class="number-display"><span id="receptionSelectedNumber">—</span><small>SELECTED NUMBER</small></div>
+      <div class="keypad" data-keypad="reception" aria-label="Reception number keypad">
+        <button data-digit="1">1</button><button data-digit="2">2</button><button data-digit="3">3</button><button data-digit="4">4</button><button data-digit="5">5</button><button data-digit="6">6</button><button data-digit="7">7</button><button data-digit="8">8</button><button data-digit="9">9</button><button class="key-muted" data-action="clear">Clear</button><button data-digit="0">0</button><button class="key-muted" data-action="backspace">⌫</button>
+      </div><button class="send-button" id="sendReception" disabled>Send to reception <span>→</span></button>
+    </section>
+    <p class="connection-status" id="doctorStatus"><i></i> Connecting to server…</p><p class="feedback" id="feedback" role="status" aria-live="polite"></p>
+  </section><footer class="doctor-footer">CareCall V2 <span>•</span> Number calling system</footer>
+</main><script type="module" src="/js/doctor.js"></script>
+</body></html>
