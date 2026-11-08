@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="The story and technical overview of CareCall Appointment Notifier.">
+  <title>CareCall Appointment Notifier — Project Story</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #16251f;
+      --muted: #56675f;
+      --paper: #f5f7f3;
+      --card: #ffffff;
+      --line: #d8e1db;
+      --green: #176b4b;
+      --green-dark: #104d38;
+      --mint: #e3f2e9;
+      --amber: #fff4d8;
+      --amber-ink: #704f12;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); line-height: 1.6; }
+    a { color: var(--green-dark); text-underline-offset: 0.2em; }
+    a:hover { text-decoration-thickness: 2px; }
+    .wrap { width: min(1080px, calc(100% - 40px)); margin-inline: auto; }
+    .topbar { padding: 18px 0; border-bottom: 1px solid var(--line); }
+    .topbar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .brand { font-size: 0.95rem; font-weight: 750; letter-spacing: 0.01em; }
+    .top-link { font-size: 0.92rem; font-weight: 650; }
+    .hero { padding: clamp(56px, 9vw, 104px) 0 62px; }
+    .eyebrow { margin: 0 0 14px; color: var(--green); font-weight: 750; letter-spacing: 0.12em; text-transform: uppercase; font-size: 0.76rem; }
+    h1 { max-width: 790px; margin: 0; font-size: clamp(2.5rem, 7vw, 5.4rem); line-height: 1.02; letter-spacing: -0.055em; }
+    .lede { max-width: 720px; margin: 24px 0 0; color: var(--muted); font-size: clamp(1.08rem, 2.2vw, 1.3rem); }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+    .button { display: inline-block; padding: 11px 16px; border: 1px solid var(--green); border-radius: 8px; color: white; background: var(--green); text-decoration: none; font-weight: 700; }
+    .button.secondary { color: var(--green-dark); background: transparent; }
+    main { padding-bottom: 76px; }
+    section { margin-top: 26px; }
+    .section-head { max-width: 720px; margin-bottom: 20px; }
+    h2 { margin: 0 0 8px; font-size: clamp(1.55rem, 3vw, 2.1rem); letter-spacing: -0.03em; }
+    .section-head p, .card p { margin: 0; color: var(--muted); }
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .card { padding: 22px; border: 1px solid var(--line); border-radius: 14px; background: var(--card); }
+    .card h3 { margin: 0 0 8px; font-size: 1.08rem; }
+    .step { display: inline-grid; place-items: center; width: 30px; height: 30px; margin-bottom: 13px; border-radius: 50%; color: var(--green-dark); background: var(--mint); font-size: 0.85rem; font-weight: 800; }
+    .flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: stretch; gap: 12px; }
+    .flow-card { min-height: 156px; padding: 20px; border: 1px solid var(--line); border-radius: 14px; background: var(--card); }
+    .flow-card strong { display: block; margin-bottom: 6px; }
+    .flow-card p { margin: 0; color: var(--muted); font-size: 0.94rem; }
+    .arrow { align-self: center; color: var(--green); font-size: 1.5rem; font-weight: 800; }
+    .tech-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .tech { padding: 18px 20px; border-left: 3px solid var(--green); border-radius: 0 10px 10px 0; background: var(--card); }
+    .tech strong { display: block; margin-bottom: 4px; }
+    .tech span { color: var(--muted); }
+    .notice { padding: 22px; border: 1px solid #e7d49c; border-radius: 14px; background: var(--amber); color: var(--amber-ink); }
+    .notice h2 { font-size: 1.35rem; }
+    .notice p { margin: 0; }
+    .links { display: flex; flex-wrap: wrap; gap: 12px 24px; }
+    footer { padding: 24px 0 34px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.9rem; }
+    @media (max-width: 760px) {
+      .grid { grid-template-columns: 1fr; }
+      .flow { grid-template-columns: 1fr; }
+      .arrow { justify-self: center; transform: rotate(90deg); }
+      .flow-card { min-height: auto; }
+      .tech-list { grid-template-columns: 1fr; }
+      .top-link { font-size: 0.82rem; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap">
+      <div class="brand">CareCall · Project story</div>
+      <a class="top-link" href="https://github.com/keshavsoft/appointment-notifier">View the source on GitHub ↗</a>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <header class="hero">
+      <p class="eyebrow">A small tool for the moment a number is called</p>
+      <h1>One call.<br>Two destinations.<br>Everyone stays in sync.</h1>
+      <p class="lede">CareCall Appointment Notifier gives staff a simple way to call a number and send it to the right screen: a public display or the reception desk. The receiving screen shows the number, says it aloud, and starts an elapsed-time counter.</p>
+      <div class="hero-actions">
+        <a class="button" href="https://github.com/keshavsoft/appointment-notifier">Explore the repository</a>
+        <a class="button secondary" href="https://github.com/keshavsoft/appointment-notifier/blob/main/README.md">Read the README</a>
+      </div>
+    </header>
+
+    <main>
+      <section aria-labelledby="purpose-title">
+        <div class="section-head">
+          <h2 id="purpose-title">What the project does</h2>
+          <p>This is the calling layer around an appointment or queue. It moves a short announcement from staff to the screen that needs it.</p>
+        </div>
+        <div class="grid">
+          <article class="card">
+            <span class="step">01</span>
+            <h3>Staff choose a destination</h3>
+            <p>The Doctor screen has separate Display and Reception tabs. Each tab has its own keypad and selected number.</p>
+          </article>
+          <article class="card">
+            <span class="step">02</span>
+            <h3>The server routes the call</h3>
+            <p>The number is sent to one logical channel. Connected screens in the other channel do not receive it.</p>
+          </article>
+          <article class="card">
+            <span class="step">03</span>
+            <h3>The screen announces it</h3>
+            <p>The selected screen updates immediately, speaks through the browser, and shows how long ago the number arrived.</p>
+          </article>
+        </div>
+      </section>
+
+      <section aria-labelledby="flow-title">
+        <div class="section-head">
+          <h2 id="flow-title">A direct path through the app</h2>
+          <p>The browser pages and live-message endpoint share one Node.js server and one configured port.</p>
+        </div>
+        <div class="flow" aria-label="Doctor screen sends an announcement through the Node.js server to either the Display or Reception screen">
+          <div class="flow-card">
+            <strong>Doctor screen</strong>
+            <p>Plain browser JavaScript sends a small JSON message with the number and its target channel.</p>
+          </div>
+          <span class="arrow" aria-hidden="true">→</span>
+          <div class="flow-card">
+            <strong>Node.js server</strong>
+            <p>Built-in HTTP serves the pages. The <code>ws</code> library carries live messages and routes them in memory.</p>
+          </div>
+          <span class="arrow" aria-hidden="true">→</span>
+          <div class="flow-card">
+            <strong>Display or Reception</strong>
+            <p>The matching channel receives the call. Browser speech synthesis provides the voice announcement.</p>
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="tech-title">
+        <div class="section-head">
+          <h2 id="tech-title">What it is built with</h2>
+          <p>Small, understandable pieces that fit the job.</p>
+        </div>
+        <div class="tech-list">
+          <div class="tech"><strong>Node.js built-in HTTP</strong><span>Serves the HTML, CSS, and JavaScript and accepts the WebSocket upgrade. There is no Express.</span></div>
+          <div class="tech"><strong><code>ws</code></strong><span>The app's only runtime dependency. It keeps a live connection open for real-time announcements.</span></div>
+          <div class="tech"><strong>Browser-native UI</strong><span>Plain HTML, CSS, and JavaScript; speech comes from the browser's speech synthesis.</span></div>
+          <div class="tech"><strong>In-memory channels</strong><span>No database or saved call history. Connected screens are tracked only while the server is running.</span></div>
+        </div>
+      </section>
+
+      <section class="notice" aria-labelledby="scope-title">
+        <h2 id="scope-title">A notifier, not a booking system</h2>
+        <p>The app calls numbers and displays them. It does not create appointments, store patient records, or manage a calendar. The role in a WebSocket URL selects a screen channel; it is not a login. Keep the running app on a trusted local network until authentication and TLS are added.</p>
+      </section>
+
+      <section aria-labelledby="learn-title">
+        <div class="section-head">
+          <h2 id="learn-title">Go deeper</h2>
+          <p>These project notes explain the code and how to run it on a local machine or trusted LAN.</p>
+        </div>
+        <nav class="links" aria-label="Project documentation">
+          <a href="https://github.com/keshavsoft/appointment-notifier/blob/main/docs/overview.md">Technical overview</a>
+          <a href="https://github.com/keshavsoft/appointment-notifier/blob/main/docs/configuration.md">Host and port configuration</a>
+          <a href="https://github.com/keshavsoft/appointment-notifier/tree/main/public">The app's browser screens</a>
+        </nav>
+      </section>
+    </main>
+  </div>
+
+  <footer>
+    <div class="wrap">CareCall Appointment Notifier · A small self-hosted calling tool</div>
+  </footer>
+</body>
+</html>

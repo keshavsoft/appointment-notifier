@@ -2,6 +2,8 @@
 
 A lightweight, self-hosted caller for appointment or queue numbers. A staff member uses the Doctor screen to send a number to the Display or Reception screen. Receiving screens show and speak the number and show elapsed time.
 
+Read the [project story](https://keshavsoft.github.io/appointment-notifier/) for a visual explanation of the app and its architecture.
+
 This is not a booking or patient-record system. It does not manage appointments, store personal records, or keep call history.
 
 ## Start locally
