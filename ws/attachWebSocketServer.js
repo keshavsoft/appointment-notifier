@@ -10,11 +10,14 @@ export function attachWebSocketServer(server) {
     };
     const v3State = createV3State();
     const v4State = createV3State();
+    const v5State = createV3State();
     const versionedRoles = new Map([
         ["doctor-v3", { role: "doctor-v3", state: v3State }],
         ["display-v3", { role: "display-v3", state: v3State }],
         ["doctor-v4", { role: "doctor-v3", state: v4State }],
-        ["display-v4", { role: "display-v3", state: v4State }]
+        ["display-v4", { role: "display-v3", state: v4State }],
+        ["doctor-v5", { role: "doctor-v3", state: v5State }],
+        ["display-v5", { role: "display-v3", state: v5State }]
     ]);
 
     webSocketServer.on("connection", (ws, request) => {

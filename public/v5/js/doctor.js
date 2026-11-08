@@ -13,7 +13,7 @@ const displayStatus = document.querySelector("#displayStatus");
 const previewDisplayStatus = document.querySelector("#previewDisplayStatus");
 const previewView = createDisplayView(document.querySelector("#displayPreview"));
 const wsProtocol = location.protocol === "https:" ? "wss:" : "ws:";
-const socket = new WebSocket(`${wsProtocol}//${location.host}/ws?role=doctor-v4`);
+const socket = new WebSocket(`${wsProtocol}//${location.host}/ws?role=doctor-v5`);
 
 let number = "";
 let serverConnected = false;

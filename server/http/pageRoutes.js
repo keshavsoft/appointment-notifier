@@ -33,7 +33,13 @@ const pageRoutes = new Map([
     ["/v4/doctor", "v4/doctor.html"],
     ["/v4/doctor.html", "v4/doctor.html"],
     ["/v4/display", "v4/display.html"],
-    ["/v4/display.html", "v4/display.html"]
+    ["/v4/display.html", "v4/display.html"],
+    ["/v5", "v5/doctor.html"],
+    ["/v5/", "v5/doctor.html"],
+    ["/v5/doctor", "v5/doctor.html"],
+    ["/v5/doctor.html", "v5/doctor.html"],
+    ["/v5/display", "v5/display.html"],
+    ["/v5/display.html", "v5/display.html"]
 ]);
 
 export function resolvePublicPath(pathname) {
