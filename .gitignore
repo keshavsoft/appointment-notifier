@@ -1,6 +1,9 @@
 node_modules/
+
+# Keep machine-specific settings and secrets out of Git.
 .env
 .env.*
 !.env.example
+
 npm-debug.log*
 .DS_Store

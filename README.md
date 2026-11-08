@@ -1,62 +1,31 @@
 # CareCall Appointment Notifier
 
-A small, self-hosted tool for calling appointment or queue numbers. The doctor console sends a number to either a display screen or a reception screen. The receiving screen shows the number, announces it with browser speech synthesis, and shows how long ago it was called.
+A lightweight, self-hosted caller for appointment or queue numbers. A staff member uses the Doctor screen to send a number to the Display or Reception screen. Receiving screens show and speak the number and show elapsed time.
 
-This is a calling/notification tool, not an appointment booking system: it does not manage calendars, patient records, or bookings.
+This is not a booking or patient-record system. It does not manage appointments, store personal records, or keep call history.
 
-## How it works
+## Start locally
 
-- Node.js's built-in `http` module serves the pages and static files from `public/`.
-- The `ws` package handles a WebSocket endpoint at `/ws` on that same HTTP server. It lets the doctor console send announcements to connected display or reception screens in real time.
-- The browser interface uses plain HTML, CSS, and JavaScript. Speech uses the browser's built-in speech synthesis.
-- There is no Express server, database, or saved call history. Connected screens and channel state live in memory while the server runs.
+Requires Node.js 20.6 or later and npm.
 
-## Requirements
-
-- Node.js 20.6 or later
-- npm
-
-## Configure and run
-
-Copy `.env.example` to `.env`:
+Create a local `.env` from the checked-in template, then install and start:
 
 ```powershell
 Copy-Item .env.example .env
-```
-
-Set the bind address and port in `.env`:
-
-```dotenv
-HOST=127.0.0.1
-PORT=3000
-```
-
-The default `127.0.0.1` makes the app available only on the same computer. To use other devices on the local network, set `HOST` to this computer's private LAN IPv4 address, for example `192.168.1.25`. Those devices can then open:
-
-- Doctor console: `http://192.168.1.25:3000/doctor`
-- Display screen: `http://192.168.1.25:3000/display`
-- Reception screen: `http://192.168.1.25:3000/reception`
-
-Replace the example address and port with the values for your setup. If needed, allow that port through the computer's firewall for the private network only.
-
-Then install the dependency and start the server:
-
-```sh
 npm install
 npm start
 ```
 
-The browser screens connect to the WebSocket endpoint on the same host and port used to open them.
+The actual `.env` is intentionally ignored by Git. Edit it for this machine; `.env.example` documents the settings without carrying machine-specific addresses into the repository.
 
-## Screens
+By default, open `http://127.0.0.1:3000/doctor`. For other devices on your trusted LAN, set `HOST` in `.env` to this computer's private LAN IPv4 address and open `/doctor`, `/display`, or `/reception` at that address and port. See [configuration](docs/configuration.md).
 
-- **Doctor:** two independent tabs for Display and Reception, each with its own keypad and selected number. Numbers can be up to three digits; Clear and backspace are available.
-- **Display and Reception:** each receives only announcements sent to its own channel. On each screen, tap **Enable voice announcements** once; browsers require a user gesture before speech can play.
+## What runs here
 
-## Network and security
+The server uses Node.js's built-in `http` module to serve the static browser screens. The `ws` package provides a WebSocket endpoint on the same server for real-time announcements. The screens are plain HTML, CSS, and JavaScript; voice announcements use the browser's speech synthesis. There is no Express, database, or persistent storage.
 
-Binding to a specific IP controls which network interface accepts connections. It does not authenticate users. The app has no role authentication, HTTPS/WSS, or access control, so anyone who can reach it may connect. Keep it on a trusted local network; do not expose it to the public internet or forward its port until authentication and TLS are added.
+See [the project story and architecture](docs/overview.md) for the request flow and current limits.
 
 ## npm
 
-This repository is a runnable application, not a reusable npm library. npm is used to install the `ws` dependency and run the start script. `package.json` sets `private: true` to prevent accidental publication to the npm registry.
+This is a runnable application, not a reusable npm library. npm installs the `ws` dependency and runs the start script; `"private": true` in `package.json` prevents accidental publication to the npm registry.
