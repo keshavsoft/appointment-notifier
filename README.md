@@ -18,9 +18,9 @@ npm install
 npm start
 ```
 
-The actual `.env` is intentionally ignored by Git. Edit it for this machine; `.env.example` documents the settings without carrying machine-specific addresses into the repository.
+The actual `.env` is intentionally ignored by Git. It contains only the port setting; `.env.example` is the tracked template.
 
-By default, open `http://127.0.0.1:3000/doctor`. For other devices on your trusted LAN, set `HOST` in `.env` to this computer's private LAN IPv4 address and open the app at that address and port. See [configuration](docs/configuration.md).
+By default, open `http://localhost:3000/doctor`. The server listens on all network interfaces, so other devices can use this computer's IP address with the configured port. See [configuration](docs/configuration.md).
 
 ## What runs here
 
