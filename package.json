@@ -1,6 +1,7 @@
 {
   "name": "appointment-notifier",
   "version": "1.2.1",
+  "private": true,
   "type": "module",
   "scripts": {
     "start": "node --env-file=.env app.js"
