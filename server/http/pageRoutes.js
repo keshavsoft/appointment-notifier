@@ -1,47 +1,24 @@
-const pageRoutes = new Map([
-    ["/", "v2/doctor.html"],
-    ["/doctor", "v2/doctor.html"],
-    ["/doctor.html", "v2/doctor.html"],
-    ["/display", "v2/display.html"],
-    ["/display.html", "v2/display.html"],
-    ["/reception", "v2/reception.html"],
-    ["/reception.html", "v2/reception.html"],
-    ["/v1", "v1/doctor.html"],
-    ["/v1/", "v1/doctor.html"],
-    ["/v1/doctor", "v1/doctor.html"],
-    ["/v1/doctor.html", "v1/doctor.html"],
-    ["/v1/display", "v1/display.html"],
-    ["/v1/display.html", "v1/display.html"],
-    ["/v1/reception", "v1/reception.html"],
-    ["/v1/reception.html", "v1/reception.html"],
-    ["/v2", "v2/doctor.html"],
-    ["/v2/", "v2/doctor.html"],
-    ["/v2/doctor", "v2/doctor.html"],
-    ["/v2/doctor.html", "v2/doctor.html"],
-    ["/v2/display", "v2/display.html"],
-    ["/v2/display.html", "v2/display.html"],
-    ["/v2/reception", "v2/reception.html"],
-    ["/v2/reception.html", "v2/reception.html"],
-    ["/v3", "v3/doctor.html"],
-    ["/v3/", "v3/doctor.html"],
-    ["/v3/doctor", "v3/doctor.html"],
-    ["/v3/doctor.html", "v3/doctor.html"],
-    ["/v3/display", "v3/display.html"],
-    ["/v3/display.html", "v3/display.html"],
-    ["/v4", "v4/doctor.html"],
-    ["/v4/", "v4/doctor.html"],
-    ["/v4/doctor", "v4/doctor.html"],
-    ["/v4/doctor.html", "v4/doctor.html"],
-    ["/v4/display", "v4/display.html"],
-    ["/v4/display.html", "v4/display.html"],
-    ["/v5", "v5/doctor.html"],
-    ["/v5/", "v5/doctor.html"],
-    ["/v5/doctor", "v5/doctor.html"],
-    ["/v5/doctor.html", "v5/doctor.html"],
-    ["/v5/display", "v5/display.html"],
-    ["/v5/display.html", "v5/display.html"]
+const legacyPageRoutes = new Map([
+    ["/", "/v2/doctor.html"],
+    ["/doctor", "/v2/doctor.html"],
+    ["/doctor.html", "/v2/doctor.html"],
+    ["/display", "/v2/display.html"],
+    ["/display.html", "/v2/display.html"],
+    ["/reception", "/v2/reception.html"],
+    ["/reception.html", "/v2/reception.html"]
 ]);
 
-export function resolvePublicPath(pathname) {
-    return pageRoutes.get(pathname) ?? pathname.replace(/^\/+/, "");
+export function rewritePageUrl(requestUrl) {
+    const url = new URL(requestUrl, "http://localhost");
+    const legacyPagePath = legacyPageRoutes.get(url.pathname);
+
+    if (legacyPagePath) {
+        url.pathname = legacyPagePath;
+    } else {
+        const versionRoot = url.pathname.match(/^\/(v\d+)\/?$/);
+
+        if (versionRoot) url.pathname = `/${versionRoot[1]}/doctor`;
+    }
+
+    return `${url.pathname}${url.search}`;
 }
