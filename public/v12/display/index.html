@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#07111d">
+  <title>CareCall Display V12</title>
+  <link rel="stylesheet" href="/v12/css/v12.css">
+</head>
+<body class="v4-display-page v12-display-page">
+  <main class="display-view display-fullscreen" id="displayView" data-display-view aria-label="Current number and elapsed time">
+    <div class="display-number" data-display-number aria-live="polite"></div>
+    <p class="display-elapsed" data-display-elapsed aria-live="off">Waiting for next call</p>
+  </main>
+  <div id="connectionStatus" class="display-connection-status" role="status">Connecting to server…</div>
+  <section class="voice-controls" aria-label="Display voice settings">
+    <label class="voice-language-control" for="voiceLanguage">
+      <span>Speak in</span>
+      <select id="voiceLanguage" aria-label="Spoken language">
+        <option value="en-IN">English</option>
+        <option value="te-IN">తెలుగు</option>
+      </select>
+    </label>
+    <button class="voice-button" id="voiceToggle" type="button" aria-pressed="false">Voice off</button>
+    <button class="voice-test-button" id="testVoice" type="button" disabled>Test voice</button>
+    <span class="voice-status" id="voiceStatus" role="status" aria-live="polite">Voice is off</span>
+  </section>
+  <script src="/v12/display/display.js?v=11" defer></script>
+</body>
+</html>
