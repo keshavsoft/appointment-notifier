@@ -44,9 +44,12 @@ This keeps the entry file focused on how the pieces fit together while the modul
 
 ## Frontend versions
 
-The browser screens are kept in `public/v1/` through `public/v5/`. V1 preserves the earlier layout. V2 keeps the Display and Reception flow and is still served by the standard `/doctor`, `/display`, and `/reception` routes. V3, V4, and V5 use focused Doctor-and-Display flows at their versioned routes. V4 and V5 have a persistent voice toggle, speak English through browser speech synthesis, and play Telugu WAV clips for numbers 1–10. Their current WAV sets are `public/v4/audio/te/01.wav` through `10.wav` and `public/v5/audio/te/01.wav` through `10.wav`; Telugu playback reports that clips above 10 are unavailable. V5's `public/v5/js/display.js` only coordinates modules: `display/connection.js` handles WebSocket messages, while `display/voice/` stores preferences, plays speech, and manages the controls. V3, V4, and V5 each keep current announcement state separate, so a newer Display connection replaces the previous one only within its version.
+The application includes versioned frontends in `public/`. Earlier versions are preserved for historical reference:
+- Legacy `/doctor`, `/display`, and `/reception` routes open V2.
+- Focused Doctor-and-Display flows exist from V3 through V14.
+- **V14** (`/v14/doctor` and `/v14/display`) is the primary version: it introduces unlimited concurrent display connections with simultaneous audio broadcasting across all connected screens. See **[V14 Multi-Display Story](v14-multi-display-story.md)** for architecture details.
 
-The Telugu clips say “నంబర్” followed by each number word, from one through ten. They were generated with TTSForge's Aishwarya Telugu (India) voice; its [terms of service](https://ttsforge.com/terms/) describe usage rights for generated audio. Listen to the clips on the intended speakers and confirm pronunciation before using them with patients.
+V4 through V14 feature persistent voice controls, English speech synthesis, and high-clarity Telugu audio clips for numbers 1–10. The Telugu clips say “నంబర్” followed by each number word, from one through ten. Listen to the clips on the intended speakers and confirm pronunciation before using them with patients.
 
 ## Current limits
 

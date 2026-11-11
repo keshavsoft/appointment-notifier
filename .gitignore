@@ -6,7 +6,8 @@ node_modules/
 !.env.example
 
 npm-debug.log*
+*.log
 .DS_Store
 
 # Runtime WebSocket diagnostics (do not commit machine-specific logs)
-/logs/
+logs/

@@ -1,36 +1,47 @@
 # CareCall Appointment Notifier
 
-A lightweight, self-hosted caller for appointment or queue numbers. A staff member uses the Doctor screen to send a number to the Display or Reception screen. Receiving screens show and speak the number and show elapsed time.
+A lightweight, self-hosted caller for appointment or queue numbers. A staff member uses the Doctor screen to send a number to connected Display or Reception screens. Receiving screens show the number, speak it aloud in the browser, and display elapsed time.
 
-Read the [project story](https://keshavsoft.github.io/appointment-notifier/) for a visual explanation of the app and its architecture, or follow the **[VPS Publishing Runbook](docs/publish-to-vps.html)** to host it live behind Caddy.
+Read the **[V14 Multi-Display Story](docs/v14-multi-display-story.md)** for a deep dive into the architecture, simultaneous multi-display audio broadcasting, and WebSocket design.
 
-This is not a booking or patient-record system. It does not manage appointments, store personal records, or keep call history.
+> [!NOTE]
+> This is not a booking or patient-record system. It does not manage appointments, store personal health records, or persist call history.
 
-## Start locally
+---
 
-Requires Node.js 20.6 or later and npm.
+## Quick Start
 
-Install and start:
+Requires Node.js 20.6 or later.
 
 ```powershell
 npm install
 npm start
 ```
 
-The `.env` file is optional. To choose a custom port, copy `.env.example` to `.env` and edit `PORT`. If neither `.env` nor the process environment sets `PORT`, the server uses port 2004. The real `.env` is ignored by Git.
+By default, the server listens on port **3000** on all network interfaces. To customize the port, copy `.env.example` to `.env` and set `PORT=your_port`.
 
-By default, open `http://localhost:2004/doctor`. The server listens on all network interfaces, so other devices can use this computer's IP address with the configured port. See [configuration](docs/configuration.md).
+### Primary Endpoints (V14)
 
-## What runs here
+- **Doctor Console**: [http://localhost:3000/v14/doctor](http://localhost:3000/v14/doctor)
+- **Queue Display**: [http://localhost:3000/v14/display](http://localhost:3000/v14/display)
 
-The server uses Node.js's built-in `http` module to serve the static browser screens. The `ws` package provides a WebSocket endpoint on the same server for real-time announcements. The screens are plain HTML, CSS, and JavaScript. V4 and V5 can speak English with browser speech synthesis or play their local Telugu WAV clips for numbers 1–10. V5 keeps the display connection and voice controls in separate browser modules. There is no Express, database, or persistent storage.
+Legacy routes (`/doctor`, `/display`, `/reception`) and earlier versions (`/v3`, `/v4`, `/v13`) remain accessible for backward compatibility.
 
-## Frontend versions
+---
 
-The frontend is kept in `public/v1/` through `public/v5/`. V1 and V2 remain available; the usual `/doctor`, `/display`, and `/reception` routes still open V2. V3, V4, and V5 keep the focused Doctor-and-Display flow at `/v3/doctor` through `/v5/display`. Each has a `Call` tab and a live `Display preview` tab, with separate live state. V4 and V5 add a voice toggle, English speech, and local Telugu audio clips for numbers 1–10. V5's display entry file wires together dedicated connection, voice settings, player, and control modules.
+## Core Capabilities (V14)
 
-See [the project story and architecture](docs/overview.md) for the request flow and current limits.
+- **Simultaneous Multi-Display Broadcasting**: Multiple displays (waiting room TVs, hallway monitors, tablets) connect concurrently without knocking each other offline.
+- **Bilingual Voice Announcements**: Full support for English (via Web Speech API) and local Telugu voice clips for numbers 1–10.
+- **Resilient Audio Autoplay**: Click or tap anywhere on the screen to activate audio in any browser window.
+- **Shared Live State & Heartbeat**: A 25-second WebSocket keep-alive ping prevents TV display timeouts, and dynamic role matching connects all clients to the shared call state.
+- **Clean Diagnostics**: Optional WebSocket runtime diagnostics are appended to `logs/log.txt` (Git-ignored).
 
-## npm
+---
 
-This is a runnable application, not a reusable npm library. npm installs the `ws` dependency and runs the start script; `"private": true` in `package.json` prevents accidental publication to the npm registry.
+## Documentation
+
+- **[V14 Multi-Display Story & Technical Architecture](docs/v14-multi-display-story.md)**: Sequence diagrams, role routing, and audio autoplay design.
+- **[System Overview](docs/overview.md)**: Request flow and architectural principles.
+- **[Configuration Guide](docs/configuration.md)**: Port configuration and environment variables.
+- **[VPS Publishing Runbook](docs/publish-to-vps.html)**: Guide to hosting CareCall on a Linux VPS behind Caddy.
