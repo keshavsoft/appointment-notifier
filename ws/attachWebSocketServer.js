@@ -3,33 +3,55 @@ import { handleConnection } from "./handleConnection.js";
 import { createV3State, handleV3Connection } from "./handleV3Connection.js";
 import { writeWsLog } from "./log.js";
 
+const VERSIONED_ROLE_NAMES = ["v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13", "v14"];
+
 export function attachWebSocketServer(server) {
-    const webSocketServer = new WebSocketServer({ noServer: true });
-    const channels = {
-        display: new Set(),
-        reception: new Set()
-    };
-    const v3State = createV3State();
-    const v4State = createV3State();
-    const v5State = createV3State();
-    const v12State = createV3State();
-    const versionedRoles = new Map([
-        ["doctor-v3", { role: "doctor-v3", state: v3State }],
-        ["display-v3", { role: "display-v3", state: v3State }],
-        ["doctor-v4", { role: "doctor-v3", state: v4State }],
-        ["display-v4", { role: "display-v3", state: v4State }],
-        ["doctor-v5", { role: "doctor-v3", state: v5State }],
-        ["display-v5", { role: "display-v3", state: v5State }],
-        ["doctor-v12", { role: "doctor-v3", state: v12State }],
-        ["display-v12", { role: "display-v3", state: v12State }]
-    ]);
+    const webSocketServer = new WebSocketServer({ noServer: true, perMessageDeflate: false });
+    const channels = { display: new Set(), reception: new Set() };
+
+    // One shared state for every versioned doctor/display client.
+    // A V14 doctor can therefore communicate with a V14 display, and vice versa.
+    const sharedState = createV3State();
+    const versionedRoles = new Map();
+
+    for (const version of VERSIONED_ROLE_NAMES) {
+        versionedRoles.set(`doctor-${version}`, { role: "doctor-v3", state: sharedState });
+        versionedRoles.set(`display-${version}`, { role: "display-v3", state: sharedState });
+    }
+
+    function resolveVersionedConnection(requestedRole) {
+        if (!requestedRole) return null;
+        if (versionedRoles.has(requestedRole)) {
+            return versionedRoles.get(requestedRole);
+        }
+        const match = requestedRole.match(/^(doctor|display)-(v\d+)$/);
+        if (match) {
+            const roleConfig = {
+                role: `${match[1] === "display" ? "display" : "doctor"}-v3`,
+                state: sharedState
+            };
+            versionedRoles.set(requestedRole, roleConfig);
+            return roleConfig;
+        }
+        return null;
+    }
 
     server.on("upgrade", (request, socket, head) => {
-        const parsedUrl = new URL(request.url, "http://localhost");
+        let parsedUrl;
+        try {
+            parsedUrl = new URL(request.url, "http://localhost");
+        } catch (error) {
+            writeWsLog("upgrade-rejected", { reason: "Invalid request URL", message: error.message });
+            socket.destroy();
+            return;
+        }
+
         const pathname = parsedUrl.pathname;
         const requestedRole = parsedUrl.searchParams.get("role");
         const connectionId = `${process.pid}-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
         request.careCallConnectionId = connectionId;
+        request.careCallRequestedRole = requestedRole;
+
         writeWsLog("upgrade-request", {
             connectionId,
             pathname,
@@ -42,7 +64,13 @@ export function attachWebSocketServer(server) {
         });
 
         if (pathname !== "/ws") {
-            writeWsLog("upgrade-rejected", { connectionId, pathname, reason: "Unexpected WebSocket path" });
+            writeWsLog("upgrade-rejected", { connectionId, pathname, requestedRole, reason: "Unexpected WebSocket path" });
+            socket.destroy();
+            return;
+        }
+
+        if (!requestedRole) {
+            writeWsLog("upgrade-rejected", { connectionId, pathname, reason: "Missing role" });
             socket.destroy();
             return;
         }
@@ -53,15 +81,16 @@ export function attachWebSocketServer(server) {
     });
 
     webSocketServer.on("connection", (ws, request) => {
-        const requestedRole = new URL(request.url, "http://localhost").searchParams.get("role");
+        const requestedRole = request.careCallRequestedRole;
         const connectionId = request.careCallConnectionId || `unknown-${Date.now()}`;
+        const versionedConnection = resolveVersionedConnection(requestedRole);
         ws.careCallConnectionId = connectionId;
-        const versionedConnection = versionedRoles.get(requestedRole);
 
         writeWsLog("websocket-open", {
             connectionId,
             requestedRole,
             mappedRole: versionedConnection ? versionedConnection.role : requestedRole,
+            sharedState: Boolean(versionedConnection),
             remoteAddress: request.socket.remoteAddress || null,
             userAgent: request.headers["user-agent"] || null,
             origin: request.headers.origin || null
@@ -89,6 +118,33 @@ export function attachWebSocketServer(server) {
         handleConnection({ ws, role: requestedRole, channels });
     });
 
-    webSocketServer.on("close", () => writeWsLog("websocket-server-close"));
+    // WebSocket ping/pong keeps long-lived TV connections observable and alive.
+    const heartbeat = setInterval(() => {
+        for (const client of webSocketServer.clients) {
+            if (client.isAlive === false) {
+                writeWsLog("heartbeat-timeout", { connectionId: client.careCallConnectionId || null });
+                client.terminate();
+                continue;
+            }
+            client.isAlive = false;
+            if (client.readyState === 1) client.ping();
+        }
+    }, 25000);
+
+    webSocketServer.on("connection", (ws) => {
+        ws.isAlive = true;
+        ws.on("pong", () => { ws.isAlive = true; });
+        ws.on("close", (code, reason) => writeWsLog("websocket-close", {
+            connectionId: ws.careCallConnectionId || null,
+            closeCode: code,
+            closeReason: reason ? reason.toString() : ""
+        }));
+    });
+
+    webSocketServer.on("close", () => {
+        clearInterval(heartbeat);
+        writeWsLog("websocket-server-close");
+    });
+
     return webSocketServer;
 }

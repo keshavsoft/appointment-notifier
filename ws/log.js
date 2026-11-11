@@ -15,7 +15,7 @@ export function writeWsLog(event, details = {}) {
             event,
             ...details
         };
-        fs.appendFileSync(logFile, JSON.stringify(entry) + "\\n", "utf8");
+        fs.appendFileSync(logFile, JSON.stringify(entry) + "\n", "utf8");
     } catch (error) {
         console.error("Unable to write WebSocket log:", error);
     }

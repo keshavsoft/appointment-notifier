@@ -37,50 +37,53 @@ function sendError(ws, message) {
 export function handleV3Connection({ ws, role, state, requestedRole = role, connectionId = null, log = () => {} }) {
     const details = { connectionId, requestedRole, handlerRole: role };
 
-    log("role-handler-enter", { ...details, displayAlreadyConnected: isOpen(state.display) });
+    log("role-handler-enter", { ...details, displayAlreadyConnected: isOpen(state.display), doctorCount: state.doctors.size });
 
     if (role === "display-v3") {
         if (isOpen(state.display)) {
+            const previous = state.display;
             log("duplicate-display-detected", {
                 ...details,
-                previousConnectionId: state.display.careCallConnectionId || null,
-                previousReadyState: state.display.readyState,
+                previousConnectionId: previous.careCallConnectionId || null,
                 action: "closing-previous-display",
                 closeCode: 4001,
-                closeReason: "A newer V3 display connected"
+                closeReason: "A newer display connected"
             });
-            state.display.close(4001, "A newer V3 display connected");
+            previous.close(4001, "A newer display connected");
         }
 
         state.display = ws;
         log("display-registered", { ...details, currentDisplayConnectionId: connectionId });
+
         ws.on("close", (code, reason) => {
-            const reasonText = reason ? reason.toString() : "";
             const isCurrent = state.display === ws;
             log("display-closed", {
                 ...details,
                 closeCode: code,
-                closeReason: reasonText,
+                closeReason: reason ? reason.toString() : "",
                 wasCurrentDisplay: isCurrent,
                 currentDisplayConnectionId: state.display?.careCallConnectionId || null
             });
+
             if (isCurrent) {
                 state.display = null;
                 broadcastState(state, "connection");
             }
         });
+
         broadcastState(state, "snapshot");
         return;
     }
 
     if (role !== "doctor-v3") {
         log("unknown-versioned-role", details);
-        ws.close(1008, "Unknown V3 role");
+        ws.close(1008, "Unknown role");
         return;
     }
 
     state.doctors.add(ws);
     log("doctor-registered", { ...details, doctorCount: state.doctors.size });
+
     ws.on("close", (code, reason) => {
         state.doctors.delete(ws);
         log("doctor-closed", {
@@ -90,10 +93,12 @@ export function handleV3Connection({ ws, role, state, requestedRole = role, conn
             doctorCount: state.doctors.size
         });
     });
+
     ws.send(stateMessage(state, "snapshot"));
 
     ws.on("message", (raw) => {
         let payload;
+
         try {
             payload = JSON.parse(raw.toString());
         } catch {
@@ -102,9 +107,10 @@ export function handleV3Connection({ ws, role, state, requestedRole = role, conn
             return;
         }
 
-        if (payload?.type !== "call" || typeof payload.number !== "string" || !/^\\d{1,3}$/.test(payload.number)) {
+        // Accept only decimal digits, including the number 0, up to three digits.
+        if (payload?.type !== "call" || typeof payload.number !== "string" || !/^\d{1,3}$/.test(payload.number)) {
             sendError(ws, "Enter a number from 0 to 999 before sending.");
-            log("doctor-invalid-call", { ...details, payloadType: payload?.type || null });
+            log("doctor-invalid-call", { ...details, payloadType: payload?.type || null, number: payload?.number ?? null });
             return;
         }
 
@@ -119,6 +125,7 @@ export function handleV3Connection({ ws, role, state, requestedRole = role, conn
             displayConnected: isOpen(state.display),
             displayConnectionId: state.display?.careCallConnectionId || null
         });
+
         broadcastState(state, "call", isOpen(state.display));
     });
 }
