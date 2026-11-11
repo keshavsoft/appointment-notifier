@@ -8,6 +8,8 @@ export function startServer(server, { port }) {
         console.log("V3 Display:      http://localhost:" + port + "/v3/display");
         console.log("V4 Doctor:       http://localhost:" + port + "/v4/doctor");
         console.log("V4 Display:      http://localhost:" + port + "/v4/display");
+        console.log("V13 Doctor:      http://localhost:" + port + "/v13/doctor");
+        console.log("V13 Display:     http://localhost:" + port + "/v13/display");
         console.log("For other devices, use this computer's IP address with port " + port + ".");
     });
 }
