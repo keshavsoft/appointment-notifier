@@ -4,8 +4,15 @@ export function createV3State() {
     return {
         announcement: null,
         doctors: new Set(),
-        display: null
+        displays: new Set()
     };
+}
+
+function hasOpenDisplay(state) {
+    for (const display of state.displays) {
+        if (isOpen(display)) return true;
+    }
+    return false;
 }
 
 function stateMessage(state, cause, delivered) {
@@ -13,7 +20,7 @@ function stateMessage(state, cause, delivered) {
         type: "state",
         cause,
         announcement: state.announcement,
-        displayConnected: isOpen(state.display)
+        displayConnected: hasOpenDisplay(state)
     };
 
     if (delivered !== undefined) message.delivered = delivered;
@@ -27,7 +34,9 @@ function broadcastState(state, cause, delivered) {
         if (isOpen(doctor)) doctor.send(message);
     }
 
-    if (isOpen(state.display)) state.display.send(message);
+    for (const display of state.displays) {
+        if (isOpen(display)) display.send(message);
+    }
 }
 
 function sendError(ws, message) {
@@ -37,38 +46,31 @@ function sendError(ws, message) {
 export function handleV3Connection({ ws, role, state, requestedRole = role, connectionId = null, log = () => {} }) {
     const details = { connectionId, requestedRole, handlerRole: role };
 
-    log("role-handler-enter", { ...details, displayAlreadyConnected: isOpen(state.display), doctorCount: state.doctors.size });
+    log("role-handler-enter", {
+        ...details,
+        displayAlreadyConnected: hasOpenDisplay(state),
+        displayCount: state.displays.size,
+        doctorCount: state.doctors.size
+    });
 
     if (role === "display-v3") {
-        if (isOpen(state.display)) {
-            const previous = state.display;
-            log("duplicate-display-detected", {
-                ...details,
-                previousConnectionId: previous.careCallConnectionId || null,
-                action: "closing-previous-display",
-                closeCode: 4001,
-                closeReason: "A newer display connected"
-            });
-            previous.close(4001, "A newer display connected");
-        }
-
-        state.display = ws;
-        log("display-registered", { ...details, currentDisplayConnectionId: connectionId });
+        state.displays.add(ws);
+        log("display-registered", {
+            ...details,
+            displayCount: state.displays.size,
+            currentDisplayConnectionId: connectionId
+        });
 
         ws.on("close", (code, reason) => {
-            const isCurrent = state.display === ws;
+            state.displays.delete(ws);
             log("display-closed", {
                 ...details,
                 closeCode: code,
                 closeReason: reason ? reason.toString() : "",
-                wasCurrentDisplay: isCurrent,
-                currentDisplayConnectionId: state.display?.careCallConnectionId || null
+                displayCount: state.displays.size
             });
 
-            if (isCurrent) {
-                state.display = null;
-                broadcastState(state, "connection");
-            }
+            broadcastState(state, "connection");
         });
 
         broadcastState(state, "snapshot");
@@ -119,13 +121,14 @@ export function handleV3Connection({ ws, role, state, requestedRole = role, conn
             sentAt: Date.now()
         };
 
+        const displayConnected = hasOpenDisplay(state);
         log("call-received", {
             ...details,
             number: payload.number,
-            displayConnected: isOpen(state.display),
-            displayConnectionId: state.display?.careCallConnectionId || null
+            displayConnected,
+            displayCount: state.displays.size
         });
 
-        broadcastState(state, "call", isOpen(state.display));
+        broadcastState(state, "call", displayConnected);
     });
 }

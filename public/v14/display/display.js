@@ -90,29 +90,33 @@
   function speakEnglish(phrase) {
     var utterance;
     if (!speechAvailable()) { setText(voiceStatus, "English speech is unavailable on this TV browser."); return; }
-    utterance = new window.SpeechSynthesisUtterance(phrase);
-    utterance.lang = "en-IN";
-    utterance.rate = 0.88;
-    utterance.onerror = function () { setText(voiceStatus, "English speech could not play on this device."); };
-    window.speechSynthesis.speak(utterance);
+    try {
+      utterance = new window.SpeechSynthesisUtterance(phrase);
+      utterance.lang = "en-IN";
+      utterance.rate = 0.88;
+      utterance.onerror = function () { setText(voiceStatus, "Click screen to enable audio in this browser"); };
+      window.speechSynthesis.speak(utterance);
+    } catch (e) {
+      setText(voiceStatus, "Click screen to enable audio in this browser");
+    }
   }
   function speakTelugu(number) {
     var n = Number(number), filename, audio, playResult;
     if (n < 1 || n > 10 || Math.floor(n) !== n) { setText(voiceStatus, "Telugu WAV clips are available for numbers 1–10."); return; }
     filename = (n < 10 ? "0" : "") + n;
-    audio = new window.Audio("/v14/display/audio/te/" + filename + ".wav");
-    activeAudio = audio;
-    audio.onended = function () { if (activeAudio === audio) activeAudio = null; };
-    audio.onerror = function () { if (activeAudio === audio) activeAudio = null; setText(voiceStatus, "Telugu audio clip could not be loaded."); };
-    playResult = audio.play();
-    if (playResult && playResult.catch) playResult.catch(function () { if (activeAudio === audio) activeAudio = null; setText(voiceStatus, "Telugu audio could not play on this device."); });
+    try {
+      audio = new window.Audio("/v14/display/audio/te/" + filename + ".wav");
+      activeAudio = audio;
+      audio.onended = function () { if (activeAudio === audio) activeAudio = null; };
+      audio.onerror = function () { if (activeAudio === audio) activeAudio = null; setText(voiceStatus, "Telugu audio clip could not be loaded."); };
+      playResult = audio.play();
+      if (playResult && playResult.catch) playResult.catch(function () { if (activeAudio === audio) activeAudio = null; setText(voiceStatus, "Click screen to enable audio in this browser"); });
+    } catch (e) {
+      setText(voiceStatus, "Click screen to enable audio in this browser");
+    }
   }
   function announce(number) {
     if (!voiceSettings.enabled) return;
-    if (!audioUnlocked) {
-      setText(voiceStatus, "Tap Test voice once to activate audio in this browser.");
-      return;
-    }
     stopVoice();
     if (voiceSettings.language === "te-IN") speakTelugu(number);
     else speakEnglish("Number " + number);
@@ -188,6 +192,15 @@
     updateVoiceControls();
     announce("1");
   };
+  function unlockAudio() {
+    if (!audioUnlocked) {
+      audioUnlocked = true;
+      updateVoiceControls();
+    }
+  }
+  window.addEventListener("click", unlockAudio);
+  window.addEventListener("touchstart", unlockAudio);
+  window.addEventListener("keydown", unlockAudio);
   window.onresize = render;
   window.onbeforeunload = function () {
     stopped = true;
