@@ -1,66 +1,84 @@
-let reconnectFn = () => {};
-let resetDelayFn = () => {};
+import { attachSocket, detachSocket } from "./socket/index.js";
 
-export function setSocketHelpers(helpers = {}) {
-  if (helpers.reconnect) reconnectFn = helpers.reconnect;
-  if (helpers.resetDelay) resetDelayFn = helpers.resetDelay;
-}
+let socket = null;
+let retryTimer = null;
+let retryDelay = 2000;
+let stopped = false;
 
 export const actions = {
-  onOpen: () => {
-    resetDelayFn();
-    if (window.displayUI) window.displayUI.setConnectionStatus("సర్వర్‌కి కనెక్ట్ అయింది · సమన్వయం చేస్తోంది");
+  createUrl: (config) => {
+    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    return `${protocol}//${window.location.host}${config.path}?role=${config.role}`;
   },
 
-  onMessage: (event) => {
-    let message;
+  calculateNextDelay: (currentDelay, reconnectConfig) => {
+    const maxDelay = reconnectConfig?.maxDelay || 30000;
+    const factor = reconnectConfig?.factor || 1.7;
+    return Math.min(maxDelay, Math.round(currentDelay * factor));
+  },
+
+  scheduleReconnect: (config) => {
+    if (stopped || retryTimer) return;
+    retryTimer = window.setTimeout(() => {
+      retryTimer = null;
+      actions.connect(config);
+    }, retryDelay);
+    retryDelay = actions.calculateNextDelay(retryDelay, config.reconnect);
+  },
+
+  connect: (config) => {
+    if (stopped) return;
+    if (socket) {
+      actions.disconnect();
+    }
+
+    if (window.displayUI) window.displayUI.setConnectionStatus("సర్వర్‌కి కనెక్ట్ అవుతోంది…");
+    const url = actions.createUrl(config);
+
     try {
-      message = JSON.parse(event.data);
+      socket = new window.WebSocket(url);
+      attachSocket(socket, {
+        onDisconnected: () => {
+          if (stopped) return;
+          socket = null;
+          actions.scheduleReconnect(config);
+        }
+      });
     } catch {
-      if (window.displayUI) window.displayUI.setConnectionStatus("సందేశాన్ని చదవడం సాధ్యం కాలేదు");
-      return;
-    }
-    if (message.type === "error") {
-      if (window.displayUI) window.displayUI.setConnectionStatus("సర్వర్: " + message.message);
-      return;
-    }
-    if (message.type !== "state") return;
-
-    if (message.announcement && message.announcement.number) {
-      if (window.displayUI) window.displayUI.showCall(message.announcement.number, message.announcement.sentAt);
-    } else {
-      if (window.displayUI) window.displayUI.showCall(null);
-    }
-
-    if (window.displayUI) {
-      window.displayUI.setConnectionStatus(message.displayConnected ? "డిస్‌ప్లే కనెక్ట్ అయింది" : "సర్వర్‌కి కనెక్ట్ అయింది");
+      if (window.displayUI) window.displayUI.setConnectionStatus("వెబ్‌సాకెట్ అందుబాటులో లేదు — మళ్లీ ప్రయత్నిస్తోంది");
+      actions.scheduleReconnect(config);
     }
   },
 
-  onError: () => {
-    if (window.displayUI) window.displayUI.setConnectionStatus("కనెక్షన్ సమస్య · మళ్లీ ప్రయత్నిస్తోంది");
+  disconnect: () => {
+    if (!socket) return;
+    try {
+      detachSocket(socket);
+      socket.close();
+    } catch {}
+    socket = null;
   },
 
-  onClose: () => {
-    if (window.displayUI) window.displayUI.setConnectionStatus("డిస్‌కనెక్ట్ అయింది · మళ్లీ కనెక్ట్ అవుతోంది…");
-    reconnectFn();
-  },
-
-  attachListeners: (socket, listeners = []) => {
-    if (!socket || !Array.isArray(listeners)) return;
-    for (const item of listeners) {
-      const fn = actions[item.action];
-      if (typeof fn === "function") {
-        socket[`on${item.event}`] = fn;
-      }
+  stop: () => {
+    stopped = true;
+    if (retryTimer) {
+      window.clearTimeout(retryTimer);
+      retryTimer = null;
     }
+    actions.disconnect();
   },
 
-  detachListeners: (socket, listeners = []) => {
-    if (!socket || !Array.isArray(listeners)) return;
-    for (const item of listeners) {
-      socket[`on${item.event}`] = null;
-    }
+  start: (instructions = []) => {
+    const [config] = instructions;
+    if (!config) return;
+    retryDelay = config.reconnect?.initialDelay || 2000;
+    stopped = false;
+
+    window.addEventListener("beforeunload", () => {
+      actions.stop();
+    });
+
+    actions.connect(config);
   }
 };
 

@@ -7,13 +7,6 @@
       "initialDelay": 2000,
       "maxDelay": 30000,
       "factor": 1.7
-    },
-    "listeners": [
-      { "event": "open", "action": "onOpen" },
-      { "event": "message", "action": "onMessage" },
-      { "event": "error", "action": "onError" },
-      { "event": "close", "action": "onClose" }
-    ]
+    }
   }
 ]
-

@@ -1,0 +1,7 @@
+[
+  { "event": "open", "action": "onOpen" },
+  { "event": "message", "action": "onMessage" },
+  { "event": "error", "action": "onError" },
+  { "event": "close", "action": "onClose" }
+]
+
