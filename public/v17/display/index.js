@@ -1,0 +1,167 @@
+import { bindEvents } from "./dom-primitive-bindings.js?v=17.0";
+import actions from "./actions.js?v=17.0";
+import { announce, stopVoice, updateVoiceControls, numberToTeluguWords, unlockAudio } from "./audio.js?v=17.0";
+
+const root = document.getElementById("displayView");
+const numberElement = root ? root.querySelector("[data-display-number]") : null;
+const spellingElement = root ? root.querySelector("[data-display-spelling]") : null;
+const elapsedElement = root ? root.querySelector("[data-display-elapsed]") : null;
+const connectionStatus = document.getElementById("connectionStatus");
+
+let announcement = null;
+let socket = null;
+let retryTimer = null;
+let retryDelay = 2000;
+let stopped = false;
+let lastAnnouncedCallKey = null;
+
+function setText(element, value) {
+  if (element) element.textContent = value;
+}
+
+function elapsedText(milliseconds) {
+  const seconds = Math.max(0, Math.floor(milliseconds / 1000));
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  if (seconds < 60) return seconds + "సె";
+  if (minutes < 60) return minutes + "ని " + (seconds % 60) + "సె";
+  return hours + "గం " + (minutes % 60) + "ని";
+}
+
+function render() {
+  if (!numberElement || !elapsedElement || !root) return;
+  if (!announcement) {
+    root.classList.add("is-waiting");
+    numberElement.textContent = "";
+    if (spellingElement) spellingElement.textContent = "";
+    elapsedElement.textContent = "తదుపరి కాల్ కోసం వేచి ఉంది";
+    return;
+  }
+  root.classList.remove("is-waiting");
+  const value = String(announcement.number == null ? "" : announcement.number);
+  numberElement.textContent = value;
+  const numVal = Number(value);
+  if (spellingElement) {
+    spellingElement.textContent = isFinite(numVal) && numVal >= 0 ? numberToTeluguWords(numVal) : "";
+  }
+  const digits = Math.max(1, value.length);
+  const heightLimit = (window.innerHeight || document.documentElement.clientHeight) * 0.32;
+  const widthLimit = ((window.innerWidth || document.documentElement.clientWidth) * 0.65) / (digits * 0.65);
+  const fontSize = Math.max(64, Math.min(heightLimit, widthLimit));
+  numberElement.style.fontSize = fontSize + "px";
+  const sentAt = Number(announcement.sentAt) || new Date().getTime();
+  elapsedElement.textContent = elapsedText(new Date().getTime() - sentAt) + " క్రితం పిలవబడింది";
+}
+
+function scheduleReconnect() {
+  if (stopped || retryTimer) return;
+  retryTimer = window.setTimeout(() => {
+    retryTimer = null;
+    connect();
+  }, retryDelay);
+  retryDelay = Math.min(30000, Math.round(retryDelay * 1.7));
+}
+
+function connect() {
+  if (stopped) return;
+  if (socket) {
+    try {
+      socket.onopen = null;
+      socket.onmessage = null;
+      socket.onerror = null;
+      socket.onclose = null;
+      socket.close();
+    } catch {}
+    socket = null;
+  }
+
+  setText(connectionStatus, "సర్వర్‌కి కనెక్ట్ అవుతోంది…");
+  const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+  const url = protocol + "//" + window.location.host + "/ws?role=display-v17";
+  try {
+    socket = new window.WebSocket(url);
+  } catch {
+    setText(connectionStatus, "వెబ్‌సాకెట్ అందుబాటులో లేదు — మళ్లీ ప్రయత్నిస్తోంది");
+    scheduleReconnect();
+    return;
+  }
+
+  socket.onopen = () => {
+    retryDelay = 2000;
+    setText(connectionStatus, "సర్వర్‌కి కనెక్ట్ అయింది · సమన్వయం చేస్తోంది");
+  };
+
+  socket.onmessage = (event) => {
+    let message;
+    try {
+      message = JSON.parse(event.data);
+    } catch {
+      setText(connectionStatus, "సందేశాన్ని చదవడం సాధ్యం కాలేదు");
+      return;
+    }
+    if (message.type === "error") {
+      setText(connectionStatus, "సర్వర్: " + message.message);
+      return;
+    }
+    if (message.type !== "state") return;
+    announcement = message.announcement || null;
+    render();
+    setText(connectionStatus, message.displayConnected ? "డిస్‌ప్లే కనెక్ట్ అయింది" : "సర్వర్‌కి కనెక్ట్ అయింది");
+
+    // Announce once per unique call
+    if (message.cause === "call" && message.announcement && message.announcement.number) {
+      const callKey = `${message.announcement.number}#${message.announcement.sentAt || 0}`;
+      if (lastAnnouncedCallKey !== callKey) {
+        lastAnnouncedCallKey = callKey;
+        announce(message.announcement.number);
+      }
+    }
+  };
+
+  socket.onerror = () => {
+    setText(connectionStatus, "కనెక్షన్ సమస్య · మళ్లీ ప్రయత్నిస్తోంది");
+  };
+
+  socket.onclose = () => {
+    if (stopped) return;
+    socket = null;
+    setText(connectionStatus, "డిస్‌కనెక్ట్ అయింది · మళ్లీ కనెక్ట్ అవుతోంది…");
+    scheduleReconnect();
+  };
+}
+
+async function init() {
+  updateVoiceControls();
+
+  // Unlock audio on initial user touch/click/key anywhere on the display
+  window.addEventListener("click", unlockAudio, { once: true });
+  window.addEventListener("touchstart", unlockAudio, { once: true });
+  window.addEventListener("keydown", unlockAudio, { once: true });
+
+  // Initialize dom-primitive-bindings locally
+  try {
+    const res = await fetch("./bindings.json?v=17.0");
+    const bindings = await res.json();
+    bindEvents("displayApp", bindings, actions);
+  } catch (error) {
+    console.error("dom-primitive-bindings init error:", error);
+  }
+
+  window.addEventListener("resize", render);
+  window.addEventListener("beforeunload", () => {
+    stopped = true;
+    if (retryTimer) window.clearTimeout(retryTimer);
+    if (socket) {
+      try {
+        socket.close();
+      } catch {}
+    }
+    stopVoice();
+  });
+
+  render();
+  window.setInterval(render, 1000);
+  connect();
+}
+
+init();

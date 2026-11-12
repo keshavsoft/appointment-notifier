@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="te">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#07111d">
+  <title>CareCall Display V17 — తెలుగు</title>
+  <link rel="stylesheet" href="./css/style.css?v=17.0">
+</head>
+<body class="v17-display-page" id="displayApp">
+  <main class="display-view display-fullscreen" id="displayView" data-display-view aria-label="ప్రస్తుత నంబర్ మరియు గడిచిన సమయం">
+    <div class="display-number-card">
+      <div class="display-number" data-display-number aria-live="polite"></div>
+      <div class="display-telugu-spelling" data-display-spelling aria-live="polite"></div>
+    </div>
+    <p class="display-elapsed" data-display-elapsed aria-live="off">తదుపరి కాల్ కోసం వేచి ఉంది</p>
+  </main>
+  <div id="connectionStatus" class="display-connection-status" role="status">సర్వర్‌కి కనెక్ట్ అవుతోంది…</div>
+  <section class="voice-controls" aria-label="డిస్‌ప్లే వాయిస్ సెట్టింగ్‌లు">
+    <button class="voice-button" id="voiceToggle" type="button" aria-pressed="false">వాయిస్ ఆఫ్</button>
+    <button class="voice-test-button" id="testVoice" type="button" disabled>వాయిస్ టెస్ట్</button>
+    <span class="voice-status" id="voiceStatus" role="status" aria-live="polite">వాయిస్ ఆఫ్ చేయబడింది</span>
+  </section>
+  <script type="module" src="./index.js?v=17.0"></script>
+</body>
+</html>

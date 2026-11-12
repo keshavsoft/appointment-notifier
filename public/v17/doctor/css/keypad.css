@@ -1,0 +1,48 @@
+/* ==========================================================================
+   Doctor Component: Keypad
+   3x4 interactive number pad with clear and backspace controls
+   ========================================================================== */
+
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.keypad button {
+  min-width: 0;
+  height: clamp(54px, 8.5svh, 68px);
+  border: 1px solid #dce5ee;
+  border-radius: 14px;
+  color: #193552;
+  background: #ffffff;
+  box-shadow: 0 2px 5px rgba(24, 51, 75, 0.03);
+  font-size: 22px;
+  font-weight: 750;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.keypad button:active {
+  background: #e5eef8;
+  transform: translateY(1px);
+}
+
+.keypad .key-muted {
+  color: #6c8095;
+  background: #e9eef4;
+  font-size: 14px;
+}
+
+@media (max-height: 680px) {
+  .keypad button {
+    height: 50px;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .keypad button {
+    transition: transform 100ms ease, background-color 120ms ease;
+  }
+}
+

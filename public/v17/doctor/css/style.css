@@ -1,0 +1,14 @@
+/* ==========================================================================
+   CareCall V17 — Doctor Console Master Stylesheet
+   Purely local modular imports (Zero external dependencies)
+   ========================================================================== */
+
+@import "./base.css";
+@import "./layout.css";
+@import "./tabs.css";
+@import "./status-pills.css";
+@import "./number-entry.css";
+@import "./keypad.css";
+@import "./send-button.css";
+@import "./preview-screen.css";
+
