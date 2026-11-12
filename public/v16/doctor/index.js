@@ -1,5 +1,5 @@
-import { bindEvents } from "/v16/lib/dom-primitive-bindings.js";
-import actions, { registerDoctorHandlers } from "./actions.js";
+import { bindEvents } from "/v16/lib/dom-primitive-bindings.js?v=16.5";
+import actions, { registerDoctorHandlers } from "./actions.js?v=16.5";
 
 const tabs = document.querySelectorAll("[data-tab]");
 const panels = {
@@ -183,7 +183,7 @@ async function init() {
 
   // Initialize dom-primitive-bindings on doctorApp
   try {
-    const res = await fetch("/v16/doctor/bindings.json");
+    const res = await fetch("/v16/doctor/bindings.json?v=16.5");
     const bindings = await res.json();
     bindEvents("doctorApp", bindings, actions);
   } catch (error) {
@@ -200,4 +200,3 @@ async function init() {
 }
 
 init();
-

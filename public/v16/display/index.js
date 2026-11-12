@@ -1,9 +1,10 @@
-import { bindEvents } from "/v16/lib/dom-primitive-bindings.js";
-import actions from "./actions.js";
-import { announce, stopVoice, updateVoiceControls } from "./audio.js";
+import { bindEvents } from "/v16/lib/dom-primitive-bindings.js?v=16.5";
+import actions from "./actions.js?v=16.5";
+import { announce, stopVoice, updateVoiceControls, numberToTeluguWords } from "./audio.js?v=16.5";
 
 const root = document.getElementById("displayView");
 const numberElement = root ? root.querySelector("[data-display-number]") : null;
+const spellingElement = root ? root.querySelector("[data-display-spelling]") : null;
 const elapsedElement = root ? root.querySelector("[data-display-elapsed]") : null;
 const connectionStatus = document.getElementById("connectionStatus");
 
@@ -12,6 +13,7 @@ let socket = null;
 let retryTimer = null;
 let retryDelay = 2000;
 let stopped = false;
+let lastAnnouncedCallKey = null;
 
 function setText(element, value) {
   if (element) element.textContent = value;
@@ -31,17 +33,21 @@ function render() {
   if (!announcement) {
     root.classList.add("is-waiting");
     numberElement.textContent = "";
-    numberElement.style.fontSize = "";
+    if (spellingElement) spellingElement.textContent = "";
     elapsedElement.textContent = "తదుపరి కాల్ కోసం వేచి ఉంది";
     return;
   }
   root.classList.remove("is-waiting");
   const value = String(announcement.number == null ? "" : announcement.number);
   numberElement.textContent = value;
+  const numVal = Number(value);
+  if (spellingElement) {
+    spellingElement.textContent = isFinite(numVal) && numVal >= 0 ? numberToTeluguWords(numVal) : "";
+  }
   const digits = Math.max(1, value.length);
-  const heightLimit = (window.innerHeight || document.documentElement.clientHeight) * 0.82;
-  const widthLimit = ((window.innerWidth || document.documentElement.clientWidth) * 0.84) / (digits * 0.68);
-  const fontSize = Math.max(80, Math.min(heightLimit, widthLimit));
+  const heightLimit = (window.innerHeight || document.documentElement.clientHeight) * 0.32;
+  const widthLimit = ((window.innerWidth || document.documentElement.clientWidth) * 0.65) / (digits * 0.65);
+  const fontSize = Math.max(64, Math.min(heightLimit, widthLimit));
   numberElement.style.fontSize = fontSize + "px";
   const sentAt = Number(announcement.sentAt) || new Date().getTime();
   elapsedElement.textContent = elapsedText(new Date().getTime() - sentAt) + " క్రితం పిలవబడింది";
@@ -58,6 +64,17 @@ function scheduleReconnect() {
 
 function connect() {
   if (stopped) return;
+  if (socket) {
+    try {
+      socket.onopen = null;
+      socket.onmessage = null;
+      socket.onerror = null;
+      socket.onclose = null;
+      socket.close();
+    } catch {}
+    socket = null;
+  }
+
   setText(connectionStatus, "సర్వర్‌కి కనెక్ట్ అవుతోంది…");
   const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
   const url = protocol + "//" + window.location.host + "/ws?role=display-v16";
@@ -90,8 +107,14 @@ function connect() {
     announcement = message.announcement || null;
     render();
     setText(connectionStatus, message.displayConnected ? "డిస్‌ప్లే కనెక్ట్ అయింది" : "సర్వర్‌కి కనెక్ట్ అయింది");
-    if (message.cause === "call" && message.announcement) {
-      announce(message.announcement.number);
+
+    // Only announce once per unique call (deduplicate against repeat/reconnect events)
+    if (message.cause === "call" && message.announcement && message.announcement.number) {
+      const callKey = `${message.announcement.number}#${message.announcement.sentAt || 0}`;
+      if (lastAnnouncedCallKey !== callKey) {
+        lastAnnouncedCallKey = callKey;
+        announce(message.announcement.number);
+      }
     }
   };
 
@@ -112,7 +135,7 @@ async function init() {
 
   // Initialize dom-primitive-bindings
   try {
-    const res = await fetch("/v16/display/bindings.json");
+    const res = await fetch("/v16/display/bindings.json?v=16.5");
     const bindings = await res.json();
     bindEvents("displayApp", bindings, actions);
   } catch (error) {
@@ -123,7 +146,11 @@ async function init() {
   window.addEventListener("beforeunload", () => {
     stopped = true;
     if (retryTimer) window.clearTimeout(retryTimer);
-    if (socket) socket.close();
+    if (socket) {
+      try {
+        socket.close();
+      } catch {}
+    }
     stopVoice();
   });
 
@@ -133,4 +160,3 @@ async function init() {
 }
 
 init();
-

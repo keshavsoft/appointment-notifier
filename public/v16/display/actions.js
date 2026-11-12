@@ -1,6 +1,6 @@
-import { toggleVoiceState, testVoiceState } from "./audio.js";
+import { toggleVoiceState, testVoiceState } from "./audio.js?v=16.5";
 
-export const actions = {
+const actions = {
   toggleVoice: () => {
     toggleVoiceState();
   },
@@ -10,4 +10,3 @@ export const actions = {
 };
 
 export default actions;
-

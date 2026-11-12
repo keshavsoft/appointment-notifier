@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#f2f5f8">
   <title>డాక్టర్ కన్సోల్ V16 | CareCall</title>
-  <link rel="stylesheet" href="/v16/css/v16.css">
+  <link rel="stylesheet" href="/v16/css/v16.css?v=16.5">
 </head>
 
 <body class="v4-doctor-page" id="doctorApp">
@@ -49,26 +49,28 @@
       <p class="feedback" id="feedback" role="status" aria-live="polite"></p>
     </section>
 
-    <section class="doctor-panel preview-panel" id="preview-panel" role="tabpanel" aria-labelledby="preview-tab" hidden>
-      <div class="preview-heading">
-        <div>
-          <p class="eyebrow">లైవ్ మిర్రర్</p>
-          <h1>డిస్‌ప్లేలో ఏమి కనిపిస్తోంది?</h1>
+    <section class="doctor-panel preview-panel" id="preview-panel" role="tabpanel" aria-labelledby="preview-tab"
+      hidden>
+      <header class="preview-header">
+        <p class="preview-eyebrow">లైవ్ మిర్రర్</p>
+        <div class="preview-headline">
+          <h2>డిస్‌ప్లేలో ప్రస్తుతం ఏమి ఉంది?</h2>
+          <span class="status-pill" id="previewDisplayStatus"><i></i>డిస్‌ప్లే ఆఫ్‌లైన్</span>
         </div>
-        <span class="status-pill" id="previewDisplayStatus"><i></i>డిస్‌ప్లే ఆఫ్‌లైన్</span>
-      </div>
-      <div class="preview-frame">
-        <div class="display-view display-preview" id="displayPreview" data-display-view
-          aria-label="డిస్‌ప్లేలో కనిపించే నంబర్ మరియు సమయం">
-          <div class="display-number" data-display-number aria-live="polite">—</div>
-          <p class="display-elapsed" data-display-elapsed aria-live="off">తదుపరి కాల్ కోసం వేచి ఉంది</p>
+      </header>
+
+      <div class="preview-stage">
+        <div class="preview-tv-frame">
+          <div class="display-view preview-screen" id="displayPreview">
+            <div class="display-number" data-display-number aria-live="polite">—</div>
+            <p class="display-elapsed" data-display-elapsed aria-live="off">తదుపరి కాల్ కోసం వేచి ఉంది</p>
+          </div>
         </div>
       </div>
     </section>
   </main>
 
-  <script type="module" src="/v16/doctor/index.js"></script>
+  <script type="module" src="/v16/doctor/index.js?v=16.5"></script>
 </body>
 
 </html>
-

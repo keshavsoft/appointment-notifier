@@ -584,15 +584,133 @@ html, body { width: 100%; height: 100%; }
 }
 
 
-/* V16 display page */
-.v16-display-page { width: 100%; height: 100%; min-height: 100vh; min-height: 100svh; overflow: hidden; background: #061426; }
-.v16-display-page .display-fullscreen { position: fixed; inset: 0; width: 100%; height: 100%; min-height: 100vh; min-height: 100svh; padding: 4vh 4vw 15vh; gap: 2vh; display: flex; align-items: center; justify-content: center; }
-.v16-display-page .display-number { width: 100%; max-width: 100%; margin: 0; text-align: center; font-size: 72vh; font-weight: 950; line-height: .86; letter-spacing: -.045em; white-space: nowrap; overflow: hidden; }
-.v16-display-page .display-elapsed { max-width: 92vw; margin: 0; color: #f4f8ff; font-size: clamp(36px, 5.2vw, 100px); font-weight: 850; line-height: 1.15; text-align: center; letter-spacing: 0; text-shadow: 0 3px 22px #0008; }
-.v16-display-page #displayView.is-waiting .display-number { display: none; }
-.v16-display-page #displayView.is-waiting .display-elapsed { font-size: clamp(48px, 6.2vw, 116px); padding: 0 3vw; animation: v15-waiting-in 500ms ease-out both; }
-.v16-display-page .display-connection-status { position: fixed; z-index: 110; top: 18px; left: 20px; max-width: 46vw; padding: 12px 18px; border: 1px solid #66809b; border-radius: 999px; color: #fff; background: #071b30ed; font: 700 clamp(14px, 1.15vw, 22px)/1.2 system-ui, sans-serif; opacity: 1; box-shadow: 0 4px 18px #0005; }
-.v16-display-page .voice-controls { position: fixed; z-index: 120; left: 2vw; right: 2vw; bottom: 2vh; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: clamp(10px, 1.1vw, 22px); max-width: none; min-height: 76px; padding: 12px 18px; border: 1px solid #66809b; border-radius: 18px; color: #fff; background: #071b30f5; box-shadow: 0 8px 30px #0007; }
-.v16-display-page .voice-button, .v16-display-page .voice-test-button { min-height: 50px; padding: 10px 18px; border-radius: 12px; font-size: clamp(15px, 1.15vw, 22px); font-weight: 800; }
-.v16-display-page .voice-status { position: static; max-width: 32vw; padding: 10px 14px; border: 1px solid #40566c; border-radius: 12px; font-size: clamp(14px, 1.05vw, 20px); white-space: normal; text-align: center; line-height: 1.25; }
+/* V16 display page: Spacious, beautiful UI/UX with plenty of vertical room */
+.v16-display-page {
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  min-height: 100svh;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% 38%, #14283e 0%, #0a1827 50%, #050e18 100%);
+}
+.v16-display-page .display-fullscreen {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: 4vh 4vw clamp(130px, 20vh, 190px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+}
+.v16-display-page .display-number-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+}
+.v16-display-page .display-number {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  text-align: center;
+  font-size: clamp(80px, 32vh, 260px);
+  font-weight: 950;
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-shadow: 0 10px 48px rgba(0, 0, 0, 0.55);
+}
+.v16-display-page .display-telugu-spelling {
+  margin-top: clamp(8px, 1.6vh, 22px);
+  font-size: clamp(26px, 3.6vh, 50px);
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: #72b9ff;
+  text-align: center;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  min-height: 1.2em;
+}
+.v16-display-page .display-elapsed {
+  max-width: 90vw;
+  margin: clamp(28px, 4.5vh, 52px) 0 0 0;
+  color: #e2edf8;
+  font-size: clamp(22px, 2.8vw, 42px);
+  font-weight: 800;
+  line-height: 1.2;
+  text-align: center;
+  letter-spacing: 0;
+  text-shadow: 0 3px 22px rgba(0, 0, 0, 0.6);
+}
+.v16-display-page #displayView.is-waiting .display-number-card {
+  display: none;
+}
+.v16-display-page #displayView.is-waiting .display-elapsed {
+  font-size: clamp(40px, 5.5vw, 96px);
+  padding: 0 3vw;
+  animation: v15-waiting-in 500ms ease-out both;
+  margin: 0;
+}
+.v16-display-page .display-connection-status {
+  position: fixed;
+  z-index: 110;
+  top: 18px;
+  left: 20px;
+  max-width: 46vw;
+  padding: 10px 18px;
+  border: 1px solid #5a7692;
+  border-radius: 999px;
+  color: #fff;
+  background: #071b30ed;
+  font: 700 clamp(13px, 1.1vw, 20px)/1.2 system-ui, sans-serif;
+  opacity: 1;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
+}
+.v16-display-page .voice-controls {
+  position: fixed;
+  z-index: 120;
+  left: 2vw;
+  right: 2vw;
+  bottom: 2vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: clamp(10px, 1.1vw, 22px);
+  max-width: none;
+  min-height: 72px;
+  padding: 10px 18px;
+  border: 1px solid #5a7692;
+  border-radius: 18px;
+  color: #fff;
+  background: #081d33f7;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+.v16-display-page .voice-button,
+.v16-display-page .voice-test-button {
+  min-height: 48px;
+  padding: 8px 18px;
+  border-radius: 12px;
+  font-size: clamp(14px, 1.1vw, 20px);
+  font-weight: 800;
+}
+.v16-display-page .voice-status {
+  position: static;
+  max-width: 32vw;
+  padding: 8px 14px;
+  border: 1px solid #40566c;
+  border-radius: 12px;
+  font-size: clamp(13px, 1vw, 18px);
+  white-space: normal;
+  text-align: center;
+  line-height: 1.25;
+}
 

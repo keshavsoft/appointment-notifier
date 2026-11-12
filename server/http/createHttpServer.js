@@ -5,6 +5,7 @@ import { rewritePageUrl } from "./pageRoutes.js";
 
 const publicDirectory = fileURLToPath(new URL("../../public/", import.meta.url));
 const servePublicFiles = sirv(publicDirectory, {
+    dev: true,
     extensions: ["html"],
     setHeaders(response) {
         response.setHeader("X-Content-Type-Options", "nosniff");

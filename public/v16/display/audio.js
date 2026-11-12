@@ -3,6 +3,7 @@ let voiceSettings = { enabled: false, language: "te-IN" };
 let activeAudio = null;
 let currentPlaylist = [];
 let playlistIndex = 0;
+let playbackSessionId = 0;
 
 function readSettings() {
   try {
@@ -21,6 +22,7 @@ function saveSettings() {
 }
 
 export function stopVoice() {
+  playbackSessionId++;
   currentPlaylist = [];
   playlistIndex = 0;
   if (activeAudio) {
@@ -80,11 +82,13 @@ export function testVoiceState() {
 function playSequence(urls, label) {
   stopVoice();
   if (!urls.length) return;
+  const thisSession = playbackSessionId;
   currentPlaylist = urls;
   playlistIndex = 0;
   setVoiceStatusText(label || "వాయిస్ ప్లే అవుతోంది…");
 
   function playNext() {
+    if (thisSession !== playbackSessionId) return;
     if (playlistIndex >= currentPlaylist.length) {
       activeAudio = null;
       setVoiceStatusText(voiceSettings.enabled ? "తెలుగు వాయిస్ సిద్ధంగా ఉంది" : "వాయిస్ ఆఫ్ చేయబడింది");
@@ -95,23 +99,55 @@ function playSequence(urls, label) {
     const audio = new window.Audio(url);
     audio.preload = "auto";
     activeAudio = audio;
-    audio.onended = playNext;
+    audio.onended = () => {
+      if (thisSession === playbackSessionId) playNext();
+    };
     audio.onerror = () => {
-      playNext();
+      if (thisSession === playbackSessionId) playNext();
     };
     try {
       const p = audio.play();
       if (p && typeof p.catch === "function") {
         p.catch(() => {
-          setVoiceStatusText("ప్లేబ్యాక్ ఆపబడింది. స్క్రీన్ పై ట్యాప్ చేయండి.");
+          if (thisSession === playbackSessionId) {
+            setVoiceStatusText("ప్లేబ్యాక్ ఆపబడింది. స్క్రీన్ పై ట్యాప్ చేయండి.");
+          }
         });
       }
     } catch {
-      playNext();
+      if (thisSession === playbackSessionId) playNext();
     }
   }
 
   playNext();
+}
+
+const TELUGU_UNITS = [
+  "సున్నా", "ఒకటి", "రెండు", "మూడు", "నాలుగు", "ఐదు",
+  "ఆరు", "ఏడు", "ఎనిమిది", "తొమ్మిది", "పది",
+  "పదకొండు", "పన్నెండు", "పదమూడు", "పద్నాలుగు", "పదిహేను",
+  "పదహారు", "పదిహేడు", "పద్దెనిమిది", "పంతొమ్మిది"
+];
+
+const TELUGU_TENS = [
+  "", "", "ఇరవై", "ముప్పై", "నలభై", "యాభై",
+  "అరవై", "డెబ్బై", "ఎనభై", "తొంభై"
+];
+
+export function numberToTeluguWords(num) {
+  const n = Math.floor(Number(num));
+  if (!isFinite(n) || n < 0 || n > 999) return String(num);
+  if (n < 20) return TELUGU_UNITS[n];
+  if (n < 100) {
+    const tens = Math.floor(n / 10);
+    const rem = n % 10;
+    return rem === 0 ? TELUGU_TENS[tens] : `${TELUGU_TENS[tens]} ${TELUGU_UNITS[rem]}`;
+  }
+  const hundreds = Math.floor(n / 100);
+  const rem = n % 100;
+  const hundredText = hundreds === 1 ? "వంద" : `${TELUGU_UNITS[hundreds]} వందల`;
+  if (rem === 0) return hundredText;
+  return `${hundredText} ${numberToTeluguWords(rem)}`;
 }
 
 export function announce(number) {
@@ -119,29 +155,33 @@ export function announce(number) {
   const value = Number(number);
   if (!isFinite(value) || value < 0) return;
 
-  // Single number 1-10 has direct pre-recorded clip
+  const teluguSpelling = numberToTeluguWords(value);
+
+  // Single numbers 1-10: use local 01.wav to 10.wav
   if (value >= 1 && value <= 10 && Math.floor(value) === value) {
     const filename = (value < 10 ? "0" : "") + value + ".wav";
-    playSequence([`/v16/display/audio/te/${filename}`], `నంబర్ ${value} పిలుస్తోంది…`);
+    playSequence([`/v16/display/audio/te/${filename}`], `నంబర్ ${value} (${teluguSpelling}) పిలుస్తోంది…`);
     return;
   }
 
-  // Multi-digit numbers (e.g. 25 -> 2, 5): run digit clips one after another
-  const digitChars = String(Math.floor(value)).split("");
+  // Two-digit numbers 11-99 (e.g. 16 -> 16.mp3 "నంబర్ పదహారు"): play single dedicated audio clip
+  if (value >= 11 && value <= 99 && Math.floor(value) === value) {
+    playSequence([`/v16/display/audio/te/${value}.mp3`], `నంబర్ ${value} (${teluguSpelling}) పిలుస్తోంది…`);
+    return;
+  }
+
+  // 100+: composite sequence (e.g. 116 -> 16.mp3)
+  const remainder = value % 100;
   const urls = [];
-  for (const digit of digitChars) {
-    const d = Number(digit);
-    if (d >= 1 && d <= 9) {
-      urls.push(`/v16/display/audio/te/0${d}.wav`);
-    } else if (d === 0) {
-      urls.push(`/v16/display/audio/te/10.wav`);
-    }
+  if (remainder >= 11 && remainder <= 99) {
+    urls.push(`/v16/display/audio/te/${remainder}.mp3`);
+  } else if (remainder >= 1 && remainder <= 10) {
+    urls.push(`/v16/display/audio/te/${remainder < 10 ? "0" : ""}${remainder}.wav`);
   }
 
   if (urls.length > 0) {
-    playSequence(urls, `నంబర్ ${value} పిలుస్తోంది…`);
+    playSequence(urls, `నంబర్ ${value} (${teluguSpelling}) పిలుస్తోంది…`);
   }
 }
 
 readSettings();
-
