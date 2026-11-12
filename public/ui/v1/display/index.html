@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="te">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#07111d">
+  <title>CareCall Display — Stage 1 UI Preview</title>
+  <link rel="stylesheet" href="./stage-1/css/style.css">
+</head>
+<body class="v17-display-page" id="displayApp">
+  <main class="display-view display-fullscreen" id="displayView" data-display-view aria-label="ప్రస్తుత నంబర్ మరియు గడిచిన సమయం">
+    <div class="display-number-card">
+      <div class="display-number" data-display-number aria-live="polite">16</div>
+      <div class="display-telugu-spelling" data-display-spelling aria-live="polite">పదహారు</div>
+    </div>
+    <p class="display-elapsed" data-display-elapsed aria-live="off">10సె క్రితం పిలవబడింది</p>
+  </main>
+  <div id="connectionStatus" class="display-connection-status" role="status">డిస్‌ప్లే ప్రివ్యూ (UI మాత్రమే)</div>
+  <section class="voice-controls" aria-label="డిస్‌ప్లే వాయిస్ సెట్టింగ్‌లు">
+    <button class="voice-button" id="voiceToggle" type="button" aria-pressed="true">వాయిస్ ఆన్</button>
+    <button class="voice-test-button" id="testVoice" type="button">వాయిస్ టెస్ట్</button>
+    <span class="voice-status" id="voiceStatus" role="status" aria-live="polite">తెలుగు వాయిస్ సిద్ధంగా ఉంది</span>
+  </section>
+</body>
+</html>
+

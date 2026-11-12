@@ -1,0 +1,34 @@
+/* ==========================================================================
+   Doctor Component: Number Entry
+   Selected token number output and subtitle label
+   ========================================================================== */
+
+.number-entry {
+  display: grid;
+  place-items: center;
+  gap: 2px;
+  padding: 4px 0 12px;
+}
+
+.selected-number {
+  min-height: 1em;
+  color: #245ca9;
+  font-size: clamp(58px, 16vw, 82px);
+  font-weight: 850;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.selected-label {
+  color: #8495a8;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+@media (max-height: 680px) {
+  .number-entry {
+    padding-block: 0 8px;
+  }
+}
+

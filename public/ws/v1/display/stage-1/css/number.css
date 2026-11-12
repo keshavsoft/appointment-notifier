@@ -1,0 +1,33 @@
+/* ==========================================================================
+   Display Component: Token Number
+   Big bold English token number display with anti-clipping safeguards
+   ========================================================================== */
+
+.display-number-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0 2vw;
+  box-sizing: border-box;
+}
+
+.display-number {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  text-align: center;
+  font-size: clamp(80px, 32vh, 260px);
+  font-weight: 950;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  white-space: nowrap;
+  /* Anti-clipping fix: visible overflow & side padding keep glyph curves & shadows intact */
+  overflow: visible;
+  padding-inline: 0.08em;
+  box-sizing: border-box;
+  text-shadow: 0 10px 48px rgba(0, 0, 0, 0.55);
+}
+

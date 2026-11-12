@@ -1,0 +1,55 @@
+/* ==========================================================================
+   Doctor Component: Send Button & Feedback
+   Submit action to broadcast token to display, and feedback notification
+   ========================================================================== */
+
+.send-button {
+  display: flex;
+  min-height: 58px;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 12px;
+  border: 0;
+  border-radius: 14px;
+  color: #ffffff;
+  background: #245fac;
+  box-shadow: 0 8px 20px rgba(36, 95, 172, 0.17);
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.send-button:disabled {
+  color: #f6f8fb;
+  background: #b7c4d2;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.send-button span {
+  font-size: 21px;
+}
+
+.feedback {
+  min-height: 34px;
+  margin: 8px 0 0;
+  color: #4b6b87;
+  text-align: center;
+  font-size: 12px;
+}
+
+@media (max-height: 680px) {
+  .send-button {
+    min-height: 52px;
+    margin-top: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .send-button {
+    transition: transform 100ms ease, background-color 120ms ease;
+  }
+}
+

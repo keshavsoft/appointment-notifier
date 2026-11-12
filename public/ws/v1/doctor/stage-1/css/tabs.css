@@ -1,0 +1,44 @@
+/* ==========================================================================
+   Doctor Component: Navigation Tabs
+   Top sticky tab toggle between Call and Preview panels
+   ========================================================================== */
+
+.doctor-tabs {
+  position: sticky;
+  z-index: 2;
+  top: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 4px 0 12px;
+  background: #f2f5f8;
+}
+
+.doctor-tab {
+  min-height: 58px;
+  border: 1px solid #dce4ed;
+  border-radius: 14px;
+  background: #e8edf3;
+  color: #5d7085;
+  font-weight: 750;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.doctor-tab.active {
+  border-color: #ffffff;
+  background: #ffffff;
+  color: #205ba8;
+  box-shadow: 0 4px 16px rgba(23, 51, 78, 0.07);
+}
+
+@media (max-width: 380px) {
+  .doctor-tabs {
+    gap: 6px;
+  }
+  .doctor-tab {
+    min-height: 54px;
+    font-size: 14px;
+  }
+}
+
