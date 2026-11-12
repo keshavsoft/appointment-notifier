@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Samsung TV Audio Volume Test</title>
+<style>
+  body { font-family: Arial, sans-serif; background:#111; color:#fff; margin:0; padding:24px; }
+  main { max-width:720px; margin:auto; }
+  h1 { font-size:26px; margin:0 0 8px; }
+  p { color:#ccc; line-height:1.5; }
+  .panel { background:#222; border:1px solid #444; border-radius:12px; padding:18px; margin:16px 0; }
+  input[type=file] { display:block; margin-top:12px; max-width:100%; }
+  button { background:#1769d2; color:white; border:0; border-radius:8px; padding:14px 18px; margin:7px 6px 7px 0; font-size:17px; cursor:pointer; }
+  button.stop { background:#555; }
+  button:disabled { opacity:.45; }
+  .level { font-size:20px; font-weight:bold; }
+  .hint { font-size:14px; color:#aaa; }
+  #status { color:#9ed0ff; min-height:24px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Samsung TV – Audio Volume Test</h1>
+  <p>Choose one original WAV or MP3 voice clip, then play the exact same clip at different volume levels. Keep the TV volume unchanged while comparing.</p>
+
+  <section class="panel">
+    <div class="level">1. Select your original audio</div>
+    <input id="file" type="file" accept="audio/*">
+    <p id="filename" class="hint">No audio selected.</p>
+  </section>
+
+  <section class="panel">
+    <div class="level">2. Compare volume levels</div>
+    <p class="hint">Each button replays the selected clip from the beginning.</p>
+    <div id="buttons">
+      <button data-gain="1.00" disabled>Original · 100%</button>
+      <button data-gain="1.25" disabled>Slightly louder · 125%</button>
+      <button data-gain="1.50" disabled>Medium · 150%</button>
+      <button data-gain="1.75" disabled>Loud · 175%</button>
+      <button data-gain="2.00" disabled>Very loud · 200%</button>
+    </div>
+    <button id="stop" class="stop" disabled>Stop</button>
+    <p id="status" aria-live="polite"></p>
+    <p class="hint">Note: Higher levels may cause distortion if the original recording is already loud. Choose the clearest level, not simply the loudest.</p>
+  </section>
+</main>
+<script>
+(() => {
+  const fileInput = document.getElementById('file');
+  const filename = document.getElementById('filename');
+  const buttons = [...document.querySelectorAll('[data-gain]')];
+  const stopButton = document.getElementById('stop');
+  const status = document.getElementById('status');
+  let audioContext = null;
+  let buffer = null;
+  let currentSource = null;
+
+  function stop() {
+    if (currentSource) {
+      try { currentSource.stop(); } catch (_) {}
+      try { currentSource.disconnect(); } catch (_) {}
+      currentSource = null;
+    }
+    stopButton.disabled = true;
+  }
+
+  fileInput.addEventListener('change', async () => {
+    stop();
+    buffer = null;
+    const file = fileInput.files && fileInput.files[0];
+    if (!file) return;
+    filename.textContent = file.name;
+    status.textContent = 'Loading audio…';
+    try {
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextClass) throw new Error('This browser does not support Web Audio.');
+      audioContext = audioContext || new AudioContextClass();
+      const bytes = await file.arrayBuffer();
+      buffer = await audioContext.decodeAudioData(bytes);
+      buttons.forEach(button => button.disabled = false);
+      status.textContent = 'Ready. Select a volume level.';
+    } catch (error) {
+      buttons.forEach(button => button.disabled = true);
+      status.textContent = 'Could not load this audio file: ' + error.message;
+    }
+  });
+
+  buttons.forEach(button => {
+    button.addEventListener('click', async () => {
+      if (!buffer || !audioContext) return;
+      stop();
+      await audioContext.resume();
+      const gainValue = Number(button.dataset.gain);
+      const source = audioContext.createBufferSource();
+      const gain = audioContext.createGain();
+      source.buffer = buffer;
+      gain.gain.value = gainValue;
+      source.connect(gain);
+      gain.connect(audioContext.destination);
+      currentSource = source;
+      stopButton.disabled = false;
+      status.textContent = 'Playing at ' + Math.round(gainValue * 100) + '% volume.';
+      source.onended = () => {
+        if (currentSource === source) currentSource = null;
+        stopButton.disabled = true;
+        status.textContent = 'Finished.';
+      };
+      source.start(0);
+    });
+  });
+
+  stopButton.addEventListener('click', () => {
+    stop();
+    status.textContent = 'Stopped.';
+  });
+})();
+</script>
+</body>
+</html>
