@@ -1,0 +1,13 @@
+[
+  {
+    "event": "click",
+    "selector": "#voiceToggle",
+    "action": "toggleVoice"
+  },
+  {
+    "event": "click",
+    "selector": "#testVoice",
+    "action": "testVoice"
+  }
+]
+

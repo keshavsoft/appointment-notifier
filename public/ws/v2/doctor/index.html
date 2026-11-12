@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="te">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f2f5f8">
+  <title>డాక్టర్ కన్సోల్ — Stage 3 Live WebSocket</title>
+  <link rel="stylesheet" href="./stage-1/css/style.css">
+</head>
+
+<body class="v17-doctor-page" id="doctorApp">
+  <main class="doctor-app">
+    <nav class="doctor-tabs" role="tablist" aria-label="డాక్టర్ కన్సోల్ ట్యాబ్‌లు">
+      <button class="doctor-tab active" id="call-tab" type="button" role="tab" aria-selected="true"
+        aria-controls="call-panel" data-tab="call">కాల్</button>
+      <button class="doctor-tab" id="preview-tab" type="button" role="tab" aria-selected="false"
+        aria-controls="preview-panel" data-tab="preview">డిస్‌ప్లే ప్రివ్యూ</button>
+    </nav>
+
+    <section class="doctor-panel call-panel" id="call-panel" role="tabpanel" aria-labelledby="call-tab">
+      <div class="connection-row">
+        <span class="status-pill" id="serverStatus"><i></i>కనెక్ట్ అవుతోంది…</span>
+        <span class="status-pill" id="displayStatus"><i></i>డిస్‌ప్లే ఆఫ్‌లైన్</span>
+      </div>
+
+      <div class="number-entry">
+        <output class="selected-number" id="selectedNumber" aria-live="polite">—</output>
+        <span class="selected-label">పిలవవలసిన నంబర్</span>
+      </div>
+
+      <div class="keypad" aria-label="కీప్యాడ్">
+        <button type="button" data-digit="1">1</button>
+        <button type="button" data-digit="2">2</button>
+        <button type="button" data-digit="3">3</button>
+        <button type="button" data-digit="4">4</button>
+        <button type="button" data-digit="5">5</button>
+        <button type="button" data-digit="6">6</button>
+        <button type="button" data-digit="7">7</button>
+        <button type="button" data-digit="8">8</button>
+        <button type="button" data-digit="9">9</button>
+        <button type="button" class="key-muted" data-action="clear">Clear</button>
+        <button type="button" data-digit="0">0</button>
+        <button type="button" class="key-muted" data-action="backspace" aria-label="డిజిట్ తొలగించు">⌫</button>
+      </div>
+
+      <button class="send-button" id="sendCall" type="button" disabled>డిస్‌ప్లేకి పంపండి <span
+          aria-hidden="true">→</span></button>
+      <p class="feedback" id="feedback" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="doctor-panel preview-panel" id="preview-panel" role="tabpanel" aria-labelledby="preview-tab"
+      hidden>
+      <header class="preview-header">
+        <p class="preview-eyebrow">లైవ్ మిర్రర్</p>
+        <div class="preview-headline">
+          <h2>డిస్‌ప్లేలో ప్రస్తుతం ఏమి ఉంది?</h2>
+          <span class="status-pill" id="previewDisplayStatus"><i></i>డిస్‌ప్లే ఆఫ్‌లైన్</span>
+        </div>
+      </header>
+
+      <div class="preview-stage">
+        <div class="preview-tv-frame">
+          <div class="display-view preview-screen" id="displayPreview">
+            <div class="display-number" data-display-number aria-live="polite">—</div>
+            <p class="display-elapsed" data-display-elapsed aria-live="off">తదుపరి కాల్ కోసం వేచి ఉంది</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Stage 2: Local Keypad & UI Logic -->
+  <script type="module" src="./stage-2/js/ui.js"></script>
+  <!-- Stage 3: Live WebSocket Transport Client -->
+  <script type="module" src="./stage-3/js/ws-client.js"></script>
+</body>
+
+</html>
+

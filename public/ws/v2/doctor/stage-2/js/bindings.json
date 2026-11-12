@@ -1,0 +1,28 @@
+[
+  {
+    "event": "click",
+    "selector": "[data-digit]",
+    "action": "pressDigit"
+  },
+  {
+    "event": "click",
+    "selector": "[data-action='clear']",
+    "action": "clearNumber"
+  },
+  {
+    "event": "click",
+    "selector": "[data-action='backspace']",
+    "action": "backspaceNumber"
+  },
+  {
+    "event": "click",
+    "selector": "#sendCall",
+    "action": "sendCall"
+  },
+  {
+    "event": "click",
+    "selector": "[data-tab]",
+    "action": "switchTab"
+  }
+]
+
