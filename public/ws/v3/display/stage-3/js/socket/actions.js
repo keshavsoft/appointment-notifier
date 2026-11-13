@@ -5,11 +5,9 @@ export const actions = {
     }
   },
 
-  onMessage: (event) => {
-    let message;
-    try {
-      message = JSON.parse(event.data);
-    } catch {
+  onMessage: (payload, event) => {
+    const message = payload;
+    if (!message || typeof message !== "object") {
       if (window.displayUI) window.displayUI.setConnectionStatus("సందేశాన్ని చదవడం సాధ్యం కాలేదు");
       return;
     }
@@ -38,15 +36,14 @@ export const actions = {
     }
   },
 
-  onClose: (event, { onDisconnected }) => {
+  onClose: (event, socket, context = {}) => {
     if (window.displayUI) {
       window.displayUI.setConnectionStatus("డిస్‌కనెక్ట్ అయింది · మళ్లీ కనెక్ట్ అవుతోంది…");
     }
-    if (typeof onDisconnected === "function") {
-      onDisconnected();
+    if (typeof context.onDisconnected === "function") {
+      context.onDisconnected();
     }
   }
 };
 
 export default actions;
-

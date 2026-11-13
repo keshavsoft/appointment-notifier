@@ -1,22 +1,9 @@
+import { bindWs, unbindWs } from "./ws-primitive-bindings.js";
 import bindings from "./bindings.json" with { type: "json" };
 import actions from "./actions.js";
 
-export function attachSocket(socket, callbacks = {}) {
-  if (!socket) return;
-  for (const item of bindings) {
-    const fn = actions[item.action];
-    if (typeof fn === "function") {
-      socket[`on${item.event}`] = (event) => fn(event, callbacks);
-    }
-  }
-}
+export const attachSocket = (socket, context = {}) => bindWs(socket, bindings, actions, context);
 
-export function detachSocket(socket) {
-  if (!socket) return;
-  for (const item of bindings) {
-    socket[`on${item.event}`] = null;
-  }
-}
+export const detachSocket = (socket) => unbindWs(socket);
 
 export default { attachSocket, detachSocket, bindings, actions };
-
