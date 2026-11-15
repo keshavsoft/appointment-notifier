@@ -38,7 +38,7 @@ function readPortFromEnvFile() {
 
 export function loadConfig(env = process.env) {
     const host = env.HOST ?? "0.0.0.0";
-    const portValue = env.PORT ?? readPortFromEnvFile() ?? 3001;
+    const portValue = env.PORT ?? readPortFromEnvFile() ?? 3000;
     const port = Number(portValue);
 
     if (!Number.isInteger(port) || port < 1 || port > 65535) {
