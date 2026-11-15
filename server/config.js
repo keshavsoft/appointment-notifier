@@ -37,12 +37,13 @@ function readPortFromEnvFile() {
 }
 
 export function loadConfig(env = process.env) {
-    const portValue = env.PORT ?? readPortFromEnvFile() ?? 3000;
+    const host = env.HOST ?? "0.0.0.0";
+    const portValue = env.PORT ?? readPortFromEnvFile() ?? 3001;
     const port = Number(portValue);
 
     if (!Number.isInteger(port) || port < 1 || port > 65535) {
         throw new Error("PORT must be an integer between 1 and 65535.");
     }
 
-    return { port };
+    return { port, host };
 }

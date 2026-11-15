@@ -102,7 +102,12 @@ export function testVoiceState() {
 }
 
 function getAudioUrl(filename) {
-  return new URL(`./audio/te/${filename}`, import.meta.url).href;
+  try {
+    if (typeof import.meta !== "undefined" && import.meta && import.meta.url) {
+      return new URL(`./audio/te/${filename}`, import.meta.url).href;
+    }
+  } catch (e) {}
+  return `./audio/te/${filename}`;
 }
 
 function playSequence(urls, label) {

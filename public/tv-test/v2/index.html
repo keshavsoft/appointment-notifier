@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TV Test — V2: Minimal JS Playback</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 40px;
+      background: #060d17;
+      color: #f1f5f9;
+      font-family: system-ui, -apple-system, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .badge {
+      display: inline-block;
+      background: #1e293b;
+      color: #a855f7;
+      border: 1px solid #475569;
+      padding: 8px 18px;
+      border-radius: 999px;
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    h1 {
+      font-size: 48px;
+      margin: 0 0 16px 0;
+    }
+    p.subtitle {
+      font-size: 24px;
+      color: #94a3b8;
+      max-width: 900px;
+      margin: 0 0 30px 0;
+      line-height: 1.4;
+    }
+    #statusBox {
+      width: 100%;
+      max-width: 800px;
+      padding: 24px 30px;
+      border-radius: 16px;
+      font-size: 28px;
+      font-weight: bold;
+      background: #1e293b;
+      color: #38bdf8;
+      border: 2px solid #334155;
+      margin-bottom: 40px;
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-group {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 900px;
+      width: 100%;
+      margin-bottom: 30px;
+    }
+    button {
+      background: #0284c7;
+      color: white;
+      border: 3px solid transparent;
+      padding: 22px 36px;
+      border-radius: 16px;
+      font-size: 26px;
+      font-weight: bold;
+      cursor: pointer;
+      outline: none;
+      transition: transform 0.15s, background 0.15s;
+    }
+    button:focus, button:hover {
+      background: #0369a1;
+      border-color: #38bdf8;
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
+    }
+    button.btn-stop {
+      background: #475569;
+    }
+    button.btn-stop:focus, button.btn-stop:hover {
+      background: #334155;
+      border-color: #94a3b8;
+    }
+    .info-card {
+      background: #0f172a;
+      border: 1px solid #1e293b;
+      border-radius: 12px;
+      padding: 20px;
+      font-size: 16px;
+      color: #64748b;
+      max-width: 800px;
+      width: 100%;
+      word-break: break-all;
+      margin-top: 20px;
+      text-align: left;
+    }
+    .nav-bar {
+      margin-top: 40px;
+    }
+    .nav-link {
+      color: #38bdf8;
+      font-size: 22px;
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 10px;
+      background: #1e293b;
+      display: inline-block;
+    }
+    .nav-link:focus, .nav-link:hover {
+      background: #0284c7;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="badge">V2 — Minimal JavaScript Playback</div>
+  <h1>JavaScript new Audio() Test</h1>
+  <p class="subtitle">Tests programmatic audio creation and browser gesture unlock with zero frameworks.</p>
+
+  <div id="statusBox">Ready · Select a button to test sound</div>
+
+  <div class="btn-group">
+    <button id="playWav" type="button" autofocus>▶ Play Number 1 (WAV)</button>
+    <button id="playMp3" type="button">▶ Play Number 16 (MP3)</button>
+    <button id="stopBtn" class="btn-stop" type="button">⏹ Stop</button>
+  </div>
+
+  <div class="info-card">
+    <strong>Browser Detected:</strong> <span id="userAgentText">...</span><br>
+    <strong>Audio API Status:</strong> <span id="apiStatusText">Checking...</span>
+  </div>
+
+  <div class="nav-bar">
+    <a class="nav-link" href="../v1/index.html">← Previous: Test V1 (HTML)</a>
+    <a class="nav-link" href="../v3/index.html" style="margin-left: 15px;">Next: Test V3 (Sequencing) →</a>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      var statusBox = document.getElementById("statusBox");
+      var playWavBtn = document.getElementById("playWav");
+      var playMp3Btn = document.getElementById("playMp3");
+      var stopBtn = document.getElementById("stopBtn");
+      var userAgentText = document.getElementById("userAgentText");
+      var apiStatusText = document.getElementById("apiStatusText");
+
+      var currentAudio = null;
+
+      if (userAgentText) userAgentText.textContent = navigator.userAgent;
+      if (apiStatusText) {
+        var hasAudio = typeof window.Audio !== "undefined";
+        var hasAudioContext = typeof window.AudioContext !== "undefined" || typeof window.webkitAudioContext !== "undefined";
+        apiStatusText.textContent = "window.Audio: " + (hasAudio ? "YES" : "NO") + " | AudioContext: " + (hasAudioContext ? "YES" : "NO");
+      }
+
+      function setStatus(text, bg, color) {
+        if (!statusBox) return;
+        statusBox.textContent = text;
+        statusBox.style.background = bg || "#1e293b";
+        statusBox.style.color = color || "#38bdf8";
+        statusBox.style.borderColor = color || "#334155";
+      }
+
+      function stopAudio() {
+        if (currentAudio) {
+          try {
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+          } catch (e) {}
+          currentAudio = null;
+        }
+      }
+
+      function playFile(url, label) {
+        stopAudio();
+        setStatus("Loading " + label + "…", "#1e293b", "#facc15");
+
+        try {
+          var audio = new window.Audio(url);
+          currentAudio = audio;
+
+          audio.onplay = function () {
+            setStatus("Playing: " + label + " 🔊", "#064e3b", "#34d399");
+          };
+
+          audio.onended = function () {
+            if (currentAudio === audio) {
+              setStatus("Finished: " + label + " ✅", "#1e293b", "#38bdf8");
+              currentAudio = null;
+            }
+          };
+
+          audio.onerror = function (e) {
+            setStatus("Error playing " + label + " ❌", "#7f1d1d", "#f87171");
+            currentAudio = null;
+          };
+
+          var promise = audio.play();
+          if (promise && typeof promise.catch === "function") {
+            promise.catch(function (err) {
+              setStatus("Play blocked: " + err.message, "#7f1d1d", "#f87171");
+              currentAudio = null;
+            });
+          }
+        } catch (err) {
+          setStatus("Exception: " + err.message, "#7f1d1d", "#f87171");
+        }
+      }
+
+      if (playWavBtn) {
+        playWavBtn.onclick = function () {
+          playFile("../audio/01.wav", "Number 1 (01.wav)");
+        };
+      }
+
+      if (playMp3Btn) {
+        playMp3Btn.onclick = function () {
+          playFile("../audio/16.mp3", "Number 16 (16.mp3)");
+        };
+      }
+
+      if (stopBtn) {
+        stopBtn.onclick = function () {
+          stopAudio();
+          setStatus("Stopped ⏹", "#1e293b", "#94a3b8");
+        };
+      }
+    })();
+  </script>
+</body>
+</html>

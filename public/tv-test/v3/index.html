@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TV Test — V3: Sequential Audio Chaining</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 40px;
+      background: #060d17;
+      color: #f1f5f9;
+      font-family: system-ui, -apple-system, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .badge {
+      display: inline-block;
+      background: #1e293b;
+      color: #10b981;
+      border: 1px solid #059669;
+      padding: 8px 18px;
+      border-radius: 999px;
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    h1 {
+      font-size: 48px;
+      margin: 0 0 16px 0;
+    }
+    p.subtitle {
+      font-size: 24px;
+      color: #94a3b8;
+      max-width: 900px;
+      margin: 0 0 30px 0;
+      line-height: 1.4;
+    }
+    #statusBox {
+      width: 100%;
+      max-width: 800px;
+      padding: 24px 30px;
+      border-radius: 16px;
+      font-size: 28px;
+      font-weight: bold;
+      background: #1e293b;
+      color: #38bdf8;
+      border: 2px solid #334155;
+      margin-bottom: 30px;
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .timeline {
+      display: flex;
+      gap: 20px;
+      max-width: 800px;
+      width: 100%;
+      margin-bottom: 35px;
+    }
+    .step {
+      flex: 1;
+      background: #0f172a;
+      border: 2px solid #1e293b;
+      border-radius: 12px;
+      padding: 16px;
+      font-size: 20px;
+      color: #64748b;
+    }
+    .step.active {
+      border-color: #38bdf8;
+      color: #f1f5f9;
+      background: #0c4a6e;
+    }
+    .step.done {
+      border-color: #10b981;
+      color: #34d399;
+      background: #064e3b;
+    }
+    button {
+      background: #059669;
+      color: white;
+      border: 3px solid transparent;
+      padding: 22px 40px;
+      border-radius: 16px;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      outline: none;
+      transition: transform 0.15s, background 0.15s;
+      margin: 10px;
+    }
+    button:focus, button:hover {
+      background: #047857;
+      border-color: #34d399;
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+    }
+    button.btn-stop {
+      background: #475569;
+    }
+    button.btn-stop:focus, button.btn-stop:hover {
+      background: #334155;
+      border-color: #94a3b8;
+    }
+    .nav-bar {
+      margin-top: 40px;
+    }
+    .nav-link {
+      color: #38bdf8;
+      font-size: 22px;
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 10px;
+      background: #1e293b;
+      display: inline-block;
+    }
+    .nav-link:focus, .nav-link:hover {
+      background: #0284c7;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="badge">V3 — Audio Chaining Test</div>
+  <h1>Sequential Audio Playback</h1>
+  <p class="subtitle">Plays Clip 1 (01.wav), waits for <code>onended</code>, then automatically plays Clip 2 (16.mp3).</p>
+
+  <div id="statusBox">Ready · Press "Play Sequence" below</div>
+
+  <div class="timeline">
+    <div id="step1" class="step">Step 1: 01.wav (1)</div>
+    <div id="step2" class="step">Step 2: 16.mp3 (16)</div>
+  </div>
+
+  <div>
+    <button id="playSeqBtn" type="button" autofocus>▶ Play Sequence (1 then 16)</button>
+    <button id="stopSeqBtn" class="btn-stop" type="button">⏹ Stop</button>
+  </div>
+
+  <div class="nav-bar">
+    <a class="nav-link" href="../v2/index.html">← Previous: Test V2 (JS Button)</a>
+    <a class="nav-link" href="../index.html" style="margin-left: 15px;">TV Test Hub 🏠</a>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      var statusBox = document.getElementById("statusBox");
+      var step1 = document.getElementById("step1");
+      var step2 = document.getElementById("step2");
+      var playSeqBtn = document.getElementById("playSeqBtn");
+      var stopSeqBtn = document.getElementById("stopSeqBtn");
+
+      var currentAudio = null;
+      var activeSession = 0;
+
+      function resetSteps() {
+        if (step1) step1.className = "step";
+        if (step2) step2.className = "step";
+      }
+
+      function stop() {
+        activeSession++;
+        if (currentAudio) {
+          try {
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+          } catch (e) {}
+          currentAudio = null;
+        }
+        resetSteps();
+        if (statusBox) {
+          statusBox.textContent = "Stopped ⏹";
+          statusBox.style.background = "#1e293b";
+          statusBox.style.color = "#94a3b8";
+        }
+      }
+
+      function runSequence() {
+        stop();
+        activeSession++;
+        var sessionId = activeSession;
+
+        if (statusBox) {
+          statusBox.textContent = "Playing Clip 1: 01.wav 🔊";
+          statusBox.style.background = "#064e3b";
+          statusBox.style.color = "#34d399";
+        }
+        if (step1) step1.className = "step active";
+
+        try {
+          var audio1 = new window.Audio("../audio/01.wav");
+          currentAudio = audio1;
+
+          audio1.onended = function () {
+            if (activeSession !== sessionId) return;
+            if (step1) step1.className = "step done";
+            if (step2) step2.className = "step active";
+
+            if (statusBox) {
+              statusBox.textContent = "Clip 1 ended! Playing Clip 2: 16.mp3 🔊";
+              statusBox.style.background = "#0c4a6e";
+              statusBox.style.color = "#38bdf8";
+            }
+
+            var audio2 = new window.Audio("../audio/16.mp3");
+            currentAudio = audio2;
+
+            audio2.onended = function () {
+              if (activeSession !== sessionId) return;
+              if (step2) step2.className = "step done";
+              if (statusBox) {
+                statusBox.textContent = "Complete Sequence Finished Successfully! 🎉";
+                statusBox.style.background = "#065f46";
+                statusBox.style.color = "#a7f3d0";
+              }
+              currentAudio = null;
+            };
+
+            audio2.onerror = function () {
+              if (activeSession !== sessionId) return;
+              if (statusBox) {
+                statusBox.textContent = "Error playing Clip 2 (16.mp3) ❌";
+                statusBox.style.background = "#7f1d1d";
+                statusBox.style.color = "#f87171";
+              }
+            };
+
+            var p2 = audio2.play();
+            if (p2 && p2.catch) {
+              p2.catch(function (err) {
+                if (statusBox) statusBox.textContent = "Clip 2 blocked: " + err.message;
+              });
+            }
+          };
+
+          audio1.onerror = function () {
+            if (activeSession !== sessionId) return;
+            if (statusBox) {
+              statusBox.textContent = "Error playing Clip 1 (01.wav) ❌";
+              statusBox.style.background = "#7f1d1d";
+              statusBox.style.color = "#f87171";
+            }
+          };
+
+          var p1 = audio1.play();
+          if (p1 && p1.catch) {
+            p1.catch(function (err) {
+              if (statusBox) statusBox.textContent = "Clip 1 blocked: " + err.message;
+            });
+          }
+        } catch (err) {
+          if (statusBox) statusBox.textContent = "Sequence exception: " + err.message;
+        }
+      }
+
+      if (playSeqBtn) playSeqBtn.onclick = runSequence;
+      if (stopSeqBtn) stopSeqBtn.onclick = stop;
+    })();
+  </script>
+</body>
+</html>
