@@ -6,7 +6,13 @@ const legacyPageRoutes = new Map([
     ["/display", "/display.html"],
     ["/display.html", "/display.html"],
     ["/reception", "/reception.html"],
-    ["/reception.html", "/reception.html"]
+    ["/reception.html", "/reception.html"],
+    ["/tv-test", "/tv-test/index.html"],
+    ["/tv-test/", "/tv-test/index.html"],
+    ["/v17/doctor", "/v17/doctor/index.html"],
+    ["/v17/doctor/", "/v17/doctor/index.html"],
+    ["/v17/display", "/v17/display/index.html"],
+    ["/v17/display/", "/v17/display/index.html"]
 ]);
 
 export function rewritePageUrl(requestUrl) {
