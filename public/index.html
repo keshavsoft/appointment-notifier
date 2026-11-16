@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0f172a" />
+    <title>CareCall | Appointment Notifier</title>
+    <style>
+      :root {
+        --bg: #07131d;
+        --bg-soft: #102334;
+        --panel: rgba(15, 23, 42, 0.82);
+        --panel-border: rgba(148, 163, 184, 0.2);
+        --primary: #7dd3fc;
+        --primary-strong: #38bdf8;
+        --accent: #34d399;
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --shadow: rgba(14, 165, 233, 0.25);
+      }
+
+      * { box-sizing: border-box; }
+
+      html, body {
+        margin: 0;
+        min-height: 100%;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background:
+          radial-gradient(circle at top, rgba(56, 189, 248, 0.18), transparent 25%),
+          linear-gradient(160deg, var(--bg) 0%, #0b1720 38%, #07131d 100%);
+        color: var(--text);
+      }
+
+      body {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 32px 20px;
+      }
+
+      .shell {
+        width: min(1100px, 100%);
+        background: rgba(15, 23, 42, 0.75);
+        border: 1px solid var(--panel-border);
+        border-radius: 28px;
+        box-shadow: 0 30px 80px rgba(2, 6, 23, 0.7), 0 0 0 1px rgba(125, 211, 252, 0.08);
+        overflow: hidden;
+        backdrop-filter: blur(8px);
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 22px 28px;
+        border-bottom: 1px solid var(--panel-border);
+        background: rgba(15, 23, 42, 0.8);
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        font-size: 1.1rem;
+      }
+
+      .brand-mark {
+        display: grid;
+        place-items: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        color: #022c22;
+        font-size: 1.2rem;
+        box-shadow: 0 12px 24px rgba(52, 211, 153, 0.25);
+      }
+
+      .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(52, 211, 153, 0.1);
+        border: 1px solid rgba(52, 211, 153, 0.35);
+        color: #d1fae5;
+        border-radius: 999px;
+        padding: 8px 14px;
+        font-size: 0.8rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .status-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 14px rgba(52, 211, 153, 0.9);
+      }
+
+      .content {
+        padding: 36px 28px 30px;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1.25fr 0.75fr;
+        gap: 28px;
+        align-items: center;
+      }
+
+      .eyebrow {
+        margin: 0 0 18px;
+        color: var(--primary);
+        letter-spacing: 0.16em;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        font-weight: 700;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(2.4rem, 4vw, 4rem);
+        line-height: 1.05;
+        letter-spacing: -0.06em;
+      }
+
+      .lead {
+        max-width: 620px;
+        margin: 18px 0 0;
+        color: var(--muted);
+        font-size: 1.05rem;
+        line-height: 1.7;
+      }
+
+      .hero-panel {
+        background: linear-gradient(180deg, rgba(15, 118, 110, 0.18), rgba(14, 116, 144, 0.08));
+        border: 1px solid rgba(125, 211, 252, 0.2);
+        border-radius: 24px;
+        padding: 22px;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+      }
+
+      .mini-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(120px, 1fr));
+        gap: 12px;
+      }
+
+      .mini-card {
+        background: rgba(15, 23, 42, 0.9);
+        border: 1px solid var(--panel-border);
+        border-radius: 16px;
+        padding: 16px 14px;
+      }
+
+      .mini-card strong {
+        display: block;
+        font-size: 1.35rem;
+        margin-top: 8px;
+      }
+
+      .mini-card span {
+        color: var(--muted);
+        font-size: 0.74rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .links {
+        margin-top: 30px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 18px;
+      }
+
+      .card {
+        text-decoration: none;
+        color: inherit;
+        background: rgba(15, 23, 42, 0.82);
+        border: 1px solid var(--panel-border);
+        border-radius: 20px;
+        padding: 22px 18px;
+        min-height: 150px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-3px);
+        border-color: rgba(125, 211, 252, 0.6);
+        box-shadow: 0 18px 32px rgba(8, 145, 178, 0.12);
+      }
+
+      .card .icon {
+        width: 44px;
+        height: 44px;
+        display: grid;
+        place-items: center;
+        border-radius: 14px;
+        background: rgba(125, 211, 252, 0.12);
+        color: var(--primary);
+        font-size: 1.25rem;
+        font-weight: 700;
+      }
+
+      .card p {
+        margin: 0;
+        font-size: 0.76rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--primary);
+      }
+
+      .card h2 {
+        margin: 0;
+        font-size: 1.45rem;
+      }
+
+      .card span {
+        margin-top: auto;
+        color: var(--muted);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      @media (max-width: 820px) {
+        .hero {
+          grid-template-columns: 1fr;
+        }
+
+        .topbar {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-mark">✚</span>
+          <span>Care<span style="color: var(--primary);">Call</span></span>
+        </div>
+        <div class="status-pill">
+          <span class="status-dot"></span>
+          Appointment notifier
+        </div>
+      </header>
+
+      <main class="content">
+        <section class="hero">
+          <div>
+            <p class="eyebrow">Clinic communication</p>
+            <h1>Smart calling screens for a smoother front desk.</h1>
+            <p class="lead">
+              Use the doctor console to send numbers to waiting-area and reception displays, keeping patients informed in real time.
+            </p>
+          </div>
+
+          <aside class="hero-panel" aria-label="Quick stats">
+            <div class="mini-grid">
+              <div class="mini-card">
+                <span>Doctor</span>
+                <strong>Live</strong>
+              </div>
+              <div class="mini-card">
+                <span>Display</span>
+                <strong>Ready</strong>
+              </div>
+              <div class="mini-card">
+                <span>Reception</span>
+                <strong>Ready</strong>
+              </div>
+              <div class="mini-card">
+                <span>System</span>
+                <strong>Web</strong>
+              </div>
+            </div>
+          </aside>
+        </section>
+
+        <section class="links" aria-label="App screens">
+          <a class="card" href="/doctor">
+            <div class="icon">⌂</div>
+            <p>Console</p>
+            <h2>Doctor</h2>
+            <span>Open doctor screen →</span>
+          </a>
+
+          <a class="card" href="/display">
+            <div class="icon">▣</div>
+            <p>Display</p>
+            <h2>Waiting Area</h2>
+            <span>Open display screen →</span>
+          </a>
+
+          <a class="card" href="/reception">
+            <div class="icon">✦</div>
+            <p>Reception</p>
+            <h2>Counter Screen</h2>
+            <span>Open reception screen →</span>
+          </a>
+
+          <a class="card" href="/v14/doctor">
+            <div class="icon">V</div>
+            <p>Version</p>
+            <h2>V14 Doctor</h2>
+            <span>Try the latest doctor UI →</span>
+          </a>
+
+          <a class="card" href="/v14/display">
+            <div class="icon">◉</div>
+            <p>Version</p>
+            <h2>V14 Display</h2>
+            <span>Try the latest display UI →</span>
+          </a>
+
+          <a class="card" href="/v17/doctor">
+            <div class="icon">✧</div>
+            <p>Version</p>
+            <h2>V17 Doctor</h2>
+            <span>Open modern version →</span>
+          </a>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

@@ -8,7 +8,41 @@ import { createV3State, handleV3Connection } from "./ws/handleV3Connection.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.join(__dirname, "public");
-const PORT = Number(process.env.PORT ?? 3000);
+const envFilePath = fileURLToPath(new URL("../../.env", import.meta.url));
+
+function readPortFromEnvFile() {
+    let contents;
+
+    try {
+        contents = fs.readFileSync(envFilePath, "utf8");
+    } catch (error) {
+        if (error.code === "ENOENT") return undefined;
+        throw error;
+    }
+
+    for (const rawLine of contents.split(/\r?\n/)) {
+        const line = rawLine.trim();
+        const assignment = line.match(/^(?:export\s+)?PORT\s*=\s*(.*)$/);
+
+        if (!assignment) continue;
+
+        let value = assignment[1].trim();
+
+        if (value.startsWith('"') || value.startsWith("'")) {
+            const closingQuote = value.indexOf(value[0], 1);
+            if (closingQuote !== -1) value = value.slice(1, closingQuote);
+        } else {
+            value = value.replace(/\s+#.*$/, "").trim();
+        }
+
+        return value;
+    }
+
+    return undefined;
+}
+
+const portValue = process.env.PORT ?? readPortFromEnvFile() ?? 3000;
+const PORT = Number(portValue);
 
 if (!Number.isInteger(PORT) || PORT < 1 || PORT > 65535) {
     console.error("PORT must be an integer between 1 and 65535.");
