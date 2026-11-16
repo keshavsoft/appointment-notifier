@@ -12,7 +12,11 @@ const legacyPageRoutes = new Map([
     ["/v17/doctor", "/v17/doctor/index.html"],
     ["/v17/doctor/", "/v17/doctor/index.html"],
     ["/v17/display", "/v17/display/index.html"],
-    ["/v17/display/", "/v17/display/index.html"]
+    ["/v17/display/", "/v17/display/index.html"],
+    ["/v18/doctor", "/v18/doctor/index.html"],
+    ["/v18/doctor/", "/v18/doctor/index.html"],
+    ["/v18/display", "/v18/display/index.html"],
+    ["/v18/display/", "/v18/display/index.html"]
 ]);
 
 export function rewritePageUrl(requestUrl) {

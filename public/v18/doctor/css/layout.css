@@ -1,0 +1,42 @@
+/* ==========================================================================
+   Doctor Component: Layout
+   Doctor page container, doctor-app flex layout, responsive paddings
+   ========================================================================== */
+
+.v17-doctor-page,
+.v4-doctor-page {
+  min-height: 100vh;
+  min-height: 100svh;
+  background: #f2f5f8;
+}
+
+.doctor-app {
+  display: flex;
+  width: min(100%, 760px);
+  min-height: 100vh;
+  min-height: 100svh;
+  flex-direction: column;
+  margin: 0 auto;
+  padding: max(8px, env(safe-area-inset-top)) 16px max(8px, env(safe-area-inset-bottom));
+}
+
+.doctor-panel {
+  flex: 1;
+  min-height: 0;
+}
+
+.doctor-panel[hidden] {
+  display: none;
+}
+
+.call-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 380px) {
+  .doctor-app {
+    padding-inline: 10px;
+  }
+}
+
