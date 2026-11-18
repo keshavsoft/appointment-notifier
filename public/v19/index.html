@@ -175,13 +175,14 @@
         max-width: 620px;
       }
 
+      /* Role Cards Grid */
       .roles-grid {
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: clamp(10px, 2vw, 20px);
-        max-width: 820px;
+        grid-template-columns: repeat(3, 1fr);
+        gap: clamp(8px, 1.5vw, 16px);
+        max-width: 900px;
         width: 100%;
-        margin: clamp(8px, 1.5vh, 18px) auto;
+        margin: clamp(6px, 1.2vh, 14px) auto;
         flex: 1;
         min-height: 0;
       }
@@ -192,7 +193,7 @@
         background: rgba(18, 30, 49, 0.65);
         border: 2px solid var(--border);
         border-radius: clamp(12px, 1.8vw, 18px);
-        padding: clamp(12px, 2vh, 20px) clamp(14px, 2vw, 20px);
+        padding: clamp(10px, 1.5vh, 16px) clamp(10px, 1.5vw, 16px);
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -210,6 +211,14 @@
         outline: none;
       }
 
+      .role-card.tv:hover, .role-card.tv:focus {
+        transform: translateY(-3px);
+        border-color: #a78bfa;
+        box-shadow: 0 14px 35px rgba(167, 139, 250, 0.25);
+        background: rgba(28, 25, 60, 0.88);
+        outline: none;
+      }
+
       .role-card.display:hover, .role-card.display:focus {
         transform: translateY(-3px);
         border-color: #34d399;
@@ -219,13 +228,13 @@
       }
 
       .role-icon {
-        width: clamp(38px, 5.5vh, 56px);
-        height: clamp(38px, 5.5vh, 56px);
-        border-radius: clamp(10px, 1.5vh, 16px);
+        width: clamp(34px, 4.8vh, 48px);
+        height: clamp(34px, 4.8vh, 48px);
+        border-radius: clamp(10px, 1.5vh, 14px);
         display: grid;
         place-items: center;
-        font-size: clamp(1.4rem, 2.8vh, 2rem);
-        margin-bottom: clamp(6px, 1vh, 12px);
+        font-size: clamp(1.2rem, 2.4vh, 1.7rem);
+        margin-bottom: clamp(4px, 0.8vh, 8px);
         flex-shrink: 0;
       }
 
@@ -234,39 +243,49 @@
         border: 1px solid rgba(56, 189, 248, 0.4);
       }
 
+      .icon-tv {
+        background: linear-gradient(135deg, rgba(167, 139, 250, 0.25), rgba(109, 40, 217, 0.35));
+        border: 1px solid rgba(167, 139, 250, 0.45);
+      }
+
       .icon-disp {
         background: linear-gradient(135deg, rgba(52, 211, 153, 0.25), rgba(5, 150, 105, 0.3));
         border: 1px solid rgba(52, 211, 153, 0.4);
       }
 
       .role-title {
-        font-size: clamp(1.15rem, 2.2vh, 1.55rem);
+        font-size: clamp(1rem, 1.8vh, 1.3rem);
         font-weight: 800;
-        margin: 0 0 clamp(4px, 0.6vh, 8px);
+        margin: 0 0 clamp(3px, 0.5vh, 6px);
         flex-shrink: 0;
       }
 
       .role-desc {
         color: var(--muted);
-        font-size: clamp(0.78rem, 1.25vh, 0.88rem);
-        line-height: 1.4;
-        margin: 0 0 clamp(8px, 1.2vh, 14px);
+        font-size: clamp(0.72rem, 1.1vh, 0.82rem);
+        line-height: 1.35;
+        margin: 0 0 clamp(6px, 1vh, 10px);
         flex-grow: 1;
       }
 
       .role-btn {
         display: inline-flex;
         align-items: center;
-        gap: 6px;
-        padding: clamp(6px, 1vh, 10px) clamp(14px, 2vw, 20px);
-        border-radius: 10px;
+        gap: 5px;
+        padding: clamp(5px, 0.8vh, 8px) clamp(10px, 1.5vw, 16px);
+        border-radius: 9px;
         font-weight: 700;
-        font-size: clamp(0.82rem, 1.3vh, 0.94rem);
+        font-size: clamp(0.75rem, 1.15vh, 0.85rem);
         flex-shrink: 0;
       }
 
       .btn-doc {
         background: #0284c7;
+        color: white;
+      }
+
+      .btn-tv {
+        background: #7c3aed;
         color: white;
       }
 
@@ -320,7 +339,7 @@
           </p>
         </div>
 
-        <!-- Two Role Cards -->
+        <!-- Three Role Cards -->
         <div class="roles-grid">
           <!-- Doctor Console -->
           <a class="role-card doctor" href="/v19/doctor/">
@@ -332,14 +351,24 @@
             <span class="role-btn btn-doc">Launch V19 Doctor →</span>
           </a>
 
+          <!-- Dedicated Android TV Display -->
+          <a class="role-card tv" href="/v19/tv/">
+            <div class="role-icon icon-tv">📺</div>
+            <h2 class="role-title">V19 Android TV</h2>
+            <p class="role-desc">
+              Hardened for Foxsky & Android TV. Zero @imports, no CSS collapse, 100% remote audio unlock, giant token typography.
+            </p>
+            <span class="role-btn btn-tv">Launch V19 TV →</span>
+          </a>
+
           <!-- Display Screen -->
           <a class="role-card display" href="/v19/display/">
-            <div class="role-icon icon-disp">📺</div>
-            <h2 class="role-title">V19 TV Display Screen</h2>
+            <div class="role-icon icon-disp">🖥️</div>
+            <h2 class="role-title">V19 Desktop Display</h2>
             <p class="role-desc">
-              Next-generation patient screen pre-wired with the verified Web Audio API Telugu voice engine. Ready for layout changes.
+              Next-generation patient screen pre-wired with the verified Web Audio API Telugu voice engine for desktop browsers.
             </p>
-            <span class="role-btn btn-disp">Launch V19 Display →</span>
+            <span class="role-btn btn-disp">Launch V19 Desktop →</span>
           </a>
         </div>
 
