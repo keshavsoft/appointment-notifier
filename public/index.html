@@ -151,14 +151,16 @@
         line-height: 1.45;
       }
 
-      /* 2 Main Action Cards */
+      /* 2 Main Action Cards (Flex with Grid Fallback - 100% TV Browser Safe) */
       .main-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: clamp(10px, 2vw, 20px);
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: stretch;
+        gap: 16px;
         max-width: 820px;
         width: 100%;
-        margin: clamp(8px, 1.5vh, 18px) auto;
+        margin: 12px auto;
         flex: 1;
         min-height: 0;
       }
@@ -166,17 +168,18 @@
       .action-card {
         text-decoration: none;
         color: inherit;
-        background: rgba(18, 30, 49, 0.65);
+        background: rgba(18, 30, 49, 0.7);
         border: 2px solid var(--border);
-        border-radius: clamp(12px, 1.8vw, 18px);
-        padding: clamp(12px, 2vh, 20px) clamp(14px, 2vw, 20px);
+        border-radius: 18px;
+        padding: 16px;
         display: flex;
         flex-direction: column;
         align-items: center;
         text-align: center;
         justify-content: space-between;
-        transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+        flex: 1;
         min-height: 0;
+        transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
       }
 
       .action-card:hover, .action-card:focus {
@@ -185,26 +188,32 @@
         outline: none;
       }
 
-      .action-card.testing:hover, .action-card.testing:focus {
-        border-color: #38bdf8;
-        box-shadow: 0 14px 35px rgba(56, 189, 248, 0.22);
+      .action-card.tv-card:hover, .action-card.tv-card:focus {
+        border-color: #a78bfa;
+        box-shadow: 0 14px 35px rgba(167, 139, 250, 0.28);
       }
 
-      .action-card.versions:hover, .action-card.versions:focus {
-        border-color: #34d399;
-        box-shadow: 0 14px 35px rgba(52, 211, 153, 0.22);
+      .action-card.desktop-card:hover, .action-card.desktop-card:focus {
+        border-color: #38bdf8;
+        box-shadow: 0 14px 35px rgba(56, 189, 248, 0.25);
       }
 
       .card-badge {
         display: inline-block;
-        padding: clamp(3px, 0.5vh, 5px) clamp(8px, 1.2vw, 12px);
+        padding: 4px 12px;
         border-radius: 999px;
-        font-size: clamp(0.65rem, 1vh, 0.72rem);
+        font-size: 11px;
         font-weight: 700;
         letter-spacing: 0.08em;
         text-transform: uppercase;
-        margin-bottom: clamp(6px, 1vh, 12px);
+        margin-bottom: 8px;
         flex-shrink: 0;
+      }
+
+      .badge-purple {
+        background: rgba(167, 139, 250, 0.18);
+        color: #c4b5fd;
+        border: 1px solid rgba(167, 139, 250, 0.45);
       }
 
       .badge-blue {
@@ -213,22 +222,22 @@
         border: 1px solid rgba(56, 189, 248, 0.35);
       }
 
-      .badge-green {
-        background: rgba(52, 211, 153, 0.14);
-        color: #6ee7b7;
-        border: 1px solid rgba(52, 211, 153, 0.35);
-      }
-
       .icon-bubble {
-        width: clamp(38px, 5.5vh, 56px);
-        height: clamp(38px, 5.5vh, 56px);
-        border-radius: clamp(10px, 1.5vh, 16px);
+        width: 50px;
+        height: 50px;
+        border-radius: 14px;
         display: grid;
         place-items: center;
-        font-size: clamp(1.4rem, 2.8vh, 2rem);
-        margin-bottom: clamp(6px, 1vh, 12px);
+        font-size: 26px;
+        margin-bottom: 8px;
         flex-shrink: 0;
         transition: transform 0.18s ease;
+      }
+
+      .icon-purple {
+        background: linear-gradient(135deg, rgba(167, 139, 250, 0.28), rgba(109, 40, 217, 0.38));
+        color: #c4b5fd;
+        border: 1px solid rgba(167, 139, 250, 0.45);
       }
 
       .icon-blue {
@@ -237,29 +246,23 @@
         border: 1px solid rgba(56, 189, 248, 0.4);
       }
 
-      .icon-green {
-        background: linear-gradient(135deg, rgba(52, 211, 153, 0.25), rgba(5, 150, 105, 0.3));
-        color: #34d399;
-        border: 1px solid rgba(52, 211, 153, 0.4);
-      }
-
       .action-card:hover .icon-bubble {
         transform: scale(1.08);
       }
 
       .card-title {
-        font-size: clamp(1.15rem, 2.2vh, 1.55rem);
+        font-size: 22px;
         font-weight: 800;
-        margin: 0 0 clamp(4px, 0.6vh, 8px);
+        margin: 0 0 6px;
         letter-spacing: -0.02em;
         flex-shrink: 0;
       }
 
       .card-desc {
         color: var(--muted);
-        font-size: clamp(0.78rem, 1.25vh, 0.88rem);
+        font-size: 13px;
         line-height: 1.4;
-        margin: 0 0 clamp(8px, 1.2vh, 14px);
+        margin: 0 0 10px;
         flex-grow: 1;
       }
 
@@ -267,21 +270,21 @@
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        font-size: clamp(0.82rem, 1.3vh, 0.94rem);
+        font-size: 14px;
         font-weight: 700;
-        padding: clamp(6px, 1vh, 10px) clamp(14px, 2vw, 20px);
+        padding: 8px 18px;
         border-radius: 10px;
         flex-shrink: 0;
         transition: transform 0.15s ease;
       }
 
-      .cta-blue {
-        background: #0284c7;
+      .cta-purple {
+        background: #7c3aed;
         color: white;
       }
 
-      .cta-green {
-        background: #059669;
+      .cta-blue {
+        background: #0284c7;
         color: white;
       }
 
@@ -345,32 +348,32 @@
           <p class="eyebrow">Smart Clinic Queue System</p>
           <h1>Welcome to CareCall</h1>
           <p class="lead">
-            Choose a section below to access TV audio diagnostic tools or browse application versions.
+            Select your screen mode: TV Display for waiting areas, or Desktop Portal for doctor consultation consoles.
           </p>
         </div>
 
-        <!-- 2 Main Clean Action Cards -->
+        <!-- 2 Main Gates: TV vs Desktop -->
         <div class="main-grid">
-          <!-- Card 1: Testing -->
-          <a class="action-card testing" href="/testing/">
-            <span class="card-badge badge-blue">Hardware & Diagnostics</span>
-            <div class="icon-bubble icon-blue">🧪</div>
-            <h2 class="card-title">Testing</h2>
+          <!-- Gate 1: TV Display -->
+          <a class="action-card tv-card" href="/v18/tv/">
+            <span class="card-badge badge-purple">Foxsky & Android TV</span>
+            <div class="icon-bubble icon-purple">📺</div>
+            <h2 class="card-title">TV Display</h2>
             <p class="card-desc">
-              Run TV audio chaining checks, single clip playback tests, latency diagnostics, and live socket tests.
+              Dedicated TV waiting area screen. Zero @imports, zero CSS collapse, 10-foot giant typography, and full remote audio unlock.
             </p>
-            <span class="card-cta cta-blue">Open Testing Hub →</span>
+            <span class="card-cta cta-purple">Launch TV Display →</span>
           </a>
 
-          <!-- Card 2: Versions -->
-          <a class="action-card versions" href="/versions/">
-            <span class="card-badge badge-green">V17 · V18 · V19 · V20</span>
-            <div class="icon-bubble icon-green">🗂️</div>
-            <h2 class="card-title">Versions</h2>
+          <!-- Gate 2: Desktop & Consoles -->
+          <a class="action-card desktop-card" href="/versions/">
+            <span class="card-badge badge-blue">Doctor · Reception · Versions</span>
+            <div class="icon-bubble icon-blue">🖥️</div>
+            <h2 class="card-title">Desktop Portal</h2>
             <p class="card-desc">
-              Access Doctor consoles and TV patient display screens across stable (V18), development (V19), and legacy releases.
+              Doctor consultation keypad, reception monitoring, version releases (V17-V20), and audio hardware testing tools.
             </p>
-            <span class="card-cta cta-green">Browse Versions →</span>
+            <span class="card-cta cta-blue">Open Desktop Portal →</span>
           </a>
         </div>
 
