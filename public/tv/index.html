@@ -138,15 +138,15 @@
         max-width: 650px;
       }
 
-      /* 4-Card TV Grid */
+      /* 3-Card TV Grid */
       .tv-grid {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 16px;
-        margin-bottom: 18px;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+        margin-bottom: 22px;
       }
 
-      @media (max-width: 680px) {
+      @media (max-width: 900px) {
         .tv-grid {
           grid-template-columns: 1fr;
         }
@@ -284,56 +284,43 @@
         </div>
 
         <div class="tv-grid">
-          <!-- Card 1: TV Display Screen (Client Deliverable) -->
-          <a class="tv-card" href="/tv/display/">
+          <!-- Card 1: Single Display Screen (/tv/single/) -->
+          <a class="tv-card" href="/tv/single/">
             <div class="card-top">
               <div class="card-icon icon-display">📺</div>
-              <span class="card-badge badge-purple">లైవ్ డిస్‌ప్లే (Delivery)</span>
+              <span class="card-badge badge-blue">సింగిల్ (V18)</span>
             </div>
-            <h2 class="card-title">టీవీ డిస్‌ప్లే స్క్రీన్</h2>
+            <h2 class="card-title">సింగిల్ డిస్‌ప్లే స్క్రీన్</h2>
             <p class="card-desc">
-              రోగుల కోసం పూర్తి స్క్రీన్ డిస్‌ప్లే. 26vw పెద్ద నంబర్, తెలుగు స్పెల్లింగ్ మరియు వాయిస్ అనౌన్స్‌మెంట్.
+              కేంద్రంలో పెద్ద 26vw నంబర్, తెలుగు స్పెల్లింగ్ మరియు వాయిస్ అనౌన్స్‌మెంట్‌లతో కూడిన క్లాసిక్ ఫుల్ స్క్రీన్ లేఅవుట్.
             </p>
-            <span class="card-cta">డిస్‌ప్లే ఓపెన్ చేయండి →</span>
+            <span class="card-cta">సింగిల్ హబ్ ఓపెన్ చేయండి →</span>
           </a>
 
-          <!-- Card 2: TV Speaker & Sequence Test -->
+          <!-- Card 2: Split Display Screen (/tv/split/) -->
+          <a class="tv-card" href="/tv/split/">
+            <div class="card-top">
+              <div class="card-icon icon-versions">🖥️</div>
+              <span class="card-badge badge-purple">స్ప్లిట్ 50/50 (V19)</span>
+            </div>
+            <h2 class="card-title">స్ప్లిట్ డిస్‌ప్లే స్క్రీన్</h2>
+            <p class="card-desc">
+              16:9 వైడ్‌స్క్రీన్ కోసం 50/50 విభజన. ఎడమవైపు భారీ టోకెన్, కుడివైపు లైవ్ కన్సల్టేషన్ మరియు గడిచిన సమయం.
+            </p>
+            <span class="card-cta">స్ప్లిట్ హబ్ ఓపెన్ చేయండి →</span>
+          </a>
+
+          <!-- Card 3: TV Speaker & Audio Diagnostics (/tv/test/) -->
           <a class="tv-card" href="/tv/test/">
             <div class="card-top">
               <div class="card-icon icon-test">🧪</div>
-              <span class="card-badge badge-blue">స్పీకర్ టెస్ట్</span>
+              <span class="card-badge badge-green">టెస్టింగ్ & ఆడియో</span>
             </div>
-            <h2 class="card-title">టీవీ ఆడియో టెస్ట్</h2>
+            <h2 class="card-title">టీవీ టెస్టింగ్ హబ్</h2>
             <p class="card-desc">
-              టీవీ స్పీకర్లు మరియు తెలుగు వాయిస్ సీక్వెన్స్ ప్లేబ్యాక్‌ని రిమోట్ కంట్రోల్‌తో తనిఖీ చేయండి.
+              టీవీ స్పీకర్ టెస్ట్, Web Audio API డయాగ్నొస్టిక్స్ మరియు తెలుగు వాయిస్ ఆడియో లైబ్రరీ (01-99).
             </p>
-            <span class="card-cta">టెస్ట్ ఓపెన్ చేయండి →</span>
-          </a>
-
-          <!-- Card 3: Audio Library & Verification -->
-          <a class="tv-card" href="/tv/audio/">
-            <div class="card-top">
-              <div class="card-icon icon-audio">🎵</div>
-              <span class="card-badge badge-green">వాయిస్ ఫైల్స్</span>
-            </div>
-            <h2 class="card-title">తెలుగు ఆడియో లైబ్రరీ</h2>
-            <p class="card-desc">
-              01 నుండి 10.wav మరియు 11 నుండి 99.mp3 వాయిస్ క్లిప్‌లను నేరుగా వినండి మరియు తనిఖీ చేయండి.
-            </p>
-            <span class="card-cta">ఆడియో లైబ్రరీ చూడండి →</span>
-          </a>
-
-          <!-- Card 4: TV Versions Switcher -->
-          <a class="tv-card" href="/tv/versions/">
-            <div class="card-top">
-              <div class="card-icon icon-versions">🗂️</div>
-              <span class="card-badge badge-amber">వర్షన్లు</span>
-            </div>
-            <h2 class="card-title">టీవీ వర్షన్లు (V18 / V19)</h2>
-            <p class="card-desc">
-              స్టేబుల్ V18 స్క్రీన్ మరియు డెవలప్‌మెంట్‌లో ఉన్న V19 స్క్రీన్‌ల మధ్య తక్షణమే మారండి.
-            </p>
-            <span class="card-cta">వర్షన్లు బ్రౌజ్ చేయండి →</span>
+            <span class="card-cta">టెస్టింగ్ ఓపెన్ చేయండి →</span>
           </a>
         </div>
 
