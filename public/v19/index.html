@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#07131d" />
+    <title>CareCall V19 | Menu</title>
+    <style>
+      :root {
+        --bg: #07131d;
+        --bg-card: rgba(15, 23, 42, 0.85);
+        --border: rgba(148, 163, 184, 0.18);
+        --primary: #38bdf8;
+        --accent: #34d399;
+        --text: #f1f5f9;
+        --muted: #94a3b8;
+      }
+
+      * { box-sizing: border-box; }
+
+      html, body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background:
+          radial-gradient(circle at 50% 10%, rgba(56, 189, 248, 0.16), transparent 40%),
+          linear-gradient(170deg, var(--bg) 0%, #0b1926 50%, #07111a 100%);
+        color: var(--text);
+        padding: 30px 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .shell {
+        width: min(920px, 100%);
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 28px;
+        box-shadow: 0 35px 80px rgba(0, 0, 0, 0.6);
+        overflow: hidden;
+        backdrop-filter: blur(12px);
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 32px;
+        border-bottom: 1px solid var(--border);
+        background: rgba(10, 18, 30, 0.7);
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .nav-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .brand-mark {
+        display: grid;
+        place-items: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        color: #022c22;
+        font-size: 1.15rem;
+        font-weight: 800;
+      }
+
+      .breadcrumb {
+        font-weight: 700;
+        font-size: 1.1rem;
+        letter-spacing: 0.02em;
+      }
+
+      .breadcrumb span {
+        color: var(--muted);
+      }
+
+      .nav-actions {
+        display: flex;
+        gap: 10px;
+      }
+
+      .nav-btn {
+        text-decoration: none;
+        color: var(--text);
+        background: rgba(30, 41, 59, 0.8);
+        border: 1px solid var(--border);
+        padding: 8px 16px;
+        border-radius: 12px;
+        font-size: 0.88rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: background 0.15s, border-color 0.15s;
+      }
+
+      .nav-btn:hover {
+        background: #1e293b;
+        border-color: var(--primary);
+      }
+
+      .content {
+        padding: 45px 36px 40px;
+        text-align: center;
+      }
+
+      .badge-strip {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 14px;
+      }
+
+      .badge {
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 5px 12px;
+        border-radius: 999px;
+      }
+
+      .badge-upcoming {
+        background: rgba(56, 189, 248, 0.16);
+        color: #7dd3fc;
+        border: 1px solid rgba(56, 189, 248, 0.4);
+      }
+
+      .badge-ready {
+        background: rgba(52, 211, 153, 0.16);
+        color: #6ee7b7;
+        border: 1px solid rgba(52, 211, 153, 0.4);
+      }
+
+      h1 {
+        margin: 0 0 12px;
+        font-size: 2.6rem;
+        letter-spacing: -0.03em;
+        font-weight: 800;
+      }
+
+      .lead {
+        margin: 0 auto 36px;
+        color: var(--muted);
+        font-size: 1.05rem;
+        line-height: 1.6;
+        max-width: 620px;
+      }
+
+      .roles-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 24px;
+        max-width: 800px;
+        margin: 0 auto 36px;
+      }
+
+      .role-card {
+        text-decoration: none;
+        color: inherit;
+        background: rgba(18, 30, 49, 0.55);
+        border: 2px solid var(--border);
+        border-radius: 22px;
+        padding: 36px 26px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+      }
+
+      .role-card.doctor:hover, .role-card.doctor:focus {
+        transform: translateY(-5px);
+        border-color: #38bdf8;
+        box-shadow: 0 18px 40px rgba(56, 189, 248, 0.22);
+        background: rgba(22, 38, 62, 0.85);
+        outline: none;
+      }
+
+      .role-card.display:hover, .role-card.display:focus {
+        transform: translateY(-5px);
+        border-color: #34d399;
+        box-shadow: 0 18px 40px rgba(52, 211, 153, 0.22);
+        background: rgba(22, 38, 62, 0.85);
+        outline: none;
+      }
+
+      .role-icon {
+        width: 70px;
+        height: 70px;
+        border-radius: 20px;
+        display: grid;
+        place-items: center;
+        font-size: 2.2rem;
+        margin-bottom: 20px;
+      }
+
+      .icon-doc {
+        background: linear-gradient(135deg, rgba(56, 189, 248, 0.25), rgba(14, 116, 144, 0.3));
+        border: 1px solid rgba(56, 189, 248, 0.4);
+      }
+
+      .icon-disp {
+        background: linear-gradient(135deg, rgba(52, 211, 153, 0.25), rgba(5, 150, 105, 0.3));
+        border: 1px solid rgba(52, 211, 153, 0.4);
+      }
+
+      .role-title {
+        font-size: 1.7rem;
+        font-weight: 800;
+        margin: 0 0 10px;
+      }
+
+      .role-desc {
+        color: var(--muted);
+        font-size: 0.95rem;
+        line-height: 1.55;
+        margin: 0 0 24px;
+        flex-grow: 1;
+      }
+
+      .role-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 1rem;
+      }
+
+      .btn-doc {
+        background: #0284c7;
+        color: white;
+      }
+
+      .btn-disp {
+        background: #059669;
+        color: white;
+      }
+
+      .bottom-nav {
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
+      }
+
+      @media (max-width: 640px) {
+        .topbar {
+          padding: 16px 20px;
+        }
+        .content {
+          padding: 30px 20px;
+        }
+        .roles-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar">
+        <div class="nav-left">
+          <div class="brand-mark">✚</div>
+          <div class="breadcrumb">CareCall <span>/</span> V19 Menu</div>
+        </div>
+        <div class="nav-actions">
+          <a href="/versions/" class="nav-btn">← 🗂️ Versions</a>
+          <a href="/" class="nav-btn">🏠 Home</a>
+        </div>
+      </header>
+
+      <main class="content">
+        <div class="badge-strip">
+          <span class="badge badge-upcoming">Next-Gen Development</span>
+          <span class="badge badge-ready">Ready for UI Modification</span>
+        </div>
+        <h1>CareCall V19 Menu</h1>
+        <p class="lead">
+          Next-generation screens running on an autonomous skeleton. Ready to receive custom UI redesigns for both Doctor and TV Display.
+        </p>
+
+        <!-- Two Role Cards -->
+        <div class="roles-grid">
+          <!-- Doctor Console -->
+          <a class="role-card doctor" href="/v19/doctor/">
+            <div class="role-icon icon-doc">👨‍⚕️</div>
+            <h2 class="role-title">V19 Doctor Console</h2>
+            <p class="role-desc">
+              Standalone consultation console connected via WebSocket role <code>doctor-v19</code>. Ready for your UI/UX design proposal.
+            </p>
+            <span class="role-btn btn-doc">Launch V19 Doctor →</span>
+          </a>
+
+          <!-- Display Screen -->
+          <a class="role-card display" href="/v19/display/">
+            <div class="role-icon icon-disp">📺</div>
+            <h2 class="role-title">V19 TV Display Screen</h2>
+            <p class="role-desc">
+              Next-generation patient screen pre-wired with the verified Web Audio API Telugu voice engine. Ready for layout changes.
+            </p>
+            <span class="role-btn btn-disp">Launch V19 Display →</span>
+          </a>
+        </div>
+
+        <div class="bottom-nav">
+          <a href="/versions/" class="nav-btn">← 🗂️ Back to Versions</a>
+          <a href="/" class="nav-btn">🏠 Back to Home</a>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

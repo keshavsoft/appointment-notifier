@@ -3,7 +3,7 @@ import { handleConnection } from "./handleConnection.js";
 import { createV3State, handleV3Connection } from "./handleV3Connection.js";
 import { writeWsLog } from "./log.js";
 
-const VERSIONED_ROLE_NAMES = ["v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13", "v14", "v15", "v16", "v17"];
+const VERSIONED_ROLE_NAMES = ["v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13", "v14", "v15", "v16", "v17", "v18", "v19", "v20"];
 
 export function attachWebSocketServer(server) {
     const webSocketServer = new WebSocketServer({ noServer: true, perMessageDeflate: false });

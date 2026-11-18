@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#07131d" />
+    <title>CareCall | Versions Hub</title>
+    <style>
+      :root {
+        --bg: #07131d;
+        --bg-card: rgba(15, 23, 42, 0.85);
+        --border: rgba(148, 163, 184, 0.18);
+        --primary: #38bdf8;
+        --accent: #34d399;
+        --text: #f1f5f9;
+        --muted: #94a3b8;
+      }
+
+      * { box-sizing: border-box; }
+
+      html, body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background:
+          radial-gradient(circle at 50% 10%, rgba(52, 211, 153, 0.12), transparent 40%),
+          linear-gradient(170deg, var(--bg) 0%, #0b1926 50%, #07111a 100%);
+        color: var(--text);
+        padding: 30px 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .shell {
+        width: min(1080px, 100%);
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 28px;
+        box-shadow: 0 35px 80px rgba(0, 0, 0, 0.6);
+        overflow: hidden;
+        backdrop-filter: blur(12px);
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 32px;
+        border-bottom: 1px solid var(--border);
+        background: rgba(10, 18, 30, 0.7);
+      }
+
+      .nav-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .brand-mark {
+        display: grid;
+        place-items: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, var(--accent), var(--primary));
+        color: #022c22;
+        font-size: 1.15rem;
+        font-weight: 800;
+      }
+
+      .breadcrumb {
+        font-weight: 700;
+        font-size: 1.1rem;
+        letter-spacing: 0.02em;
+      }
+
+      .breadcrumb span {
+        color: var(--muted);
+      }
+
+      .nav-btn {
+        text-decoration: none;
+        color: var(--text);
+        background: rgba(30, 41, 59, 0.8);
+        border: 1px solid var(--border);
+        padding: 8px 16px;
+        border-radius: 12px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: background 0.15s, border-color 0.15s;
+      }
+
+      .nav-btn:hover {
+        background: #1e293b;
+        border-color: var(--primary);
+      }
+
+      .content {
+        padding: 40px 36px 36px;
+      }
+
+      .header-area {
+        margin-bottom: 35px;
+      }
+
+      .eyebrow {
+        margin: 0 0 10px;
+        color: var(--accent);
+        letter-spacing: 0.15em;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        font-weight: 700;
+      }
+
+      h1 {
+        margin: 0 0 12px;
+        font-size: 2.4rem;
+        letter-spacing: -0.03em;
+        font-weight: 800;
+      }
+
+      .lead {
+        margin: 0;
+        color: var(--muted);
+        font-size: 1.05rem;
+        line-height: 1.6;
+        max-width: 760px;
+      }
+
+      .versions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(460px, 1fr));
+        gap: 24px;
+        margin-bottom: 35px;
+      }
+
+      .version-card {
+        background: rgba(18, 30, 49, 0.55);
+        border: 2px solid var(--border);
+        border-radius: 22px;
+        padding: 28px 24px;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+      }
+
+      .version-card:hover {
+        border-color: var(--accent);
+        box-shadow: 0 18px 40px rgba(52, 211, 153, 0.12);
+        background: rgba(22, 38, 62, 0.8);
+      }
+
+      .version-card.highlight {
+        border-color: rgba(56, 189, 248, 0.45);
+        background: rgba(18, 36, 58, 0.65);
+      }
+
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 12px;
+      }
+
+      .version-title {
+        font-size: 1.6rem;
+        font-weight: 800;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .badges-wrap {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+
+      .badge {
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 4px 10px;
+        border-radius: 999px;
+      }
+
+      .badge-stable {
+        background: rgba(52, 211, 153, 0.16);
+        color: #6ee7b7;
+        border: 1px solid rgba(52, 211, 153, 0.4);
+      }
+
+      .badge-upcoming {
+        background: rgba(56, 189, 248, 0.16);
+        color: #7dd3fc;
+        border: 1px solid rgba(56, 189, 248, 0.4);
+      }
+
+      .badge-legacy {
+        background: rgba(148, 163, 184, 0.16);
+        color: #cbd5e1;
+        border: 1px solid rgba(148, 163, 184, 0.35);
+      }
+
+      .version-desc {
+        color: var(--muted);
+        font-size: 0.95rem;
+        line-height: 1.5;
+        margin: 0 0 24px;
+        flex-grow: 1;
+      }
+
+      .button-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+
+      .role-btn {
+        text-decoration: none;
+        padding: 12px 14px;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+      }
+
+      .role-doctor {
+        background: #0284c7;
+        color: white;
+        border: 1px solid #38bdf8;
+      }
+
+      .role-doctor:hover {
+        background: #0369a1;
+        transform: translateY(-2px);
+      }
+
+      .role-display {
+        background: #059669;
+        color: white;
+        border: 1px solid #34d399;
+      }
+
+      .role-display:hover {
+        background: #047857;
+        transform: translateY(-2px);
+      }
+
+      .version-menu-link {
+        text-decoration: none;
+        color: var(--primary);
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-align: center;
+        padding: 8px;
+        border-radius: 8px;
+        transition: background 0.15s ease;
+        display: block;
+      }
+
+      .version-menu-link:hover {
+        background: rgba(56, 189, 248, 0.12);
+      }
+
+      .bottom-nav {
+        display: flex;
+        justify-content: flex-start;
+        padding-top: 20px;
+        border-top: 1px solid var(--border);
+      }
+
+      @media (max-width: 640px) {
+        .versions-grid {
+          grid-template-columns: 1fr;
+        }
+        .button-row {
+          grid-template-columns: 1fr;
+        }
+        .topbar {
+          padding: 16px 20px;
+        }
+        .content {
+          padding: 24px 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar">
+        <div class="nav-left">
+          <div class="brand-mark">🗂️</div>
+          <div class="breadcrumb">CareCall <span>/</span> Versions Hub</div>
+        </div>
+        <a href="/" class="nav-btn">← 🏠 Back to Home</a>
+      </header>
+
+      <main class="content">
+        <div class="header-area">
+          <p class="eyebrow">Production Releases & Roadmap</p>
+          <h1>Application Versions</h1>
+          <p class="lead">
+            Select a version to open either its Doctor Console or TV Display Screen. Each version is fully self-contained with its own autonomous architecture.
+          </p>
+        </div>
+
+        <div class="versions-grid">
+          <!-- V18: Current Stable -->
+          <div class="version-card highlight">
+            <div class="card-header">
+              <h2 class="version-title">
+                <span>V18</span>
+              </h2>
+              <div class="badges-wrap">
+                <span class="badge badge-stable">Stable Active</span>
+                <span class="badge badge-stable">TV Audio Fixed</span>
+              </div>
+            </div>
+            <p class="version-desc">
+              Verified TV Audio playback engine using Web Audio API buffer sources, automated audio keep-alive heartbeat, and persistent HTML5 audio fallback for Telugu voice calls.
+            </p>
+            <div class="button-row">
+              <a class="role-btn role-doctor" href="/v18/doctor/">👨‍⚕️ Doctor Console</a>
+              <a class="role-btn role-display" href="/v18/display/">📺 TV Display</a>
+            </div>
+            <a class="version-menu-link" href="/v18/">Open V18 Menu Page →</a>
+          </div>
+
+          <!-- V19: Next-Gen UI (In Development) -->
+          <div class="version-card">
+            <div class="card-header">
+              <h2 class="version-title">
+                <span>V19</span>
+              </h2>
+              <div class="badges-wrap">
+                <span class="badge badge-upcoming">In Development</span>
+                <span class="badge badge-upcoming">Ready for Custom UI</span>
+              </div>
+            </div>
+            <p class="version-desc">
+              Next-generation screen framework. Clean autonomous skeleton with TV audio engine pre-wired, ready to receive your custom UI redesign and layouts.
+            </p>
+            <div class="button-row">
+              <a class="role-btn role-doctor" href="/v19/doctor/">👨‍⚕️ Doctor Console</a>
+              <a class="role-btn role-display" href="/v19/display/">📺 TV Display</a>
+            </div>
+            <a class="version-menu-link" href="/v19/">Open V19 Menu Page →</a>
+          </div>
+
+          <!-- V17: Previous Generation -->
+          <div class="version-card">
+            <div class="card-header">
+              <h2 class="version-title">
+                <span>V17</span>
+              </h2>
+              <div class="badges-wrap">
+                <span class="badge badge-legacy">Previous Gen</span>
+              </div>
+            </div>
+            <p class="version-desc">
+              First autonomous folder release with zero shared dependencies. Maintained for legacy reference and comparison.
+            </p>
+            <div class="button-row">
+              <a class="role-btn role-doctor" href="/v17/doctor/">👨‍⚕️ Doctor Console</a>
+              <a class="role-btn role-display" href="/v17/display/">📺 Display Screen</a>
+            </div>
+            <a class="version-menu-link" href="/v17/">Open V17 Menu Page →</a>
+          </div>
+
+          <!-- V20: Future Roadmap -->
+          <div class="version-card">
+            <div class="card-header">
+              <h2 class="version-title">
+                <span>V20</span>
+              </h2>
+              <div class="badges-wrap">
+                <span class="badge badge-legacy">Roadmap</span>
+              </div>
+            </div>
+            <p class="version-desc">
+              Planned multi-room calling, doctor room routing, bilingual audio synthesis (Telugu + English), and multi-counter display support.
+            </p>
+            <div class="button-row">
+              <a class="role-btn role-doctor" href="/v20/doctor/">👨‍⚕️ Doctor (Preview)</a>
+              <a class="role-btn role-display" href="/v20/display/">📺 Display (Preview)</a>
+            </div>
+            <a class="version-menu-link" href="/v20/">Open V20 Roadmap Page →</a>
+          </div>
+        </div>
+
+        <div class="bottom-nav">
+          <a href="/" class="nav-btn">← 🏠 Back to Home Menu</a>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

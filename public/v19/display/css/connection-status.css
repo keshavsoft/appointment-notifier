@@ -1,0 +1,25 @@
+/* ==========================================================================
+   Display Component: Connection Status
+   Floating status pill indicating live WebSocket / server connection
+   ========================================================================== */
+
+.display-connection-status {
+  position: static;
+  max-width: 46vw;
+  padding: clamp(10px, 1.2vh, 22px) clamp(18px, 1.8vw, 36px);
+  border: 2px solid #5a7692;
+  border-radius: 999px;
+  color: #ffffff;
+  background: #071b30ed;
+  font: 700 clamp(16px, 1.5vw, 32px)/1.2 system-ui, sans-serif;
+  opacity: 1;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
+}
+
+@media (max-width: 900px) {
+  .display-connection-status {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+}
+

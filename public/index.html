@@ -3,241 +3,299 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0f172a" />
+    <meta name="theme-color" content="#07131d" />
     <title>CareCall | Appointment Notifier</title>
     <style>
       :root {
         --bg: #07131d;
-        --bg-soft: #102334;
-        --panel: rgba(15, 23, 42, 0.82);
-        --panel-border: rgba(148, 163, 184, 0.2);
-        --primary: #7dd3fc;
-        --primary-strong: #38bdf8;
+        --bg-card: rgba(15, 23, 42, 0.85);
+        --border: rgba(148, 163, 184, 0.18);
+        --border-hover: rgba(56, 189, 248, 0.5);
+        --primary: #38bdf8;
+        --primary-glow: rgba(56, 189, 248, 0.25);
         --accent: #34d399;
-        --text: #e2e8f0;
+        --accent-glow: rgba(52, 211, 153, 0.25);
+        --text: #f1f5f9;
         --muted: #94a3b8;
-        --shadow: rgba(14, 165, 233, 0.25);
       }
 
       * { box-sizing: border-box; }
 
       html, body {
         margin: 0;
-        min-height: 100%;
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background:
-          radial-gradient(circle at top, rgba(56, 189, 248, 0.18), transparent 25%),
-          linear-gradient(160deg, var(--bg) 0%, #0b1720 38%, #07131d 100%);
-        color: var(--text);
-      }
-
-      body {
         min-height: 100vh;
-        display: grid;
-        place-items: center;
-        padding: 32px 20px;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background:
+          radial-gradient(circle at 50% 10%, rgba(56, 189, 248, 0.15), transparent 40%),
+          linear-gradient(170deg, var(--bg) 0%, #0b1926 50%, #07111a 100%);
+        color: var(--text);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 30px 20px;
       }
 
       .shell {
-        width: min(1100px, 100%);
-        background: rgba(15, 23, 42, 0.75);
-        border: 1px solid var(--panel-border);
+        width: min(960px, 100%);
+        background: var(--bg-card);
+        border: 1px solid var(--border);
         border-radius: 28px;
-        box-shadow: 0 30px 80px rgba(2, 6, 23, 0.7), 0 0 0 1px rgba(125, 211, 252, 0.08);
+        box-shadow: 0 35px 80px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.04);
         overflow: hidden;
-        backdrop-filter: blur(8px);
+        backdrop-filter: blur(12px);
       }
 
       .topbar {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 16px;
-        padding: 22px 28px;
-        border-bottom: 1px solid var(--panel-border);
-        background: rgba(15, 23, 42, 0.8);
+        padding: 22px 32px;
+        border-bottom: 1px solid var(--border);
+        background: rgba(10, 18, 30, 0.7);
       }
 
       .brand {
         display: inline-flex;
         align-items: center;
         gap: 12px;
-        font-weight: 700;
-        letter-spacing: 0.04em;
-        font-size: 1.1rem;
+        font-weight: 800;
+        letter-spacing: 0.02em;
+        font-size: 1.25rem;
       }
 
       .brand-mark {
         display: grid;
         place-items: center;
-        width: 36px;
-        height: 36px;
+        width: 38px;
+        height: 38px;
         border-radius: 12px;
         background: linear-gradient(135deg, var(--primary), var(--accent));
         color: #022c22;
-        font-size: 1.2rem;
-        box-shadow: 0 12px 24px rgba(52, 211, 153, 0.25);
+        font-size: 1.25rem;
+        box-shadow: 0 8px 20px var(--accent-glow);
       }
 
       .status-pill {
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        background: rgba(52, 211, 153, 0.1);
+        background: rgba(52, 211, 153, 0.12);
         border: 1px solid rgba(52, 211, 153, 0.35);
-        color: #d1fae5;
+        color: #a7f3d0;
         border-radius: 999px;
-        padding: 8px 14px;
-        font-size: 0.8rem;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
+        padding: 8px 16px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
       }
 
       .status-dot {
-        width: 10px;
-        height: 10px;
+        width: 9px;
+        height: 9px;
         border-radius: 50%;
         background: var(--accent);
-        box-shadow: 0 0 14px rgba(52, 211, 153, 0.9);
+        box-shadow: 0 0 10px rgba(52, 211, 153, 0.9);
       }
 
       .content {
-        padding: 36px 28px 30px;
-      }
-
-      .hero {
-        display: grid;
-        grid-template-columns: 1.25fr 0.75fr;
-        gap: 28px;
-        align-items: center;
+        padding: 45px 36px 40px;
+        text-align: center;
       }
 
       .eyebrow {
-        margin: 0 0 18px;
+        margin: 0 0 12px;
         color: var(--primary);
         letter-spacing: 0.16em;
-        font-size: 0.72rem;
+        font-size: 0.8rem;
         text-transform: uppercase;
         font-weight: 700;
       }
 
       h1 {
-        margin: 0;
-        font-size: clamp(2.4rem, 4vw, 4rem);
-        line-height: 1.05;
-        letter-spacing: -0.06em;
+        margin: 0 0 14px;
+        font-size: clamp(2rem, 4.5vw, 3.2rem);
+        letter-spacing: -0.04em;
+        font-weight: 800;
       }
 
       .lead {
-        max-width: 620px;
-        margin: 18px 0 0;
+        max-width: 600px;
+        margin: 0 auto 40px;
         color: var(--muted);
-        font-size: 1.05rem;
-        line-height: 1.7;
+        font-size: 1.1rem;
+        line-height: 1.6;
       }
 
-      .hero-panel {
-        background: linear-gradient(180deg, rgba(15, 118, 110, 0.18), rgba(14, 116, 144, 0.08));
-        border: 1px solid rgba(125, 211, 252, 0.2);
-        border-radius: 24px;
-        padding: 22px;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
-      }
-
-      .mini-grid {
+      /* Exactly 2 Main Action Cards */
+      .main-grid {
         display: grid;
-        grid-template-columns: repeat(2, minmax(120px, 1fr));
-        gap: 12px;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 26px;
+        max-width: 860px;
+        margin: 0 auto;
       }
 
-      .mini-card {
-        background: rgba(15, 23, 42, 0.9);
-        border: 1px solid var(--panel-border);
-        border-radius: 16px;
-        padding: 16px 14px;
-      }
-
-      .mini-card strong {
-        display: block;
-        font-size: 1.35rem;
-        margin-top: 8px;
-      }
-
-      .mini-card span {
-        color: var(--muted);
-        font-size: 0.74rem;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-      }
-
-      .links {
-        margin-top: 30px;
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 18px;
-      }
-
-      .card {
+      .action-card {
         text-decoration: none;
         color: inherit;
-        background: rgba(15, 23, 42, 0.82);
-        border: 1px solid var(--panel-border);
-        border-radius: 20px;
-        padding: 22px 18px;
-        min-height: 150px;
+        background: rgba(18, 30, 49, 0.6);
+        border: 2px solid var(--border);
+        border-radius: 24px;
+        padding: 36px 28px;
         display: flex;
         flex-direction: column;
-        gap: 12px;
-        transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+        align-items: center;
+        text-align: center;
+        transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+                    border-color 0.2s ease,
+                    box-shadow 0.2s ease,
+                    background 0.2s ease;
+        position: relative;
+        overflow: hidden;
       }
 
-      .card:hover {
-        transform: translateY(-3px);
-        border-color: rgba(125, 211, 252, 0.6);
-        box-shadow: 0 18px 32px rgba(8, 145, 178, 0.12);
+      .action-card:hover, .action-card:focus {
+        transform: translateY(-5px);
+        background: rgba(22, 38, 62, 0.85);
+        outline: none;
       }
 
-      .card .icon {
-        width: 44px;
-        height: 44px;
+      .action-card.testing:hover, .action-card.testing:focus {
+        border-color: #38bdf8;
+        box-shadow: 0 20px 45px rgba(56, 189, 248, 0.22);
+      }
+
+      .action-card.versions:hover, .action-card.versions:focus {
+        border-color: #34d399;
+        box-shadow: 0 20px 45px rgba(52, 211, 153, 0.22);
+      }
+
+      .card-badge {
+        display: inline-block;
+        padding: 6px 14px;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 20px;
+      }
+
+      .badge-blue {
+        background: rgba(56, 189, 248, 0.14);
+        color: #7dd3fc;
+        border: 1px solid rgba(56, 189, 248, 0.35);
+      }
+
+      .badge-green {
+        background: rgba(52, 211, 153, 0.14);
+        color: #6ee7b7;
+        border: 1px solid rgba(52, 211, 153, 0.35);
+      }
+
+      .icon-bubble {
+        width: 72px;
+        height: 72px;
+        border-radius: 22px;
         display: grid;
         place-items: center;
-        border-radius: 14px;
-        background: rgba(125, 211, 252, 0.12);
-        color: var(--primary);
-        font-size: 1.25rem;
-        font-weight: 700;
+        font-size: 2.2rem;
+        margin-bottom: 22px;
+        transition: transform 0.2s ease;
       }
 
-      .card p {
-        margin: 0;
-        font-size: 0.76rem;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        color: var(--primary);
+      .icon-blue {
+        background: linear-gradient(135deg, rgba(56, 189, 248, 0.25), rgba(14, 116, 144, 0.3));
+        color: #38bdf8;
+        border: 1px solid rgba(56, 189, 248, 0.4);
       }
 
-      .card h2 {
-        margin: 0;
-        font-size: 1.45rem;
+      .icon-green {
+        background: linear-gradient(135deg, rgba(52, 211, 153, 0.25), rgba(5, 150, 105, 0.3));
+        color: #34d399;
+        border: 1px solid rgba(52, 211, 153, 0.4);
       }
 
-      .card span {
-        margin-top: auto;
+      .action-card:hover .icon-bubble {
+        transform: scale(1.1);
+      }
+
+      .card-title {
+        font-size: 1.8rem;
+        font-weight: 800;
+        margin: 0 0 12px;
+        letter-spacing: -0.02em;
+      }
+
+      .card-desc {
         color: var(--muted);
+        font-size: 0.98rem;
+        line-height: 1.55;
+        margin: 0 0 26px;
+        flex-grow: 1;
+      }
+
+      .card-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 1.05rem;
+        font-weight: 700;
+        padding: 12px 24px;
+        border-radius: 14px;
+        transition: transform 0.15s ease, background 0.15s ease;
+      }
+
+      .cta-blue {
+        background: #0284c7;
+        color: white;
+      }
+
+      .cta-green {
+        background: #059669;
+        color: white;
+      }
+
+      .action-card:hover .card-cta {
+        transform: scale(1.04);
+      }
+
+      .footer-strip {
+        margin-top: 40px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 30px;
+        flex-wrap: wrap;
+        color: var(--muted);
+        font-size: 0.88rem;
+      }
+
+      .footer-item {
         display: inline-flex;
         align-items: center;
         gap: 8px;
       }
 
-      @media (max-width: 820px) {
-        .hero {
-          grid-template-columns: 1fr;
-        }
+      .footer-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--primary);
+      }
 
+      @media (max-width: 640px) {
         .topbar {
-          flex-direction: column;
-          align-items: flex-start;
+          padding: 18px 20px;
+        }
+        .content {
+          padding: 30px 20px;
+        }
+        .main-grid {
+          grid-template-columns: 1fr;
         }
       }
     </style>
@@ -251,78 +309,52 @@
         </div>
         <div class="status-pill">
           <span class="status-dot"></span>
-          Appointment notifier
+          System Online
         </div>
       </header>
 
       <main class="content">
-        <section class="hero">
-          <div>
-            <p class="eyebrow">Clinic communication</p>
-            <h1>Smart calling screens for a smoother front desk.</h1>
-            <p class="lead">
-              Use the doctor console to send numbers to waiting-area and reception displays, keeping patients informed in real time.
+        <p class="eyebrow">Smart Clinic Queue System</p>
+        <h1>Welcome to CareCall</h1>
+        <p class="lead">
+          Choose a section below to access TV audio diagnostic tools or browse application versions.
+        </p>
+
+        <!-- 2 Main Clean Action Cards -->
+        <div class="main-grid">
+          <!-- Card 1: Testing -->
+          <a class="action-card testing" href="/testing/">
+            <span class="card-badge badge-blue">Hardware & Diagnostics</span>
+            <div class="icon-bubble icon-blue">🧪</div>
+            <h2 class="card-title">Testing</h2>
+            <p class="card-desc">
+              Run TV audio chaining checks, single clip playback tests, latency diagnostics, and live socket tests.
             </p>
+            <span class="card-cta cta-blue">Open Testing Hub →</span>
+          </a>
+
+          <!-- Card 2: Versions -->
+          <a class="action-card versions" href="/versions/">
+            <span class="card-badge badge-green">V17 · V18 · V19 · V20</span>
+            <div class="icon-bubble icon-green">🗂️</div>
+            <h2 class="card-title">Versions</h2>
+            <p class="card-desc">
+              Access Doctor consoles and TV patient display screens across stable (V18), development (V19), and legacy releases.
+            </p>
+            <span class="card-cta cta-green">Browse Versions →</span>
+          </a>
+        </div>
+
+        <div class="footer-strip">
+          <div class="footer-item">
+            <span class="footer-dot"></span>
+            <strong>Active Production:</strong> V18 (TV Audio Verified)
           </div>
-
-          <aside class="hero-panel" aria-label="Quick stats">
-            <div class="mini-grid">
-              <div class="mini-card">
-                <span>Doctor</span>
-                <strong>Live</strong>
-              </div>
-              <div class="mini-card">
-                <span>Display</span>
-                <strong>Ready</strong>
-              </div>
-              <div class="mini-card">
-                <span>Reception</span>
-                <strong>Ready</strong>
-              </div>
-              <div class="mini-card">
-                <span>System</span>
-                <strong>Web</strong>
-              </div>
-            </div>
-          </aside>
-        </section>
-
-        <section class="links" aria-label="App screens">
-          <a class="card" href="/v18/doctor/">
-            <div class="icon">✧</div>
-            <p>Console (Latest)</p>
-            <h2>V18 Doctor</h2>
-            <span>Open V18 doctor console →</span>
-          </a>
-
-          <a class="card" href="/v18/display/">
-            <div class="icon">▣</div>
-            <p>Display (TV Ready)</p>
-            <h2>V18 Display</h2>
-            <span>Open responsive TV display →</span>
-          </a>
-
-          <a class="card" href="/v17/doctor/">
-            <div class="icon">✦</div>
-            <p>Console</p>
-            <h2>V17 Doctor</h2>
-            <span>Open legacy doctor console →</span>
-          </a>
-
-          <a class="card" href="/v17/display/">
-            <div class="icon">◉</div>
-            <p>Display</p>
-            <h2>V17 Display</h2>
-            <span>Open legacy display screen →</span>
-          </a>
-
-          <a class="card" href="/tv-test/">
-            <div class="icon">📺</div>
-            <p>Testing</p>
-            <h2>TV Test Hub</h2>
-            <span>Open TV display tests →</span>
-          </a>
-        </section>
+          <div class="footer-item">
+            <span class="footer-dot" style="background: var(--accent);"></span>
+            <strong>In Development:</strong> V19 (Next-Gen UI)
+          </div>
+        </div>
       </main>
     </div>
   </body>
