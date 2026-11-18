@@ -1,0 +1,58 @@
+/* ==========================================================================
+   Doctor Component: Status Pills
+   Server connection and Display connection indicator pills
+   ========================================================================== */
+
+.connection-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 2px 2px 8px;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 30px;
+  border: 1px solid #dce4ed;
+  border-radius: 999px;
+  padding: 5px 10px;
+  color: #63778d;
+  background: #f8fafc;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.status-pill i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #d39b3a;
+}
+
+.status-pill.connected {
+  color: #246747;
+  border-color: #cce5d7;
+  background: #edf8f1;
+}
+
+.status-pill.connected i {
+  background: #22a268;
+}
+
+.status-pill.offline i {
+  background: #d39b3a;
+}
+
+@media (max-width: 380px) {
+  .connection-row {
+    gap: 5px;
+  }
+  .status-pill {
+    padding-inline: 8px;
+    font-size: 10px;
+  }
+}
+

@@ -1,0 +1,28 @@
+/* ==========================================================================
+   Display Component: Telugu Spelling
+   Spelled-out words in Telugu directly below the token number
+   ========================================================================== */
+
+.display-telugu-spelling {
+  margin-top: clamp(8px, 1.8vh, 32px);
+  font-size: clamp(28px, 4vh, 70px);
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: #72b9ff;
+  text-align: center;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  min-height: 1.2em;
+}
+
+@media (min-width: 1920px) {
+  .display-telugu-spelling {
+    font-size: clamp(36px, 4.5vh, 85px);
+  }
+}
+
+@media (min-width: 2560px) {
+  .display-telugu-spelling {
+    font-size: clamp(48px, 5vh, 110px);
+  }
+}
+

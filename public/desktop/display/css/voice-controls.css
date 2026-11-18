@@ -1,0 +1,114 @@
+/* ==========================================================================
+   Display Component: Voice Controls
+   Floating bar with toggle, test trigger, and status badge
+   ========================================================================== */
+
+.voice-controls {
+  position: fixed;
+  z-index: 120;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  bottom: 24px;
+  bottom: clamp(16px, 3vh, 50px);
+  width: 90%;
+  width: min(94vw, 1200px);
+  max-width: 1200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  gap: clamp(12px, 1.6vw, 36px);
+  min-height: 64px;
+  min-height: clamp(64px, 8vh, 120px);
+  padding: 12px 20px;
+  padding: clamp(10px, 1.5vh, 24px) clamp(16px, 2vw, 40px);
+  border: 2px solid #5a7692;
+  border-radius: 20px;
+  border-radius: clamp(16px, 2vw, 32px);
+  color: #ffffff;
+  background: #081d33f7;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7);
+}
+
+.voice-button,
+.voice-test-button {
+  min-height: clamp(50px, 6vh, 90px);
+  padding: clamp(10px, 1.2vh, 20px) clamp(20px, 2.2vw, 48px);
+  border: 2px solid #40566c;
+  border-radius: clamp(12px, 1.5vw, 22px);
+  color: #d2deea;
+  background: #172d42;
+  font: inherit;
+  font-size: clamp(16px, 1.6vw, 34px);
+  font-weight: 800;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.15s, border-color 0.15s;
+}
+
+.voice-button:hover,
+.voice-button:focus,
+.voice-test-button:hover:not(:disabled),
+.voice-test-button:focus:not(:disabled) {
+  border-color: #38bdf8;
+  background: #1e3a5a;
+  transform: scale(1.04);
+}
+
+.voice-button[aria-pressed="true"] {
+  border-color: #38bdf8;
+  color: #ffffff;
+  background: #0284c7;
+}
+
+.voice-button:disabled,
+.voice-test-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
+.voice-status {
+  position: static;
+  max-width: none;
+  padding: clamp(10px, 1.2vh, 20px) clamp(16px, 2vw, 36px);
+  border: 2px solid #40566c;
+  border-radius: clamp(12px, 1.5vw, 22px);
+  font-size: clamp(15px, 1.5vw, 30px);
+  font-weight: 600;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.25;
+  color: #c6d5e2;
+  background: rgba(15, 23, 42, 0.7);
+}
+
+/* Extra-large TV & 4K Viewport scaling */
+@media (min-width: 1920px) {
+  .voice-controls {
+    width: min(88vw, 1500px);
+  }
+}
+
+@media (min-width: 2560px) {
+  .voice-controls {
+    width: min(80vw, 1800px);
+  }
+}
+
+@media (max-width: 900px) {
+  .voice-controls {
+    width: calc(100vw - 20px);
+    bottom: 10px;
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .voice-status {
+    width: 100%;
+    flex-basis: 100%;
+  }
+}
+

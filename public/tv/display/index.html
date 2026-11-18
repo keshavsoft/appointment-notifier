@@ -1,0 +1,842 @@
+<!doctype html>
+<html lang="te">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#07111e">
+  <title>CareCall TV Display — తెలుగు</title>
+  <style>
+    /* ==========================================================================
+       CareCall Dedicated Android TV Display Screen (/tv/)
+       Zero @imports · Zero experimental CSS · 100% resilient fallback layout
+       ========================================================================== */
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      min-height: 100vh;
+      overflow: hidden !important;
+      background-color: #06101c;
+      background-image: radial-gradient(ellipse at 50% 40%, #132a45 0%, #081726 60%, #040a12 100%);
+      color: #ffffff;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Telugu", sans-serif;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    /* Top Navigation & Status Bar */
+    .tv-topbar {
+      position: fixed;
+      top: 24px;
+      left: 32px;
+      right: 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .tv-topbar > * {
+      pointer-events: auto;
+    }
+
+    .tv-status-pill {
+      background: rgba(15, 23, 42, 0.88);
+      border: 2px solid #486581;
+      border-radius: 999px;
+      padding: 10px 24px;
+      font-size: 20px;
+      font-weight: 700;
+      color: #38bdf8;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      letter-spacing: 0.3px;
+    }
+
+    .tv-nav-button {
+      text-decoration: none;
+      background: rgba(15, 23, 42, 0.88);
+      border: 2px solid #486581;
+      border-radius: 999px;
+      padding: 10px 24px;
+      font-size: 20px;
+      font-weight: 700;
+      color: #f1f5f9;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      transition: background 0.2s, border-color 0.2s, transform 0.2s;
+    }
+
+    .tv-nav-button:hover,
+    .tv-nav-button:focus {
+      background: #0284c7;
+      border-color: #7dd3fc;
+      color: #ffffff;
+      transform: scale(1.05);
+      outline: 3px solid #38bdf8;
+    }
+
+    /* Main Center Display */
+    .tv-display-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 70px 24px 130px;
+      box-sizing: border-box;
+      z-index: 10;
+    }
+
+    .tv-token-number {
+      font-size: 180px; /* Fallback for older TV engines */
+      font-size: 25vw;
+      font-weight: 900;
+      line-height: 0.95;
+      color: #ffffff;
+      letter-spacing: -2px;
+      margin: 0;
+      text-shadow: 0 12px 50px rgba(0, 0, 0, 0.9), 0 0 80px rgba(56, 189, 248, 0.2);
+    }
+
+    .tv-telugu-spelling {
+      font-size: 42px; /* Fallback */
+      font-size: 4.4vw;
+      font-weight: 700;
+      color: #60a5fa;
+      margin-top: 16px;
+      min-height: 1.25em;
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+    }
+
+    .tv-elapsed-time {
+      font-size: 28px; /* Fallback */
+      font-size: 2.6vw;
+      font-weight: 600;
+      color: #e2e8f0;
+      margin-top: 16px;
+      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
+    }
+
+    /* Fixed Bottom Voice Control & Status Bar */
+    .tv-voice-panel {
+      position: fixed;
+      bottom: 24px;
+      left: 24px;
+      right: 24px;
+      margin-left: auto;
+      margin-right: auto;
+      width: 90%;
+      max-width: 960px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 12px 24px;
+      background: rgba(10, 25, 43, 0.95);
+      border: 2px solid #38bdf8;
+      border-radius: 999px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.75);
+      z-index: 100;
+    }
+
+    .tv-voice-toggle-btn {
+      background: #0284c7;
+      color: #ffffff;
+      border: 2px solid #38bdf8;
+      border-radius: 999px;
+      padding: 10px 26px;
+      font-size: 20px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.15s, transform 0.15s;
+    }
+
+    .tv-voice-toggle-btn[data-active="false"] {
+      background: #334155;
+      border-color: #64748b;
+      color: #e2e8f0;
+    }
+
+    .tv-voice-toggle-btn:hover,
+    .tv-voice-toggle-btn:focus {
+      transform: scale(1.04);
+      outline: 3px solid #38bdf8;
+    }
+
+    .tv-voice-test-btn {
+      background: #1e293b;
+      color: #94a3b8;
+      border: 2px solid #475569;
+      border-radius: 999px;
+      padding: 10px 22px;
+      font-size: 19px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .tv-voice-test-btn:hover:not(:disabled),
+    .tv-voice-test-btn:focus:not(:disabled) {
+      border-color: #38bdf8;
+      color: #ffffff;
+      background: #0f172a;
+    }
+
+    .tv-voice-test-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .tv-voice-status-text {
+      font-size: 19px;
+      font-weight: 600;
+      color: #94a3b8;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 420px;
+    }
+
+    /* Fullscreen Touch/Remote Audio Unlock Overlay */
+    .tv-audio-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(3, 10, 18, 0.75);
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      cursor: pointer;
+      padding: 24px;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .tv-audio-overlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .tv-audio-prompt-box {
+      background: #0d2137;
+      border: 3px solid #38bdf8;
+      border-radius: 28px;
+      padding: 32px 48px;
+      max-width: 650px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85);
+      animation: pulseGlow 2s infinite ease-in-out;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { border-color: #38bdf8; box-shadow: 0 0 30px rgba(56, 189, 248, 0.4); }
+      50% { border-color: #34d399; box-shadow: 0 0 50px rgba(52, 211, 153, 0.6); }
+    }
+
+    .tv-audio-prompt-icon {
+      font-size: 64px;
+      margin-bottom: 12px;
+    }
+
+    .tv-audio-prompt-title {
+      font-size: 32px;
+      font-weight: 900;
+      color: #ffffff;
+      margin-bottom: 8px;
+    }
+
+    .tv-audio-prompt-subtitle {
+      font-size: 20px;
+      font-weight: 600;
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body id="tvApp">
+
+  <!-- Top Bar: Connection & Navigation -->
+  <header class="tv-topbar">
+    <div id="connectionStatus" class="tv-status-pill" role="status">సర్వర్‌కి కనెక్ట్ అవుతోంది…</div>
+    <div style="display: flex; gap: 10px;">
+      <a href="/tv/" class="tv-nav-button" title="టీవీ పోర్టల్ మెనూకి వెళ్ళండి">📂 టీవీ మెనూ</a>
+      <a href="/tv/test/" class="tv-nav-button" title="టీవీ ఆడియో టెస్ట్">🧪 టెస్ట్</a>
+      <a href="/" class="tv-nav-button" title="హోమ్‌కి వెళ్ళండి">🏠 హోమ్</a>
+    </div>
+  </header>
+
+  <!-- Center Stage: Giant Token Number & Telugu Spelling -->
+  <main class="tv-display-container" id="tvDisplayView">
+    <h1 class="tv-token-number" id="tvTokenNumber"></h1>
+    <div class="tv-telugu-spelling" id="tvTeluguSpelling"></div>
+    <p class="tv-elapsed-time" id="tvElapsedTime">తదుపరి కాల్ కోసం వేచి ఉంది</p>
+  </main>
+
+  <!-- Bottom Voice Bar (TV Remote Accessible) -->
+  <footer class="tv-voice-panel" id="tvVoicePanel">
+    <button class="tv-voice-toggle-btn" id="voiceToggle" type="button" data-active="true">
+      🔊 వాయిస్ ఆన్
+    </button>
+    <button class="tv-voice-test-btn" id="testVoice" type="button">
+      టెస్ట్ వాయిస్
+    </button>
+    <span class="tv-voice-status-text" id="voiceStatus">తెలుగు వాయిస్ సిద్ధంగా ఉంది</span>
+  </footer>
+
+  <!-- One-Click First-Launch Audio Unlock Overlay for Android TV -->
+  <div class="tv-audio-overlay hidden" id="audioUnlockOverlay">
+    <div class="tv-audio-prompt-box">
+      <div class="tv-audio-prompt-icon">🔊</div>
+      <div class="tv-audio-prompt-title">టీవీ వాయిస్ ఆన్ చేయండి</div>
+      <div class="tv-audio-prompt-subtitle">రిమోట్ OK బటన్ లేదా స్క్రీన్‌పై ఎక్కడైనా క్లిక్ చేయండి</div>
+    </div>
+  </div>
+
+  <audio id="persistentVoiceAudio" preload="auto" playsinline style="display:none"></audio>
+
+  <!-- Self-Contained TV Engine Script -->
+  <script>
+  (function () {
+    "use strict";
+
+    var tokenNumberEl = document.getElementById("tvTokenNumber");
+    var teluguSpellingEl = document.getElementById("tvTeluguSpelling");
+    var elapsedTimeEl = document.getElementById("tvElapsedTime");
+    var connectionStatus = document.getElementById("connectionStatus");
+    var voiceToggle = document.getElementById("voiceToggle");
+    var testVoice = document.getElementById("testVoice");
+    var voiceStatus = document.getElementById("voiceStatus");
+    var audioUnlockOverlay = document.getElementById("audioUnlockOverlay");
+
+    var announcement = null;
+    var socket = null;
+    var retryTimer = null;
+    var retryDelay = 2000;
+    var stopped = false;
+    var lastAnnouncedCallKey = null;
+
+    var voiceSettings = { enabled: true, language: "te-IN" };
+    var activeAudio = null;
+    var activeSourceNode = null;
+    var audioBufferCache = {};
+    var currentPlaylist = [];
+    var playlistIndex = 0;
+    var playbackSessionId = 0;
+    var audioContext = null;
+    var persistentAudio = null;
+    var isAudioUnlocked = false;
+    var isHtmlAudioPrimed = false;
+    var heartbeatInterval = null;
+
+    var TELUGU_UNITS = [
+      "సున్నా", "ఒకటి", "రెండు", "మూడు", "నాలుగు", "ఐదు",
+      "ఆరు", "ఏడు", "ఎనిమిది", "తొమ్మిది", "పది",
+      "పదకొండు", "పన్నెండు", "పదమూడు", "పద్నాలుగు", "పదిహేను",
+      "పదహారు", "పదిహేడు", "పద్దెనిమిది", "పంతొమ్మిది"
+    ];
+
+    var TELUGU_TENS = [
+      "", "", "ఇరవై", "ముప్పై", "నలభై", "యాభై",
+      "అరవై", "డెబ్బై", "ఎనభై", "తొంభై"
+    ];
+
+    function numberToTeluguWords(num) {
+      var n = Math.floor(Number(num));
+      if (!isFinite(n) || n < 0 || n > 999) return String(num);
+      if (n < 20) return TELUGU_UNITS[n];
+      if (n < 100) {
+        var tens = Math.floor(n / 10);
+        var rem = n % 10;
+        return rem === 0 ? TELUGU_TENS[tens] : (TELUGU_TENS[tens] + " " + TELUGU_UNITS[rem]);
+      }
+      var hundreds = Math.floor(n / 100);
+      var rem100 = n % 100;
+      var hundredText = hundreds === 1 ? "వంద" : (TELUGU_UNITS[hundreds] + " వందల");
+      if (rem100 === 0) return hundredText;
+      return hundredText + " " + numberToTeluguWords(rem100);
+    }
+
+    function elapsedText(milliseconds) {
+      var seconds = Math.max(0, Math.floor(milliseconds / 1000));
+      var minutes = Math.floor(seconds / 60);
+      var hours = Math.floor(minutes / 60);
+      if (seconds < 60) return seconds + "సె";
+      if (minutes < 60) return minutes + "ని " + (seconds % 60) + "సె";
+      return hours + "గం " + (minutes % 60) + "ని";
+    }
+
+    function render() {
+      if (!announcement || announcement.number == null) {
+        tokenNumberEl.textContent = "";
+        teluguSpellingEl.textContent = "";
+        elapsedTimeEl.textContent = "తదుపరి కాల్ కోసం వేచి ఉంది";
+        return;
+      }
+      var value = String(announcement.number);
+      tokenNumberEl.textContent = value;
+      var numVal = Number(value);
+      teluguSpellingEl.textContent = isFinite(numVal) && numVal >= 0 ? numberToTeluguWords(numVal) : "";
+      var sentAt = Number(announcement.sentAt) || new Date().getTime();
+      elapsedTimeEl.textContent = elapsedText(new Date().getTime() - sentAt) + " క్రితం పిలవబడింది";
+    }
+
+    function getPersistentAudio() {
+      if (!persistentAudio) {
+        persistentAudio = document.getElementById("persistentVoiceAudio");
+      }
+      return persistentAudio;
+    }
+
+    function fetchArrayBuffer(url, onSuccess, onError) {
+      if (typeof window.fetch === "function") {
+        window.fetch(url)
+          .then(function (res) {
+            if (!res.ok) throw new Error("HTTP " + res.status);
+            return res.arrayBuffer();
+          })
+          .then(onSuccess)
+          .catch(onError);
+      } else {
+        try {
+          var xhr = new XMLHttpRequest();
+          xhr.open("GET", url, true);
+          xhr.responseType = "arraybuffer";
+          xhr.onload = function () {
+            if (xhr.status === 200 || xhr.status === 0) onSuccess(xhr.response);
+            else onError(new Error("XHR " + xhr.status));
+          };
+          xhr.onerror = function () { onError(new Error("XHR network error")); };
+          xhr.send();
+        } catch (e) { onError(e); }
+      }
+    }
+
+    function fetchAndDecodeAudio(url, onSuccess, onError) {
+      if (audioBufferCache[url]) {
+        onSuccess(audioBufferCache[url]);
+        return;
+      }
+      fetchArrayBuffer(url, function (arrayBuffer) {
+        var AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!audioContext && AudioCtx) {
+          try { audioContext = new AudioCtx(); } catch (e) {}
+        }
+        if (!audioContext) {
+          onError(new Error("No AudioContext available"));
+          return;
+        }
+        var decodeDone = false;
+        function handleSuccess(decodedBuffer) {
+          if (decodeDone) return;
+          decodeDone = true;
+          audioBufferCache[url] = decodedBuffer;
+          onSuccess(decodedBuffer);
+        }
+        function handleErr(err) {
+          if (decodeDone) return;
+          decodeDone = true;
+          onError(err || new Error("decodeAudioData failed"));
+        }
+        try {
+          var res = audioContext.decodeAudioData(arrayBuffer, handleSuccess, handleErr);
+          if (res && typeof res.then === "function") {
+            res.then(handleSuccess).catch(handleErr);
+          }
+        } catch (e) { handleErr(e); }
+      }, onError);
+    }
+
+    function getAudioUrl(filename) {
+      return "/tv/audio/te/" + filename;
+    }
+
+    function preloadCommonAudio() {
+      for (var i = 1; i <= 10; i++) {
+        var filename = (i < 10 ? "0" : "") + i + ".wav";
+        (function (fn) {
+          var url = getAudioUrl(fn);
+          if (!audioBufferCache[url]) {
+            fetchAndDecodeAudio(url, function () {}, function () {});
+          }
+        })(filename);
+      }
+    }
+
+    function startHeartbeat() {
+      if (heartbeatInterval) return;
+      heartbeatInterval = window.setInterval(function () {
+        if (!voiceSettings.enabled || !audioContext) return;
+        if (audioContext.state === "suspended") {
+          try { audioContext.resume(); } catch (e) {}
+        }
+        if (audioContext.state === "running") {
+          try {
+            var osc = audioContext.createOscillator();
+            var gain = audioContext.createGain();
+            gain.gain.value = 0.00001;
+            osc.connect(gain);
+            gain.connect(audioContext.destination);
+            var now = audioContext.currentTime;
+            osc.start(now);
+            osc.stop(now + 0.001);
+          } catch (e) {}
+        }
+      }, 15000);
+    }
+
+    function unlockAudio() {
+      var AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (AudioCtx) {
+        try {
+          if (!audioContext) audioContext = new AudioCtx();
+          if (audioContext.state === "suspended") {
+            audioContext.resume();
+          }
+          if (!isAudioUnlocked && audioContext.state === "running") {
+            var buffer = audioContext.createBuffer(1, 1, 22050);
+            var source = audioContext.createBufferSource();
+            source.buffer = buffer;
+            source.connect(audioContext.destination);
+            source.start(0);
+            isAudioUnlocked = true;
+          }
+          startHeartbeat();
+          preloadCommonAudio();
+        } catch (e) {}
+      }
+
+      if (!isHtmlAudioPrimed) {
+        try {
+          var pa = getPersistentAudio();
+          if (pa) {
+            pa.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA";
+            var p = pa.play();
+            if (p && typeof p.then === "function") {
+              p.then(function () {
+                pa.pause();
+                pa.currentTime = 0;
+                isHtmlAudioPrimed = true;
+              }).catch(function () {});
+            }
+          }
+        } catch (e) {}
+      }
+
+      if (audioUnlockOverlay) {
+        audioUnlockOverlay.classList.add("hidden");
+      }
+      updateVoiceControls();
+    }
+
+    function stopVoice() {
+      playbackSessionId++;
+      currentPlaylist = [];
+      playlistIndex = 0;
+      if (activeSourceNode) {
+        try {
+          activeSourceNode.onended = null;
+          activeSourceNode.stop(0);
+          activeSourceNode.disconnect();
+        } catch (e) {}
+        activeSourceNode = null;
+      }
+      if (activeAudio) {
+        activeAudio.onended = null;
+        activeAudio.onerror = null;
+        try {
+          activeAudio.pause();
+          activeAudio.currentTime = 0;
+        } catch (e) {}
+        activeAudio = null;
+      }
+    }
+
+    function setVoiceStatusText(text) {
+      if (voiceStatus) voiceStatus.textContent = text;
+    }
+
+    function updateVoiceControls() {
+      if (voiceToggle) {
+        voiceToggle.setAttribute("data-active", voiceSettings.enabled ? "true" : "false");
+        voiceToggle.textContent = voiceSettings.enabled ? "🔊 వాయిస్ ఆన్" : "🔇 వాయిస్ ఆఫ్";
+      }
+      if (testVoice) {
+        testVoice.disabled = !voiceSettings.enabled;
+      }
+      if (!voiceSettings.enabled) {
+        setVoiceStatusText("వాయిస్ ఆఫ్ చేయబడింది");
+      } else if (audioContext && audioContext.state === "running") {
+        setVoiceStatusText("తెలుగు వాయిస్ సిద్ధంగా ఉంది");
+      } else {
+        setVoiceStatusText("రిమోట్ బటన్ నొక్కండి (ఆడియో ఆక్టివేట్)");
+      }
+    }
+
+    function playSequence(urls, label) {
+      stopVoice();
+      if (!urls || !urls.length) return;
+      var thisSession = playbackSessionId;
+      currentPlaylist = urls;
+      playlistIndex = 0;
+      setVoiceStatusText(label || "వాయిస్ ప్లే అవుతోంది…");
+
+      if (audioContext && audioContext.state === "suspended") {
+        try { audioContext.resume(); } catch (e) {}
+      }
+
+      function playWithWebAudio(url, onEnd, onError) {
+        fetchAndDecodeAudio(url, function (buffer) {
+          if (thisSession !== playbackSessionId) return;
+          try {
+            var source = audioContext.createBufferSource();
+            source.buffer = buffer;
+            source.connect(audioContext.destination);
+            activeSourceNode = source;
+            source.onended = function () {
+              if (activeSourceNode === source) activeSourceNode = null;
+              onEnd();
+            };
+            source.start(0);
+          } catch (err) { onError(err); }
+        }, onError);
+      }
+
+      function playWithHtmlAudio(url, onEnd, onError) {
+        var audio = getPersistentAudio();
+        activeAudio = audio;
+        audio.onended = function () { activeAudio = null; onEnd(); };
+        audio.onerror = function (err) { activeAudio = null; onError(err); };
+        audio.src = url;
+        try {
+          var p = audio.play();
+          if (p && typeof p.catch === "function") {
+            p.catch(function (err) { activeAudio = null; onError(err); });
+          }
+        } catch (err) { activeAudio = null; onError(err); }
+      }
+
+      function playNext() {
+        if (thisSession !== playbackSessionId) return;
+        if (playlistIndex >= currentPlaylist.length) {
+          activeSourceNode = null;
+          activeAudio = null;
+          updateVoiceControls();
+          return;
+        }
+        var url = currentPlaylist[playlistIndex];
+        playlistIndex++;
+
+        if (audioContext && audioContext.state !== "closed") {
+          if (audioContext.state === "suspended") {
+            try { audioContext.resume(); } catch (e) {}
+          }
+          playWithWebAudio(url, function () {
+            if (thisSession === playbackSessionId) playNext();
+          }, function () {
+            playWithHtmlAudio(url, function () {
+              if (thisSession === playbackSessionId) playNext();
+            }, function () {
+              if (thisSession === playbackSessionId) playNext();
+            });
+          });
+        } else {
+          playWithHtmlAudio(url, function () {
+            if (thisSession === playbackSessionId) playNext();
+          }, function () {
+            if (thisSession === playbackSessionId) playNext();
+          });
+        }
+      }
+
+      playNext();
+    }
+
+    function announce(number) {
+      if (!voiceSettings.enabled) return;
+      var value = Number(number);
+      if (!isFinite(value) || value < 0) return;
+
+      var teluguSpelling = numberToTeluguWords(value);
+
+      if (value >= 1 && value <= 10 && Math.floor(value) === value) {
+        var filename = (value < 10 ? "0" : "") + value + ".wav";
+        playSequence([getAudioUrl(filename)], "నంబర్ " + value + " (" + teluguSpelling + ") పిలుస్తోంది…");
+        return;
+      }
+
+      if (value >= 11 && value <= 99 && Math.floor(value) === value) {
+        playSequence([getAudioUrl(value + ".mp3")], "నంబర్ " + value + " (" + teluguSpelling + ") పిలుస్తోంది…");
+        return;
+      }
+
+      var remainder = value % 100;
+      var urls = [];
+      if (remainder >= 11 && remainder <= 99) {
+        urls.push(getAudioUrl(remainder + ".mp3"));
+      } else if (remainder >= 1 && remainder <= 10) {
+        urls.push(getAudioUrl((remainder < 10 ? "0" : "") + remainder + ".wav"));
+      }
+
+      if (urls.length > 0) {
+        playSequence(urls, "నంబర్ " + value + " (" + teluguSpelling + ") పిలుస్తోంది…");
+      }
+    }
+
+    function connect() {
+      if (stopped) return;
+      if (socket) {
+        try { socket.close(); } catch (e) {}
+        socket = null;
+      }
+
+      if (connectionStatus) connectionStatus.textContent = "సర్వర్‌కి కనెక్ట్ అవుతోంది…";
+      var protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+      var url = protocol + "//" + window.location.host + "/ws?role=display-v18";
+      var currentSocket;
+
+      try {
+        currentSocket = new window.WebSocket(url);
+        socket = currentSocket;
+      } catch (e) {
+        if (connectionStatus) connectionStatus.textContent = "కనెక్ట్ కాలేదు · మళ్లీ ప్రయత్నిస్తోంది";
+        scheduleReconnect();
+        return;
+      }
+
+      currentSocket.onopen = function () {
+        if (socket !== currentSocket) return;
+        retryDelay = 2000;
+        if (connectionStatus) connectionStatus.textContent = "డిస్‌ప్లే కనెక్ట్ అయింది";
+      };
+
+      currentSocket.onmessage = function (event) {
+        if (socket !== currentSocket) return;
+        var message;
+        try {
+          message = JSON.parse(event.data);
+        } catch (e) { return; }
+
+        if (message.type !== "state") return;
+        announcement = message.announcement || null;
+        render();
+
+        if (connectionStatus) {
+          connectionStatus.textContent = "డిస్‌ప్లే కనెక్ట్ అయింది";
+        }
+
+        if (message.cause === "call" && message.announcement && message.announcement.number) {
+          var callKey = message.announcement.number + "#" + (message.announcement.sentAt || 0);
+          if (lastAnnouncedCallKey !== callKey) {
+            lastAnnouncedCallKey = callKey;
+            if (audioContext && audioContext.state === "suspended") {
+              try { audioContext.resume(); } catch (e) {}
+            }
+            announce(message.announcement.number);
+          }
+        }
+      };
+
+      currentSocket.onerror = function () {
+        if (socket === currentSocket && connectionStatus) {
+          connectionStatus.textContent = "కనెక్షన్ సమస్య · మళ్లీ ప్రయత్నిస్తోంది";
+        }
+      };
+
+      currentSocket.onclose = function () {
+        if (socket !== currentSocket || stopped) return;
+        socket = null;
+        if (connectionStatus) connectionStatus.textContent = "డిస్‌కనెక్ట్ అయింది · మళ్లీ కనెక్ట్ అవుతోంది…";
+        scheduleReconnect();
+      };
+    }
+
+    function scheduleReconnect() {
+      if (stopped || retryTimer) return;
+      retryTimer = window.setTimeout(function () {
+        retryTimer = null;
+        connect();
+      }, retryDelay);
+      retryDelay = Math.min(30000, Math.round(retryDelay * 1.7));
+    }
+
+    if (voiceToggle) {
+      voiceToggle.onclick = function () {
+        unlockAudio();
+        voiceSettings.enabled = !voiceSettings.enabled;
+        updateVoiceControls();
+        if (voiceSettings.enabled) {
+          announce(1);
+        } else {
+          stopVoice();
+        }
+      };
+    }
+
+    if (testVoice) {
+      testVoice.onclick = function () {
+        unlockAudio();
+        announce(1);
+      };
+    }
+
+    if (audioUnlockOverlay) {
+      audioUnlockOverlay.onclick = function () {
+        unlockAudio();
+      };
+    }
+
+    var unlockEvents = ["click", "keydown", "keyup", "touchstart", "touchend", "pointerdown", "mousedown"];
+    unlockEvents.forEach(function (eventName) {
+      window.addEventListener(eventName, function () {
+        unlockAudio();
+      }, { passive: true });
+    });
+
+    window.addEventListener("beforeunload", function () {
+      stopped = true;
+      if (retryTimer) window.clearTimeout(retryTimer);
+      if (heartbeatInterval) window.clearInterval(heartbeatInterval);
+      if (socket) {
+        try { socket.close(); } catch (e) {}
+      }
+      stopVoice();
+    });
+
+    var AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (AudioCtx) {
+      try {
+        audioContext = new AudioCtx();
+        if (audioContext.state === "suspended" && audioUnlockOverlay) {
+          audioUnlockOverlay.classList.remove("hidden");
+        }
+      } catch (e) {}
+    }
+
+    updateVoiceControls();
+    render();
+    window.setInterval(render, 1000);
+    connect();
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="te">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#07111e">
+  <title>CareCall TV Audio Test — Foxsky & Android TV</title>
+  <style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body {
+      margin: 0; padding: 0; width: 100%; height: 100%; min-height: 100vh;
+      overflow: hidden !important; background: #06101c radial-gradient(ellipse at 50% 40%, #132a45 0%, #081726 60%, #040a12 100%);
+      color: #ffffff; font-family: system-ui, -apple-system, sans-serif;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; -webkit-user-select: none; user-select: none;
+    }
+    .tv-test-card {
+      background: rgba(15, 23, 42, 0.92); border: 2px solid #38bdf8;
+      border-radius: 28px; padding: 36px 48px; max-width: 800px; width: 90%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+    }
+    .badge {
+      display: inline-block; padding: 6px 18px; border-radius: 999px;
+      background: rgba(56, 189, 248, 0.18); color: #7dd3fc; border: 1px solid rgba(56, 189, 248, 0.4);
+      font-weight: 800; font-size: 15px; text-transform: uppercase; margin-bottom: 16px;
+    }
+    h1 { margin: 0 0 10px; font-size: 32px; font-weight: 900; }
+    p { color: #94a3b8; font-size: 18px; line-height: 1.5; margin: 0 0 28px; }
+    .btn-row { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 24px; }
+    .tv-btn {
+      background: #0284c7; color: #ffffff; border: 2px solid #38bdf8;
+      border-radius: 999px; padding: 14px 32px; font-size: 20px; font-weight: 800;
+      cursor: pointer; transition: transform 0.15s, background 0.15s;
+    }
+    .tv-btn:hover, .tv-btn:focus {
+      background: #0369a1; transform: scale(1.06); outline: 3px solid #7dd3fc;
+    }
+    .tv-btn.secondary {
+      background: #1e293b; border-color: #475569; color: #e2e8f0;
+    }
+    .tv-btn.secondary:hover, .tv-btn.secondary:focus {
+      border-color: #a78bfa; background: #2e1065;
+    }
+    .status-box {
+      background: rgba(7, 17, 29, 0.8); border: 1px solid #334e68;
+      border-radius: 14px; padding: 14px 20px; font-size: 18px; color: #38bdf8;
+      font-weight: 700; margin-bottom: 24px; min-height: 52px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .nav-back {
+      text-decoration: none; color: #94a3b8; font-size: 17px; font-weight: 700;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .nav-back:hover, .nav-back:focus { color: #ffffff; }
+  </style>
+</head>
+<body>
+  <div class="tv-test-card">
+    <span class="badge">టీవీ ఆడియో చెక్ · TV Speaker Test</span>
+    <h1>స్పీకర్ సౌండ్ డయాగ్నొస్టిక్స్</h1>
+    <p>రిమోట్ కంట్రోల్ బటన్ ఉపయోగించి కింద ఇచ్చిన టెస్ట్ బటన్లను నొక్కండి.</p>
+
+    <div class="status-box" id="statusBox">సిద్ధంగా ఉంది · రిమోట్ బటన్ నొక్కండి</div>
+
+    <div class="btn-row">
+      <button class="tv-btn" id="btnTestSingle" type="button">🔊 టెస్ట్ 1: సింగిల్ క్లిప్ (01.wav)</button>
+      <button class="tv-btn secondary" id="btnTestChain" type="button">🎵 టెస్ట్ 2: సీక్వెన్స్ (1 + 12)</button>
+    </div>
+
+    <div>
+      <a href="/tv/" class="nav-back">← 📺 టీవీ డిస్‌ప్లే స్క్రీన్‌కి తిరిగి వెళ్ళండి</a>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      var statusBox = document.getElementById("statusBox");
+      var btnSingle = document.getElementById("btnTestSingle");
+      var btnChain = document.getElementById("btnTestChain");
+      var audioCtx = null;
+
+      function getAudioContext() {
+        if (!audioCtx) {
+          var Audio = window.AudioContext || window.webkitAudioContext;
+          if (Audio) audioCtx = new Audio();
+        }
+        if (audioCtx && audioCtx.state === "suspended") {
+          audioCtx.resume();
+        }
+        return audioCtx;
+      }
+
+      function playBuffer(url, onEnd) {
+        var ctx = getAudioContext();
+        if (!ctx) {
+          statusBox.textContent = "ఈ టీవీలో Web Audio అందుబాటులో లేదు";
+          return;
+        }
+        statusBox.textContent = "ఆడియో లోడ్ అవుతోంది: " + url.split("/").pop();
+        fetch(url)
+          .then(function(res) { return res.arrayBuffer(); })
+          .then(function(buf) { return ctx.decodeAudioData(buf); })
+          .then(function(decoded) {
+            var src = ctx.createBufferSource();
+            src.buffer = decoded;
+            src.connect(ctx.destination);
+            src.onended = onEnd;
+            src.start(0);
+            statusBox.textContent = "🔊 ఆడియో ప్లే అవుతోంది...";
+          })
+          .catch(function(err) {
+            statusBox.textContent = "ఆడియో ప్లే కాలేదు: " + err.message;
+          });
+      }
+
+      btnSingle.onclick = function() {
+        playBuffer("/tv/audio/te/01.wav", function() {
+          statusBox.textContent = "✅ టెస్ట్ 1 విజయవంతమైంది (01.wav పూర్తయింది)";
+        });
+      };
+
+      btnChain.onclick = function() {
+        playBuffer("/tv/audio/te/01.wav", function() {
+          statusBox.textContent = "క్లిప్ 2 ప్లే అవుతోంది...";
+          playBuffer("/tv/audio/te/12.mp3", function() {
+            statusBox.textContent = "✅ టెస్ట్ 2 విజయవంతమైంది (సీక్వెన్స్ పూర్తయింది)";
+          });
+        });
+      };
+    })();
+  </script>
+</body>
+</html>

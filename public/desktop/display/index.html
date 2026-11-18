@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="te">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#07111d">
+  <title>CareCall డెస్క్‌టాప్ డిస్‌ప్లే — తెలుగు</title>
+  <link rel="stylesheet" href="./css/style.css?v=18.2">
+</head>
+<body class="v18-display-page" id="displayApp">
+  <header class="display-topbar">
+    <div id="connectionStatus" class="display-connection-status" role="status">సర్వర్‌కి కనెక్ట్ అవుతోంది…</div>
+    <div style="display: flex; gap: 8px; align-items: center;">
+      <a href="/desktop/" class="home-nav-button" title="డెస్క్‌టాప్ హబ్‌కి వెళ్ళండి">🖥️ డెస్క్‌టాప్</a>
+      <a href="/tv/" class="home-nav-button" title="టీవీ స్క్రీన్‌కి వెళ్ళండి">📺 టీవీ</a>
+      <a href="/" class="home-nav-button" title="హోమ్ మెనూకి వెళ్ళండి">🏠 హోమ్</a>
+    </div>
+  </header>
+  <main class="display-view display-fullscreen" id="displayView" data-display-view aria-label="ప్రస్తుత నంబర్ మరియు గడిచిన సమయం">
+    <div class="display-number-card">
+      <div class="display-number" data-display-number aria-live="polite"></div>
+      <div class="display-telugu-spelling" data-display-spelling aria-live="polite"></div>
+    </div>
+    <p class="display-elapsed" data-display-elapsed aria-live="off">తదుపరి కాల్ కోసం వేచి ఉంది</p>
+  </main>
+  <section class="voice-controls" aria-label="డిస్‌ప్లే వాయిస్ సెట్టింగ్‌లు">
+    <button class="voice-button" id="voiceToggle" type="button" aria-pressed="false">వాయిస్ ఆఫ్</button>
+    <button class="voice-test-button" id="testVoice" type="button" disabled>వాయిస్ టెస్ట్</button>
+    <span class="voice-status" id="voiceStatus" role="status" aria-live="polite">వాయిస్ ఆఫ్ చేయబడింది</span>
+  </section>
+  <audio id="persistentVoiceAudio" preload="auto" playsinline style="display:none"></audio>
+  <script src="./display.js?v=18.1" defer></script>
+</body>
+</html>
