@@ -2,13 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="theme-color" content="#07131d" />
     <title>CareCall | Versions Hub</title>
     <style>
       :root {
         --bg: #07131d;
-        --bg-card: rgba(15, 23, 42, 0.85);
+        --bg-card: rgba(15, 23, 42, 0.88);
         --border: rgba(148, 163, 184, 0.18);
         --primary: #38bdf8;
         --accent: #34d399;
@@ -18,26 +18,39 @@
 
       * { box-sizing: border-box; }
 
+      /* Guaranteed Zero-Scroll TV Viewport Fit */
       html, body {
+        width: 100%;
+        height: 100%;
+        height: 100vh;
+        height: 100dvh;
         margin: 0;
-        min-height: 100vh;
+        padding: 0;
+        overflow: hidden !important;
         font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         background:
-          radial-gradient(circle at 50% 10%, rgba(52, 211, 153, 0.12), transparent 40%),
+          radial-gradient(circle at 50% 10%, rgba(52, 211, 153, 0.12), transparent 45%),
           linear-gradient(170deg, var(--bg) 0%, #0b1926 50%, #07111a 100%);
         color: var(--text);
-        padding: 30px 20px;
+      }
+
+      body {
         display: flex;
-        flex-direction: column;
         align-items: center;
+        justify-content: center;
+        padding: clamp(8px, 1.8vh, 18px) clamp(10px, 2vw, 24px);
       }
 
       .shell {
         width: min(1080px, 100%);
+        height: 100%;
+        max-height: 100%;
         background: var(--bg-card);
         border: 1px solid var(--border);
-        border-radius: 28px;
-        box-shadow: 0 35px 80px rgba(0, 0, 0, 0.6);
+        border-radius: clamp(14px, 2vw, 24px);
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65);
+        display: flex;
+        flex-direction: column;
         overflow: hidden;
         backdrop-filter: blur(12px);
       }
@@ -46,33 +59,33 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 20px 32px;
+        padding: clamp(8px, 1.4vh, 14px) clamp(16px, 2.5vw, 28px);
         border-bottom: 1px solid var(--border);
-        background: rgba(10, 18, 30, 0.7);
+        background: rgba(10, 18, 30, 0.75);
+        flex-shrink: 0;
       }
 
       .nav-left {
         display: flex;
         align-items: center;
-        gap: 14px;
+        gap: 12px;
       }
 
       .brand-mark {
         display: grid;
         place-items: center;
-        width: 36px;
-        height: 36px;
-        border-radius: 10px;
+        width: clamp(28px, 3.8vh, 34px);
+        height: clamp(28px, 3.8vh, 34px);
+        border-radius: 9px;
         background: linear-gradient(135deg, var(--accent), var(--primary));
         color: #022c22;
-        font-size: 1.15rem;
+        font-size: clamp(1rem, 2vh, 1.15rem);
         font-weight: 800;
       }
 
       .breadcrumb {
         font-weight: 700;
-        font-size: 1.1rem;
-        letter-spacing: 0.02em;
+        font-size: clamp(0.95rem, 1.8vh, 1.1rem);
       }
 
       .breadcrumb span {
@@ -84,13 +97,13 @@
         color: var(--text);
         background: rgba(30, 41, 59, 0.8);
         border: 1px solid var(--border);
-        padding: 8px 16px;
-        border-radius: 12px;
-        font-size: 0.9rem;
+        padding: clamp(5px, 0.8vh, 8px) clamp(10px, 1.5vw, 14px);
+        border-radius: 10px;
+        font-size: clamp(0.75rem, 1.2vh, 0.85rem);
         font-weight: 600;
         display: inline-flex;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
         transition: background 0.15s, border-color 0.15s;
       }
 
@@ -100,57 +113,67 @@
       }
 
       .content {
-        padding: 40px 36px 36px;
+        padding: clamp(8px, 1.6vh, 18px) clamp(14px, 2.5vw, 28px);
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
       }
 
       .header-area {
-        margin-bottom: 35px;
+        flex-shrink: 0;
+        margin-bottom: clamp(6px, 1vh, 12px);
       }
 
       .eyebrow {
-        margin: 0 0 10px;
+        margin: 0 0 clamp(2px, 0.4vh, 4px);
         color: var(--accent);
-        letter-spacing: 0.15em;
-        font-size: 0.8rem;
+        letter-spacing: 0.14em;
+        font-size: clamp(0.68rem, 1vh, 0.75rem);
         text-transform: uppercase;
         font-weight: 700;
       }
 
       h1 {
-        margin: 0 0 12px;
-        font-size: 2.4rem;
+        margin: 0 0 clamp(3px, 0.6vh, 6px);
+        font-size: clamp(1.3rem, 2.8vh, 2rem);
         letter-spacing: -0.03em;
         font-weight: 800;
+        line-height: 1.15;
       }
 
       .lead {
         margin: 0;
         color: var(--muted);
-        font-size: 1.05rem;
-        line-height: 1.6;
-        max-width: 760px;
+        font-size: clamp(0.8rem, 1.3vh, 0.92rem);
+        line-height: 1.4;
       }
 
       .versions-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(460px, 1fr));
-        gap: 24px;
-        margin-bottom: 35px;
+        grid-template-columns: 1fr 1fr;
+        gap: clamp(8px, 1.4vh, 14px);
+        flex: 1;
+        min-height: 0;
+        margin-bottom: clamp(6px, 1vh, 12px);
       }
 
       .version-card {
         background: rgba(18, 30, 49, 0.55);
         border: 2px solid var(--border);
-        border-radius: 22px;
-        padding: 28px 24px;
+        border-radius: clamp(12px, 1.6vw, 16px);
+        padding: clamp(8px, 1.4vh, 16px) clamp(12px, 1.8vw, 18px);
         display: flex;
         flex-direction: column;
-        transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+        justify-content: space-between;
+        min-height: 0;
+        transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
       }
 
       .version-card:hover {
         border-color: var(--accent);
-        box-shadow: 0 18px 40px rgba(52, 211, 153, 0.12);
+        box-shadow: 0 12px 30px rgba(52, 211, 153, 0.12);
         background: rgba(22, 38, 62, 0.8);
       }
 
@@ -162,31 +185,28 @@
       .card-header {
         display: flex;
         justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 12px;
+        align-items: center;
+        margin-bottom: clamp(4px, 0.6vh, 8px);
+        flex-shrink: 0;
       }
 
       .version-title {
-        font-size: 1.6rem;
+        font-size: clamp(1.1rem, 2vh, 1.4rem);
         font-weight: 800;
         margin: 0;
-        display: flex;
-        align-items: center;
-        gap: 10px;
       }
 
       .badges-wrap {
         display: flex;
         gap: 6px;
-        flex-wrap: wrap;
       }
 
       .badge {
-        font-size: 0.72rem;
+        font-size: clamp(0.62rem, 0.9vh, 0.7rem);
         font-weight: 700;
         letter-spacing: 0.08em;
         text-transform: uppercase;
-        padding: 4px 10px;
+        padding: clamp(2px, 0.4vh, 4px) clamp(6px, 1vw, 10px);
         border-radius: 999px;
       }
 
@@ -210,31 +230,36 @@
 
       .version-desc {
         color: var(--muted);
-        font-size: 0.95rem;
-        line-height: 1.5;
-        margin: 0 0 24px;
+        font-size: clamp(0.74rem, 1.15vh, 0.84rem);
+        line-height: 1.35;
+        margin: 0 0 clamp(6px, 1vh, 10px);
         flex-grow: 1;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
       }
 
       .button-row {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 12px;
-        margin-bottom: 12px;
+        gap: clamp(6px, 1vw, 10px);
+        margin-bottom: clamp(3px, 0.6vh, 6px);
+        flex-shrink: 0;
       }
 
       .role-btn {
         text-decoration: none;
-        padding: 12px 14px;
-        border-radius: 12px;
+        padding: clamp(6px, 0.9vh, 9px) clamp(8px, 1.2vw, 12px);
+        border-radius: 9px;
         font-weight: 700;
-        font-size: 0.95rem;
+        font-size: clamp(0.75rem, 1.2vh, 0.88rem);
         text-align: center;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
-        transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+        gap: 5px;
+        transition: transform 0.12s ease, background 0.12s ease;
       }
 
       .role-doctor {
@@ -245,7 +270,6 @@
 
       .role-doctor:hover {
         background: #0369a1;
-        transform: translateY(-2px);
       }
 
       .role-display {
@@ -256,19 +280,18 @@
 
       .role-display:hover {
         background: #047857;
-        transform: translateY(-2px);
       }
 
       .version-menu-link {
         text-decoration: none;
         color: var(--primary);
-        font-size: 0.9rem;
+        font-size: clamp(0.72rem, 1.1vh, 0.82rem);
         font-weight: 600;
         text-align: center;
-        padding: 8px;
-        border-radius: 8px;
-        transition: background 0.15s ease;
+        padding: 3px;
+        border-radius: 6px;
         display: block;
+        flex-shrink: 0;
       }
 
       .version-menu-link:hover {
@@ -278,22 +301,18 @@
       .bottom-nav {
         display: flex;
         justify-content: flex-start;
-        padding-top: 20px;
+        padding-top: clamp(6px, 1vh, 10px);
         border-top: 1px solid var(--border);
+        flex-shrink: 0;
       }
 
-      @media (max-width: 640px) {
+      @media (max-width: 680px) {
         .versions-grid {
           grid-template-columns: 1fr;
+          overflow-y: auto; /* Fallback for very small phone screens */
         }
-        .button-row {
-          grid-template-columns: 1fr;
-        }
-        .topbar {
-          padding: 16px 20px;
-        }
-        .content {
-          padding: 24px 20px;
+        .version-desc {
+          display: none;
         }
       }
     </style>
@@ -313,7 +332,7 @@
           <p class="eyebrow">Production Releases & Roadmap</p>
           <h1>Application Versions</h1>
           <p class="lead">
-            Select a version to open either its Doctor Console or TV Display Screen. Each version is fully self-contained with its own autonomous architecture.
+            Select a version to open its Doctor Console or TV Display Screen. Fully autonomous architecture.
           </p>
         </div>
 
@@ -321,83 +340,75 @@
           <!-- V18: Current Stable -->
           <div class="version-card highlight">
             <div class="card-header">
-              <h2 class="version-title">
-                <span>V18</span>
-              </h2>
+              <h2 class="version-title">V18</h2>
               <div class="badges-wrap">
-                <span class="badge badge-stable">Stable Active</span>
+                <span class="badge badge-stable">Stable</span>
                 <span class="badge badge-stable">TV Audio Fixed</span>
               </div>
             </div>
             <p class="version-desc">
-              Verified TV Audio playback engine using Web Audio API buffer sources, automated audio keep-alive heartbeat, and persistent HTML5 audio fallback for Telugu voice calls.
+              Verified Web Audio API engine, auto-heartbeat, persistent fallback, and Telugu voice announcements.
             </p>
             <div class="button-row">
-              <a class="role-btn role-doctor" href="/v18/doctor/">👨‍⚕️ Doctor Console</a>
-              <a class="role-btn role-display" href="/v18/display/">📺 TV Display</a>
+              <a class="role-btn role-doctor" href="/v18/doctor/">👨‍⚕️ Doctor</a>
+              <a class="role-btn role-display" href="/v18/display/">📺 Display</a>
             </div>
-            <a class="version-menu-link" href="/v18/">Open V18 Menu Page →</a>
+            <a class="version-menu-link" href="/v18/">Open V18 Menu →</a>
           </div>
 
           <!-- V19: Next-Gen UI (In Development) -->
           <div class="version-card">
             <div class="card-header">
-              <h2 class="version-title">
-                <span>V19</span>
-              </h2>
+              <h2 class="version-title">V19</h2>
               <div class="badges-wrap">
-                <span class="badge badge-upcoming">In Development</span>
-                <span class="badge badge-upcoming">Ready for Custom UI</span>
+                <span class="badge badge-upcoming">Development</span>
+                <span class="badge badge-upcoming">New UI Ready</span>
               </div>
             </div>
             <p class="version-desc">
-              Next-generation screen framework. Clean autonomous skeleton with TV audio engine pre-wired, ready to receive your custom UI redesign and layouts.
+              Next-generation screen framework. Pre-wired with the TV audio engine, ready for custom UI modifications.
             </p>
             <div class="button-row">
-              <a class="role-btn role-doctor" href="/v19/doctor/">👨‍⚕️ Doctor Console</a>
-              <a class="role-btn role-display" href="/v19/display/">📺 TV Display</a>
+              <a class="role-btn role-doctor" href="/v19/doctor/">👨‍⚕️ Doctor</a>
+              <a class="role-btn role-display" href="/v19/display/">📺 Display</a>
             </div>
-            <a class="version-menu-link" href="/v19/">Open V19 Menu Page →</a>
+            <a class="version-menu-link" href="/v19/">Open V19 Menu →</a>
           </div>
 
           <!-- V17: Previous Generation -->
           <div class="version-card">
             <div class="card-header">
-              <h2 class="version-title">
-                <span>V17</span>
-              </h2>
+              <h2 class="version-title">V17</h2>
               <div class="badges-wrap">
                 <span class="badge badge-legacy">Previous Gen</span>
               </div>
             </div>
             <p class="version-desc">
-              First autonomous folder release with zero shared dependencies. Maintained for legacy reference and comparison.
+              First autonomous folder release with zero shared dependencies. Maintained for legacy reference.
             </p>
             <div class="button-row">
-              <a class="role-btn role-doctor" href="/v17/doctor/">👨‍⚕️ Doctor Console</a>
-              <a class="role-btn role-display" href="/v17/display/">📺 Display Screen</a>
+              <a class="role-btn role-doctor" href="/v17/doctor/">👨‍⚕️ Doctor</a>
+              <a class="role-btn role-display" href="/v17/display/">📺 Display</a>
             </div>
-            <a class="version-menu-link" href="/v17/">Open V17 Menu Page →</a>
+            <a class="version-menu-link" href="/v17/">Open V17 Menu →</a>
           </div>
 
           <!-- V20: Future Roadmap -->
           <div class="version-card">
             <div class="card-header">
-              <h2 class="version-title">
-                <span>V20</span>
-              </h2>
+              <h2 class="version-title">V20</h2>
               <div class="badges-wrap">
                 <span class="badge badge-legacy">Roadmap</span>
               </div>
             </div>
             <p class="version-desc">
-              Planned multi-room calling, doctor room routing, bilingual audio synthesis (Telugu + English), and multi-counter display support.
+              Planned multi-room consultation calling, doctor room routing, and bilingual audio synthesis.
             </p>
             <div class="button-row">
-              <a class="role-btn role-doctor" href="/v20/doctor/">👨‍⚕️ Doctor (Preview)</a>
-              <a class="role-btn role-display" href="/v20/display/">📺 Display (Preview)</a>
+              <a class="role-btn role-doctor" href="/v20/doctor/">👨‍⚕️ Doctor</a>
+              <a class="role-btn role-display" href="/v20/display/">📺 Display</a>
             </div>
-            <a class="version-menu-link" href="/v20/">Open V20 Roadmap Page →</a>
+            <a class="version-menu-link" href="/v20/">Open V20 Roadmap →</a>
           </div>
         </div>
 

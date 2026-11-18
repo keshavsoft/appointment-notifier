@@ -3,6 +3,8 @@
    Doctor page container, doctor-app flex layout, responsive paddings
    ========================================================================== */
 
+.v19-doctor-page,
+.v18-doctor-page,
 .v17-doctor-page,
 .v4-doctor-page {
   min-height: 100vh;
