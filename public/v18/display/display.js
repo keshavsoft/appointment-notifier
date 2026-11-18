@@ -17,13 +17,20 @@
   var stopped = false;
   var lastAnnouncedCallKey = null;
 
-  var settingsKey = "carecall-v17-display-voice-telugu";
+  var settingsKey = "carecall-v18-display-voice-telugu";
+  var legacySettingsKey = "carecall-v17-display-voice-telugu";
   var voiceSettings = { enabled: false, language: "te-IN" };
   var activeAudio = null;
+  var activeSourceNode = null;
+  var audioBufferCache = {};
   var currentPlaylist = [];
   var playlistIndex = 0;
   var playbackSessionId = 0;
   var audioContext = null;
+  var persistentAudio = null;
+  var isAudioUnlocked = false;
+  var isHtmlAudioPrimed = false;
+  var heartbeatInterval = null;
 
   function setText(element, value) {
     if (element) element.textContent = value;
@@ -93,9 +100,128 @@
     elapsedElement.textContent = elapsedText(new Date().getTime() - sentAt) + " క్రితం పిలవబడింది";
   }
 
+  function getPersistentAudio() {
+    if (!persistentAudio) {
+      persistentAudio = document.getElementById("persistentVoiceAudio");
+      if (!persistentAudio) {
+        persistentAudio = document.createElement("audio");
+        persistentAudio.id = "persistentVoiceAudio";
+        persistentAudio.preload = "auto";
+        persistentAudio.setAttribute("playsinline", "");
+        persistentAudio.style.display = "none";
+        document.body.appendChild(persistentAudio);
+      }
+    }
+    return persistentAudio;
+  }
+
+  function fetchArrayBuffer(url, onSuccess, onError) {
+    if (typeof window.fetch === "function") {
+      window.fetch(url)
+        .then(function (res) {
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          return res.arrayBuffer();
+        })
+        .then(onSuccess)
+        .catch(onError);
+    } else {
+      try {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", url, true);
+        xhr.responseType = "arraybuffer";
+        xhr.onload = function () {
+          if (xhr.status === 200 || xhr.status === 0) {
+            onSuccess(xhr.response);
+          } else {
+            onError(new Error("XHR " + xhr.status));
+          }
+        };
+        xhr.onerror = function (e) {
+          onError(new Error("XHR network error"));
+        };
+        xhr.send();
+      } catch (e) {
+        onError(e);
+      }
+    }
+  }
+
+  function fetchAndDecodeAudio(url, onSuccess, onError) {
+    if (audioBufferCache[url]) {
+      onSuccess(audioBufferCache[url]);
+      return;
+    }
+    fetchArrayBuffer(url, function (arrayBuffer) {
+      var AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!audioContext && AudioCtx) {
+        try { audioContext = new AudioCtx(); } catch (e) {}
+      }
+      if (!audioContext) {
+        onError(new Error("No AudioContext available"));
+        return;
+      }
+      var decodeDone = false;
+      function handleSuccess(decodedBuffer) {
+        if (decodeDone) return;
+        decodeDone = true;
+        audioBufferCache[url] = decodedBuffer;
+        onSuccess(decodedBuffer);
+      }
+      function handleErr(err) {
+        if (decodeDone) return;
+        decodeDone = true;
+        onError(err || new Error("decodeAudioData failed"));
+      }
+      try {
+        var res = audioContext.decodeAudioData(arrayBuffer, handleSuccess, handleErr);
+        if (res && typeof res.then === "function") {
+          res.then(handleSuccess).catch(handleErr);
+        }
+      } catch (e) {
+        handleErr(e);
+      }
+    }, onError);
+  }
+
+  function preloadCommonAudio() {
+    for (var i = 1; i <= 10; i++) {
+      var filename = (i < 10 ? "0" : "") + i + ".wav";
+      (function (fn) {
+        var url = getAudioUrl(fn);
+        if (!audioBufferCache[url]) {
+          fetchAndDecodeAudio(url, function () {}, function () {});
+        }
+      })(filename);
+    }
+  }
+
+  function startHeartbeat() {
+    if (heartbeatInterval) return;
+    heartbeatInterval = window.setInterval(function () {
+      if (!voiceSettings.enabled || !audioContext) return;
+      if (audioContext.state === "suspended") {
+        try { audioContext.resume(); } catch (e) {}
+      }
+      if (audioContext.state === "running") {
+        try {
+          var osc = audioContext.createOscillator();
+          var gain = audioContext.createGain();
+          gain.gain.value = 0.00001;
+          osc.connect(gain);
+          gain.connect(audioContext.destination);
+          var now = audioContext.currentTime;
+          osc.start(now);
+          osc.stop(now + 0.001);
+        } catch (e) {}
+      }
+    }, 15000);
+  }
+
   function readSettings() {
     try {
-      var parsed = JSON.parse(window.localStorage.getItem(settingsKey) || "{}");
+      var saved = window.localStorage.getItem(settingsKey) ||
+                  window.localStorage.getItem(legacySettingsKey) || "{}";
+      var parsed = JSON.parse(saved);
       voiceSettings.enabled = parsed.enabled === true;
       voiceSettings.language = "te-IN";
     } catch (e) {
@@ -105,7 +231,9 @@
 
   function saveSettings() {
     try {
-      window.localStorage.setItem(settingsKey, JSON.stringify(voiceSettings));
+      var val = JSON.stringify(voiceSettings);
+      window.localStorage.setItem(settingsKey, val);
+      window.localStorage.setItem(legacySettingsKey, val);
     } catch (e) {}
   }
 
@@ -114,20 +242,52 @@
     if (AudioCtx) {
       try {
         if (!audioContext) audioContext = new AudioCtx();
-        if (audioContext.state === "suspended") audioContext.resume();
-        var buffer = audioContext.createBuffer(1, 1, 22050);
-        var source = audioContext.createBufferSource();
-        source.buffer = buffer;
-        source.connect(audioContext.destination);
-        source.start(0);
+        if (audioContext.state === "suspended") {
+          audioContext.resume();
+        }
+        if (!isAudioUnlocked && audioContext.state === "running") {
+          var buffer = audioContext.createBuffer(1, 1, 22050);
+          var source = audioContext.createBufferSource();
+          source.buffer = buffer;
+          source.connect(audioContext.destination);
+          source.start(0);
+          isAudioUnlocked = true;
+        }
+        startHeartbeat();
+        preloadCommonAudio();
       } catch (e) {}
     }
+
+    if (!isHtmlAudioPrimed) {
+      try {
+        var pa = getPersistentAudio();
+        pa.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA";
+        var p = pa.play();
+        if (p && typeof p.then === "function") {
+          p.then(function () {
+            pa.pause();
+            pa.currentTime = 0;
+            isHtmlAudioPrimed = true;
+          }).catch(function () {});
+        }
+      } catch (e) {}
+    }
+
+    updateVoiceControls();
   }
 
   function stopVoice() {
     playbackSessionId++;
     currentPlaylist = [];
     playlistIndex = 0;
+    if (activeSourceNode) {
+      try {
+        activeSourceNode.onended = null;
+        activeSourceNode.stop(0);
+        activeSourceNode.disconnect();
+      } catch (e) {}
+      activeSourceNode = null;
+    }
     if (activeAudio) {
       activeAudio.onended = null;
       activeAudio.onerror = null;
@@ -144,7 +304,9 @@
   }
 
   function updateVoiceControls() {
-    var available = typeof window.Audio !== "undefined";
+    var available = typeof window.Audio !== "undefined" ||
+                    typeof window.AudioContext !== "undefined" ||
+                    typeof window.webkitAudioContext !== "undefined";
     if (voiceToggle) {
       voiceToggle.setAttribute("aria-pressed", voiceSettings.enabled ? "true" : "false");
       voiceToggle.textContent = voiceSettings.enabled ? "వాయిస్ ఆన్" : "వాయిస్ ఆఫ్";
@@ -153,9 +315,15 @@
     if (testVoice) {
       testVoice.disabled = !available || !voiceSettings.enabled;
     }
-    setVoiceStatusText(!available
-      ? "ఈ బ్రౌజర్‌లో ఆడియో అందుబాటులో లేదు."
-      : (voiceSettings.enabled ? "తెలుగు వాయిస్ సిద్ధంగా ఉంది" : "వాయిస్ ఆఫ్ చేయబడింది"));
+    if (!available) {
+      setVoiceStatusText("ఈ బ్రౌజర్‌లో ఆడియో అందుబాటులో లేదు.");
+    } else if (!voiceSettings.enabled) {
+      setVoiceStatusText("వాయిస్ ఆఫ్ చేయబడింది");
+    } else if (audioContext && audioContext.state === "running") {
+      setVoiceStatusText("తెలుగు వాయిస్ సిద్ధంగా ఉంది");
+    } else {
+      setVoiceStatusText("వాయిస్ సిద్ధం · దయచేసి రిమోట్ బటన్ నొక్కండి");
+    }
   }
 
   function getAudioUrl(filename) {
@@ -164,43 +332,103 @@
 
   function playSequence(urls, label) {
     stopVoice();
-    if (!urls.length) return;
+    if (!urls || !urls.length) return;
     var thisSession = playbackSessionId;
     currentPlaylist = urls;
     playlistIndex = 0;
     setVoiceStatusText(label || "వాయిస్ ప్లే అవుతోంది…");
 
-    function playNext() {
-      if (thisSession !== playbackSessionId) return;
-      if (playlistIndex >= currentPlaylist.length) {
-        activeAudio = null;
-        setVoiceStatusText(voiceSettings.enabled ? "తెలుగు వాయిస్ సిద్ధంగా ఉంది" : "వాయిస్ ఆఫ్ చేయబడింది");
-        return;
-      }
-      var url = currentPlaylist[playlistIndex];
-      playlistIndex++;
-      var audio = new window.Audio(url);
-      audio.preload = "auto";
+    // Ensure audioContext is awake
+    if (audioContext && audioContext.state === "suspended") {
+      try { audioContext.resume(); } catch (e) {}
+    }
+
+    function playWithWebAudio(url, onEnd, onError) {
+      fetchAndDecodeAudio(url, function (buffer) {
+        if (thisSession !== playbackSessionId) return;
+        try {
+          var source = audioContext.createBufferSource();
+          source.buffer = buffer;
+          source.connect(audioContext.destination);
+          activeSourceNode = source;
+          source.onended = function () {
+            if (activeSourceNode === source) activeSourceNode = null;
+            onEnd();
+          };
+          source.start(0);
+        } catch (err) {
+          onError(err);
+        }
+      }, onError);
+    }
+
+    function playWithHtmlAudio(url, onEnd, onError) {
+      var audio = getPersistentAudio();
       activeAudio = audio;
       audio.onended = function () {
-        if (thisSession === playbackSessionId) playNext();
+        activeAudio = null;
+        onEnd();
       };
       audio.onerror = function (err) {
-        console.warn("Audio load error on:", url, err);
-        if (thisSession === playbackSessionId) playNext();
+        activeAudio = null;
+        onError(err);
       };
+      audio.src = url;
       try {
         var p = audio.play();
         if (p && typeof p.catch === "function") {
           p.catch(function (err) {
-            console.warn("Audio play rejected by browser policy:", err);
-            if (thisSession === playbackSessionId) {
-              setVoiceStatusText("ప్లేబ్యాక్ ఆపబడింది. స్క్రీన్ పై ట్యాప్ చేయండి.");
-            }
+            activeAudio = null;
+            onError(err);
           });
         }
-      } catch (e) {
-        if (thisSession === playbackSessionId) playNext();
+      } catch (err) {
+        activeAudio = null;
+        onError(err);
+      }
+    }
+
+    function playNext() {
+      if (thisSession !== playbackSessionId) return;
+      if (playlistIndex >= currentPlaylist.length) {
+        activeSourceNode = null;
+        activeAudio = null;
+        updateVoiceControls();
+        return;
+      }
+      var url = currentPlaylist[playlistIndex];
+      playlistIndex++;
+
+      // Prefer Web Audio API: 100% immune to Autoplay Policy rejections in WebSocket callbacks once unlocked
+      if (audioContext && audioContext.state !== "closed") {
+        if (audioContext.state === "suspended") {
+          try { audioContext.resume(); } catch (e) {}
+        }
+        playWithWebAudio(url, function () {
+          if (thisSession === playbackSessionId) playNext();
+        }, function (webAudioErr) {
+          console.warn("WebAudio playback error, falling back to HTML5 Audio:", webAudioErr);
+          if (thisSession !== playbackSessionId) return;
+          playWithHtmlAudio(url, function () {
+            if (thisSession === playbackSessionId) playNext();
+          }, function (htmlAudioErr) {
+            console.warn("Both WebAudio and HTML5 audio failed:", htmlAudioErr);
+            if (thisSession === playbackSessionId) {
+              setVoiceStatusText("ప్లేబ్యాక్ ఆపబడింది. రిమోట్ బటన్ నొక్కండి.");
+              playNext();
+            }
+          });
+        });
+      } else {
+        playWithHtmlAudio(url, function () {
+          if (thisSession === playbackSessionId) playNext();
+        }, function (htmlAudioErr) {
+          console.warn("HTML5 audio playback failed:", htmlAudioErr);
+          if (thisSession === playbackSessionId) {
+            setVoiceStatusText("ప్లేబ్యాక్ ఆపబడింది. రిమోట్ బటన్ నొక్కండి.");
+            playNext();
+          }
+        });
       }
     }
 
@@ -323,6 +551,9 @@
         var callKey = message.announcement.number + "#" + (message.announcement.sentAt || 0);
         if (lastAnnouncedCallKey !== callKey) {
           lastAnnouncedCallKey = callKey;
+          if (audioContext && audioContext.state === "suspended") {
+            try { audioContext.resume(); } catch (e) {}
+          }
           announce(message.announcement.number);
         }
       }
@@ -354,15 +585,17 @@
     };
   }
 
-  // Audio unlock triggers on user interaction
-  window.addEventListener("click", unlockAudio);
-  window.addEventListener("touchstart", unlockAudio);
-  window.addEventListener("keydown", unlockAudio);
+  // Audio unlock triggers on ANY user interaction (clicks, taps, TV remote keys)
+  var unlockEvents = ["click", "touchstart", "touchend", "keydown", "keyup", "pointerdown", "mousedown"];
+  unlockEvents.forEach(function (eventName) {
+    window.addEventListener(eventName, unlockAudio, { passive: true });
+  });
   window.addEventListener("resize", render);
 
   window.addEventListener("beforeunload", function () {
     stopped = true;
     if (retryTimer) window.clearTimeout(retryTimer);
+    if (heartbeatInterval) window.clearInterval(heartbeatInterval);
     if (socket) {
       try { socket.close(); } catch (e) {}
     }

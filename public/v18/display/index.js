@@ -133,10 +133,11 @@ function connect() {
 async function init() {
   updateVoiceControls();
 
-  // Unlock audio on initial user touch/click/key anywhere on the display
-  window.addEventListener("click", unlockAudio, { once: true });
-  window.addEventListener("touchstart", unlockAudio, { once: true });
-  window.addEventListener("keydown", unlockAudio, { once: true });
+  // Unlock audio on ANY user touch/click/key anywhere on the display (TV remote, mouse, touch)
+  const unlockEvents = ["click", "touchstart", "touchend", "keydown", "keyup", "pointerdown", "mousedown"];
+  unlockEvents.forEach((eventName) => {
+    window.addEventListener(eventName, unlockAudio, { passive: true });
+  });
 
   // Initialize dom-primitive-bindings locally
   try {
