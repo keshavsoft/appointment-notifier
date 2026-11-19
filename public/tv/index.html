@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="te">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#06101c">
+  <title>CareCall V1 — TV Display</title>
+  <style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body {
+      margin: 0; padding: 0; width: 100%; height: 100%; min-height: 100vh;
+      overflow: hidden !important;
+      background-color: #06101c;
+      background-image: radial-gradient(ellipse at 50% 40%, #132a45 0%, #071526 60%, #030811 100%);
+      color: #ffffff;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Telugu", sans-serif;
+      -webkit-user-select: none; user-select: none;
+    }
+
+    /* Top Navigation Bar */
+    .topbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      background: rgba(7, 17, 28, 0.88);
+      border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+    }
+
+    .status-pill {
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(15, 23, 42, 0.88);
+      border: 2px solid #334e68;
+      border-radius: 999px;
+      padding: 6px 18px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #38bdf8;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+      transition: transform 0.15s, border-color 0.15s;
+    }
+    .status-pill:hover { border-color: #7dd3fc; transform: scale(1.04); }
+
+    .status-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #34d399;
+      box-shadow: 0 0 10px #34d399;
+    }
+
+    .topbar-center {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #94a3b8;
+    }
+
+    .topbar-pulse {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #38bdf8;
+      box-shadow: 0 0 10px #38bdf8;
+      animation: pulse 1.8s infinite;
+    }
+
+    .audio-btn {
+      background: #0284c7;
+      color: #ffffff;
+      border: 2px solid #38bdf8;
+      border-radius: 999px;
+      padding: 7px 20px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6);
+      transition: transform 0.15s;
+    }
+    .audio-btn[data-active="false"] {
+      background: #334155;
+      border-color: #64748b;
+      color: #e2e8f0;
+    }
+
+    /* 50/50 Widescreen Display Container */
+    .container {
+      position: fixed;
+      top: 64px; left: 0; right: 0; bottom: 0;
+      width: 100%;
+      height: calc(100% - 64px);
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      box-sizing: border-box;
+      padding: 20px 36px;
+    }
+
+    /* LEFT 50%: Hero Token & Telugu Spelling */
+    .split-left {
+      width: 50%; height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+      box-sizing: border-box;
+      border-right: 2px solid rgba(56, 189, 248, 0.18);
+    }
+
+    .token-label {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #38bdf8;
+      margin-bottom: 4px;
+    }
+
+    .token-number {
+      font-size: 180px;
+      font-size: clamp(100px, 16vw, 240px);
+      font-weight: 900;
+      line-height: 1;
+      color: #ffffff;
+      letter-spacing: -2px;
+      margin: 8px 0;
+      text-shadow: 0 16px 60px rgba(0, 0, 0, 0.95), 0 0 80px rgba(56, 189, 248, 0.3);
+      transition: opacity 0.2s;
+    }
+
+    .token-spelling {
+      font-size: 36px;
+      font-size: clamp(28px, 3.2vw, 48px);
+      font-weight: 800;
+      color: #60a5fa;
+      margin-top: 8px;
+      min-height: 1.2em;
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+      transition: opacity 0.2s;
+    }
+
+    /* RIGHT 50%: Consultation Info Card */
+    .split-right {
+      width: 50%; height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 36px;
+      box-sizing: border-box;
+    }
+
+    .info-card {
+      width: 100%;
+      max-width: 520px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 2px solid rgba(148, 163, 184, 0.24);
+      border-radius: 28px;
+      padding: 32px 36px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .info-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+      padding-bottom: 14px;
+    }
+
+    .info-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge-status {
+      background: rgba(52, 211, 153, 0.18);
+      border: 1px solid rgba(52, 211, 153, 0.45);
+      color: #6ee7b7;
+      padding: 4px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #34d399;
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    .time-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .time-label {
+      font-size: 13px;
+      color: #94a3b8;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .time-value {
+      font-size: clamp(24px, 2.6vw, 36px);
+      font-weight: 800;
+      color: #f1f5f9;
+    }
+
+    .meta-box {
+      background: rgba(7, 17, 29, 0.85);
+      border: 1px solid #334e68;
+      border-radius: 18px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .meta-item { display: flex; flex-direction: column; gap: 3px; }
+    .meta-key { font-size: 13px; color: #94a3b8; font-weight: 700; }
+    .meta-val { font-size: 17px; color: #38bdf8; font-weight: 800; }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a href="/" class="status-pill" id="connStatus" title="హోమ్‌కి వెళ్ళండి (Click to return home)">
+      <span class="status-dot"></span>
+      <span id="connStatusText">డిస్‌ప్లే కనెక్ట్ అయింది</span>
+    </a>
+    <div class="topbar-center">
+      <span class="topbar-pulse"></span>
+      <span>లైవ్ వెయిటింగ్ ఏరియా స్క్రీన్</span>
+    </div>
+    <button class="audio-btn" id="voiceToggle" type="button" data-active="true">
+      🔊 వాయిస్ ఆన్
+    </button>
+  </header>
+
+  <main class="container">
+    <section class="split-left">
+      <span class="token-label">టోకెన్ నంబర్ · TOKEN</span>
+      <h1 class="token-number" id="tokenNum">--</h1>
+      <div class="token-spelling" id="tokenSpell">కాల్ కోసం వేచి ఉంది…</div>
+    </section>
+
+    <section class="split-right">
+      <div class="info-card">
+        <div class="info-header">
+          <div class="info-title">
+            <span>🏥</span>
+            <span>ప్రస్తుత పిలుపు</span>
+          </div>
+          <div class="badge-status">
+            <span class="badge-dot"></span>
+            <span>దయచేసి లోపలికి రండి</span>
+          </div>
+        </div>
+
+        <div class="time-row">
+          <span class="time-label">గడిచిన సమయం · ELAPSED TIME</span>
+          <div class="time-value" id="elapsedTime">తదుపరి కాల్ కోసం వేచి ఉంది</div>
+        </div>
+
+        <div class="meta-box">
+          <div class="meta-item">
+            <span class="meta-key">కన్సల్టేషన్ గది (Room)</span>
+            <span class="meta-val">గది నం: 1 (Room 1)</span>
+          </div>
+          <div class="meta-item" style="text-align: right;">
+            <span class="meta-key">విభాగం (Department)</span>
+            <span class="meta-val">జనరల్ ఓపీ (General OP)</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <audio id="backupAudio" preload="auto" playsinline style="display:none"></audio>
+
+  <script>
+  (function () {
+    "use strict";
+
+    var tokenNum = document.getElementById("tokenNum");
+    var tokenSpell = document.getElementById("tokenSpell");
+    var elapsedTime = document.getElementById("elapsedTime");
+    var connStatusText = document.getElementById("connStatusText");
+    var voiceToggle = document.getElementById("voiceToggle");
+    var backupAudio = document.getElementById("backupAudio");
+
+    var activeCall = null;
+    var voiceEnabled = true;
+    var socket = null;
+    var retryTimer = null;
+    var audioCtx = null;
+    var audioCache = {};
+    var lastCallKey = null;
+
+    var TELUGU_UNITS = [
+      "సున్నా", "ఒకటి", "రెండు", "మూడు", "నాలుగు", "ఐదు",
+      "ఆరు", "ఏడు", "ఎనిమిది", "తొమ్మిది", "పది",
+      "పదకొండు", "పన్నెండు", "పదమూడు", "పద్నాలుగు", "పదిహేను",
+      "పదహారు", "పదిహేడు", "పద్దెనిమిది", "పంతొమ్మిది"
+    ];
+
+    var TELUGU_TENS = [
+      "", "", "ఇరవై", "ముప్పై", "నలభై", "యాభై",
+      "అరవై", "డెబ్బై", "ఎనభై", "తొంభై"
+    ];
+
+    function numberToTeluguWords(num) {
+      var n = Math.floor(Number(num));
+      if (!isFinite(n) || n < 0 || n > 999) return String(num);
+      if (n < 20) return TELUGU_UNITS[n];
+      if (n < 100) {
+        var tens = Math.floor(n / 10);
+        var rem = n % 10;
+        return rem === 0 ? TELUGU_TENS[tens] : (TELUGU_TENS[tens] + " " + TELUGU_UNITS[rem]);
+      }
+      var hundreds = Math.floor(n / 100);
+      var rem100 = n % 100;
+      var hundredText = hundreds === 1 ? "వంద" : (TELUGU_UNITS[hundreds] + " వందల");
+      if (rem100 === 0) return hundredText;
+      return hundredText + " " + numberToTeluguWords(rem100);
+    }
+
+    function formatElapsed(ms) {
+      var sec = Math.max(0, Math.floor(ms / 1000));
+      if (sec < 60) return sec + "సె";
+      var min = Math.floor(sec / 60);
+      return min + "ని " + (sec % 60) + "సె";
+    }
+
+    function render() {
+      if (!activeCall || !activeCall.number) {
+        tokenNum.textContent = "--";
+        tokenNum.style.opacity = "0.35";
+        tokenSpell.textContent = "కాల్ కోసం వేచి ఉంది…";
+        tokenSpell.style.opacity = "0.7";
+        elapsedTime.textContent = "తదుపరి కాల్ కోసం వేచి ఉంది";
+        return;
+      }
+      tokenNum.style.opacity = "1";
+      tokenSpell.style.opacity = "1";
+      tokenNum.textContent = String(activeCall.number);
+      var n = Number(activeCall.number);
+      tokenSpell.textContent = (isFinite(n) && n >= 0) ? numberToTeluguWords(n) : "";
+      var elapsed = Date.now() - (activeCall.sentAt || Date.now());
+      elapsedTime.textContent = formatElapsed(elapsed) + " క్రితం పిలవబడింది";
+    }
+
+    function getAudioContext() {
+      if (!audioCtx) {
+        var Audio = window.AudioContext || window.webkitAudioContext;
+        if (Audio) audioCtx = new Audio();
+      }
+      if (audioCtx && audioCtx.state === "suspended") {
+        try { audioCtx.resume(); } catch (e) {}
+      }
+      return audioCtx;
+    }
+
+    function getAudioUrl(file) {
+      return "/audio/te/" + file;
+    }
+
+    function playSequence(urls) {
+      if (!urls || !urls.length || !voiceEnabled) return;
+      var ctx = getAudioContext();
+      var idx = 0;
+
+      function playNext() {
+        if (idx >= urls.length) return;
+        var url = urls[idx++];
+
+        if (ctx && ctx.state !== "closed") {
+          if (audioCache[url]) {
+            var src = ctx.createBufferSource();
+            src.buffer = audioCache[url];
+            src.connect(ctx.destination);
+            src.onended = playNext;
+            src.start(0);
+          } else {
+            fetch(url)
+              .then(function (r) { return r.arrayBuffer(); })
+              .then(function (buf) { return ctx.decodeAudioData(buf); })
+              .then(function (decoded) {
+                audioCache[url] = decoded;
+                var src = ctx.createBufferSource();
+                src.buffer = decoded;
+                src.connect(ctx.destination);
+                src.onended = playNext;
+                src.start(0);
+              })
+              .catch(playNext);
+          }
+        } else {
+          backupAudio.src = url;
+          backupAudio.onended = playNext;
+          backupAudio.onerror = playNext;
+          backupAudio.play().catch(playNext);
+        }
+      }
+
+      playNext();
+    }
+
+    function announceNumber(numStr) {
+      var n = Number(numStr);
+      if (!isFinite(n) || n < 1 || n > 99) return;
+      if (n <= 10) {
+        var fname = (n < 10 ? "0" : "") + n + ".wav";
+        playSequence([getAudioUrl(fname)]);
+      } else {
+        playSequence([getAudioUrl(n + ".mp3")]);
+      }
+    }
+
+    function connect() {
+      if (socket) {
+        try { socket.close(); } catch (e) {}
+        socket = null;
+      }
+
+      connStatusText.textContent = "కనెక్ట్ అవుతోంది…";
+      var protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+      var url = protocol + "//" + window.location.host + "/ws";
+
+      try {
+        socket = new window.WebSocket(url);
+      } catch (e) {
+        connStatusText.textContent = "కనెక్షన్ సమస్య";
+        scheduleRetry();
+        return;
+      }
+
+      socket.onopen = function () {
+        connStatusText.textContent = "డిస్‌ప్లే కనెక్ట్ అయింది";
+      };
+
+      socket.onclose = function () {
+        socket = null;
+        connStatusText.textContent = "డిస్‌కనెక్ట్ అయింది";
+        scheduleRetry();
+      };
+
+      socket.onerror = function () {
+        connStatusText.textContent = "కనెక్షన్ సమస్య";
+      };
+
+      socket.onmessage = function (event) {
+        var data;
+        try { data = JSON.parse(event.data); } catch (e) { return; }
+
+        if (data.type === "state" && data.announcement && data.announcement.number) {
+          activeCall = data.announcement;
+          render();
+
+          if (data.cause === "call") {
+            var callKey = activeCall.number + "#" + activeCall.sentAt;
+            if (lastCallKey !== callKey) {
+              lastCallKey = callKey;
+              announceNumber(activeCall.number);
+            }
+          }
+        }
+      };
+    }
+
+    function scheduleRetry() {
+      if (retryTimer) return;
+      retryTimer = window.setTimeout(function () {
+        retryTimer = null;
+        connect();
+      }, 2000);
+    }
+
+    voiceToggle.addEventListener("click", function () {
+      voiceEnabled = !voiceEnabled;
+      voiceToggle.setAttribute("data-active", voiceEnabled ? "true" : "false");
+      voiceToggle.textContent = voiceEnabled ? "🔊 వాయిస్ ఆన్" : "🔇 వాయిస్ ఆఫ్";
+      getAudioContext();
+    });
+
+    // Remote OK / screen touch unlocks Web Audio
+    window.addEventListener("click", getAudioContext, { passive: true });
+    window.addEventListener("keydown", getAudioContext, { passive: true });
+
+    render();
+    window.setInterval(render, 1000);
+    connect();
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#07131d">
+  <title>CareCall V1 — Smart Clinic Queue System</title>
+  <style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { width: 100%; height: 100%; margin: 0; padding: 0; }
+    body {
+      background: radial-gradient(circle at 50% -10%, rgba(56, 189, 248, 0.18), transparent 45%),
+                  linear-gradient(165deg, #07131d 0%, #0b1926 55%, #050d15 100%);
+      color: #ffffff;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex; flex-direction: column; min-height: 100vh;
+      -webkit-user-select: none; user-select: none;
+    }
+
+    header {
+      height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 32px;
+      background: rgba(15, 23, 42, 0.85);
+      border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+    }
+    .brand { font-size: 1.25rem; font-weight: 800; color: #38bdf8; display: flex; align-items: center; gap: 8px; }
+    .brand span { color: #34d399; }
+    .status-pill {
+      font-size: 0.8rem; font-weight: 700; padding: 5px 14px; border-radius: 999px;
+      background: rgba(52, 211, 153, 0.15); border: 1px solid rgba(52, 211, 153, 0.35);
+      color: #6ee7b7; display: flex; align-items: center; gap: 6px;
+    }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #34d399; box-shadow: 0 0 10px #34d399; }
+
+    main {
+      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 40px 24px; text-align: center; max-width: 1100px; width: 100%; margin: 0 auto;
+    }
+    .eyebrow {
+      font-size: 0.85rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.14em; color: #38bdf8; margin: 0 0 8px;
+    }
+    h1 { font-size: clamp(2rem, 5vw, 2.8rem); font-weight: 900; margin: 0 0 12px; }
+    p.lead { color: #94a3b8; font-size: 1.05rem; max-width: 600px; margin: 0 0 36px; line-height: 1.5; }
+
+    .gateway-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      width: 100%;
+    }
+    @media (max-width: 860px) {
+      .gateway-grid { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      text-decoration: none; color: inherit;
+      background: rgba(15, 23, 42, 0.88);
+      border: 2px solid rgba(148, 163, 184, 0.22);
+      border-radius: 24px; padding: 28px 24px;
+      display: flex; flex-direction: column; align-items: flex-start; text-align: left;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+      transition: transform 0.18s, border-color 0.18s, box-shadow 0.18s;
+    }
+    .card:hover, .card:focus {
+      transform: translateY(-4px);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+    }
+    .card.card-tv:hover { border-color: #a855f7; outline: 2px solid #a855f7; }
+    .card.card-mobile:hover { border-color: #34d399; outline: 2px solid #34d399; }
+    .card.card-desktop:hover { border-color: #38bdf8; outline: 2px solid #38bdf8; }
+
+    .card-top { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 14px; }
+    .card-icon {
+      width: 48px; height: 48px; border-radius: 14px;
+      display: grid; place-items: center; font-size: 1.6rem;
+    }
+    .icon-tv { background: rgba(168, 85, 247, 0.2); }
+    .icon-mobile { background: rgba(52, 211, 153, 0.2); }
+    .icon-desktop { background: rgba(56, 189, 248, 0.2); }
+
+    .card-badge {
+      font-size: 0.72rem; font-weight: 800; padding: 4px 10px; border-radius: 999px;
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .badge-tv { background: rgba(168, 85, 247, 0.2); color: #d8b4fe; border: 1px solid rgba(168, 85, 247, 0.4); }
+    .badge-mobile { background: rgba(52, 211, 153, 0.2); color: #6ee7b7; border: 1px solid rgba(52, 211, 153, 0.4); }
+    .badge-desktop { background: rgba(56, 189, 248, 0.2); color: #7dd3fc; border: 1px solid rgba(56, 189, 248, 0.4); }
+
+    .card-title { font-size: 1.35rem; font-weight: 800; margin: 0 0 8px; }
+    .card-desc { color: #94a3b8; font-size: 0.88rem; line-height: 1.45; margin: 0 0 20px; flex-grow: 1; }
+    
+    .card-cta {
+      font-size: 0.9rem; font-weight: 800; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .cta-tv { color: #c084fc; }
+    .cta-mobile { color: #34d399; }
+    .cta-desktop { color: #38bdf8; }
+
+    footer {
+      border-top: 1px solid rgba(148, 163, 184, 0.15);
+      padding: 16px 24px; text-align: center; color: #64748b; font-size: 0.82rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <span>✚</span> CareCall <span>V1</span>
+    </div>
+    <div class="status-pill">
+      <span class="status-dot"></span>
+      System Online
+    </div>
+  </header>
+
+  <main>
+    <div class="eyebrow">Smart Clinic Queue Notifier</div>
+    <h1>Welcome to CareCall V1</h1>
+    <p class="lead">
+      Select your role: Widescreen TV Display for waiting areas, touch-first Mobile Keypad for doctors, or Desktop Workstation for reception desks.
+    </p>
+
+    <div class="gateway-grid">
+      <!-- 1. TV Display -->
+      <a href="/tv/" class="card card-tv">
+        <div class="card-top">
+          <div class="card-icon icon-tv">📺</div>
+          <span class="card-badge badge-tv">Foxsky & Smart TV</span>
+        </div>
+        <h2 class="card-title">TV Display</h2>
+        <p class="card-desc">
+          Widescreen 16:9 waiting area display. 50/50 split layout, live elapsed time, and clear Telugu voice announcements.
+        </p>
+        <span class="card-cta cta-tv">Launch TV Screen →</span>
+      </a>
+
+      <!-- 2. Mobile Doctor Keypad -->
+      <a href="/mobile/" class="card card-mobile">
+        <div class="card-top">
+          <div class="card-icon icon-mobile">📱</div>
+          <span class="card-badge badge-mobile">Smartphones & Tablets</span>
+        </div>
+        <h2 class="card-title">Doctor Mobile</h2>
+        <p class="card-desc">
+          Fast, touch-optimized consultation keypad for doctors to call patient tokens directly from their phone.
+        </p>
+        <span class="card-cta cta-mobile">Open Mobile Keypad →</span>
+      </a>
+
+      <!-- 3. Desktop Workstation -->
+      <a href="/desktop/" class="card card-desktop">
+        <div class="card-top">
+          <div class="card-icon icon-desktop">🖥️</div>
+          <span class="card-badge badge-desktop">Consultation Desk</span>
+        </div>
+        <h2 class="card-title">Desktop Portal</h2>
+        <p class="card-desc">
+          Dual-panel workstation with keypad and real-time live TV preview mirror for reception and doctor desks.
+        </p>
+        <span class="card-cta cta-desktop">Open Desktop Console →</span>
+      </a>
+    </div>
+  </main>
+
+  <footer>
+    CareCall V1 Clean Architecture · Built for instant real-time patient queues
+  </footer>
+</body>
+</html>

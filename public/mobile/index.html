@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="te">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#07131d">
+  <title>డాక్టర్ మొబైల్ కన్సోల్ | CareCall V1</title>
+  <style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { width: 100%; min-height: 100%; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      min-height: 100dvh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: #eaf3fb;
+      background: radial-gradient(circle at 50% -10%, rgba(56, 189, 248, 0.16), transparent 40%),
+                  linear-gradient(165deg, #07131d 0%, #0b1926 55%, #07111a 100%);
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    .mobile-app {
+      width: min(100%, 480px);
+      min-height: 100vh;
+      min-height: 100dvh;
+      margin: 0 auto;
+      padding: max(14px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+      display: flex;
+      flex-direction: column;
+    }
+    .mobile-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .brand {
+      margin: 0 0 2px;
+      color: #38bdf8;
+      font-size: 0.8rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .brand span { color: #34d399; }
+    .mobile-header h1 {
+      margin: 0;
+      font-size: 1.45rem;
+      font-weight: 800;
+    }
+    .desktop-link {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(148, 163, 184, 0.24);
+      border-radius: 12px;
+      background: rgba(30, 41, 59, 0.82);
+      text-decoration: none;
+      font-size: 1.25rem;
+      transition: transform 0.15s;
+    }
+    .desktop-link:active { transform: scale(0.95); }
+    .status-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .status-pill {
+      min-height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 6px 10px;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.85);
+      color: #94a3b8;
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-align: center;
+    }
+    .status-pill i {
+      width: 8px;
+      height: 8px;
+      flex: 0 0 8px;
+      border-radius: 50%;
+      background: #64748b;
+    }
+    .status-pill.connected { color: #86efac; border-color: rgba(52, 211, 153, 0.4); }
+    .status-pill.connected i { background: #34d399; box-shadow: 0 0 10px rgba(52, 211, 153, 0.8); }
+    .status-pill.offline { color: #fda4af; border-color: rgba(244, 63, 94, 0.4); }
+    .status-pill.offline i { background: #fb7185; }
+
+    .call-card {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: 24px;
+      background: rgba(15, 23, 42, 0.9);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+    }
+    .selected-label {
+      color: #94a3b8;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .selected-number {
+      min-height: clamp(65px, 12vh, 95px);
+      display: grid;
+      place-items: center;
+      color: #ffffff;
+      font-size: clamp(3rem, 16vw, 5.2rem);
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -1px;
+      border-bottom: 2px solid rgba(56, 189, 248, 0.25);
+      text-shadow: 0 4px 20px rgba(56, 189, 248, 0.3);
+    }
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      padding: 14px 0;
+    }
+    .keypad button {
+      aspect-ratio: 1.45 / 1;
+      min-height: 56px;
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: 16px;
+      background: linear-gradient(145deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.98));
+      color: #ffffff;
+      font-size: clamp(1.4rem, 6.5vw, 1.85rem);
+      font-weight: 800;
+      cursor: pointer;
+      touch-action: manipulation;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      transition: transform 0.1s, background 0.1s;
+    }
+    .keypad button:active {
+      transform: scale(0.94);
+      background: #0284c7;
+      border-color: #38bdf8;
+    }
+    .keypad .key-clear { color: #f59e0b; }
+    .keypad .key-back { color: #38bdf8; }
+
+    .send-button {
+      width: 100%;
+      min-height: 58px;
+      margin-top: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 22px;
+      border: 0;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+      box-shadow: 0 8px 24px rgba(2, 132, 199, 0.4);
+      color: white;
+      font-size: 1.08rem;
+      font-weight: 800;
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: transform 0.1s, opacity 0.2s;
+    }
+    .send-button:active:not(:disabled) { transform: scale(0.98); }
+    .send-button b { font-size: 1.4rem; }
+    .send-button:disabled { opacity: 0.38; cursor: not-allowed; box-shadow: none; }
+
+    .feedback {
+      min-height: 20px;
+      margin: 8px 4px 0;
+      color: #38bdf8;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .mobile-nav {
+      height: 56px;
+      flex: 0 0 56px;
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 16px;
+      background: rgba(15, 23, 42, 0.9);
+    }
+    .mobile-nav a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      color: #cbd5e1;
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 700;
+      transition: color 0.15s;
+    }
+    .mobile-nav a:hover, .mobile-nav a:active { color: #38bdf8; }
+  </style>
+</head>
+<body>
+  <main class="mobile-app">
+    <header class="mobile-header">
+      <div>
+        <p class="brand">Care<span>Call V1</span></p>
+        <h1>డాక్టర్ మొబైల్</h1>
+      </div>
+      <a class="desktop-link" href="/desktop/" aria-label="డెస్క్‌టాప్ పోర్టల్" title="డెస్క్‌టాప్ వెర్షన్">🖥️</a>
+    </header>
+
+    <section class="status-row">
+      <span class="status-pill" id="serverStatus"><i></i>కనెక్ట్ అవుతోంది…</span>
+      <span class="status-pill" id="screenStatus"><i></i>స్క్రీన్స్: 0</span>
+    </section>
+
+    <section class="call-card">
+      <div class="selected-label">పిలవవలసిన నంబర్ · TOKEN</div>
+      <output class="selected-number" id="selectedNumber">—</output>
+
+      <div class="keypad">
+        <button type="button" data-digit="1">1</button>
+        <button type="button" data-digit="2">2</button>
+        <button type="button" data-digit="3">3</button>
+        <button type="button" data-digit="4">4</button>
+        <button type="button" data-digit="5">5</button>
+        <button type="button" data-digit="6">6</button>
+        <button type="button" data-digit="7">7</button>
+        <button type="button" data-digit="8">8</button>
+        <button type="button" data-digit="9">9</button>
+        <button type="button" class="key-clear" id="keyClear">C</button>
+        <button type="button" data-digit="0">0</button>
+        <button type="button" class="key-back" id="keyBack">⌫</button>
+      </div>
+
+      <button class="send-button" id="sendCall" type="button" disabled>
+        <span>డిస్‌ప్లేకి పంపండి</span><b aria-hidden="true">→</b>
+      </button>
+      <div class="feedback" id="feedback"></div>
+    </section>
+
+    <nav class="mobile-nav">
+      <a href="/mobile/">📱 <span>మొబైల్</span></a>
+      <a href="/tv/">📺 <span>టీవీ</span></a>
+      <a href="/">🏠 <span>హోమ్</span></a>
+    </nav>
+  </main>
+
+  <script>
+  (function () {
+    "use strict";
+
+    var selectedNumber = document.getElementById("selectedNumber");
+    var sendButton = document.getElementById("sendCall");
+    var feedback = document.getElementById("feedback");
+    var serverStatus = document.getElementById("serverStatus");
+    var screenStatus = document.getElementById("screenStatus");
+    var keyClear = document.getElementById("keyClear");
+    var keyBack = document.getElementById("keyBack");
+
+    var currentDigits = "";
+    var socket = null;
+    var retryTimer = null;
+    var isConnected = false;
+
+    function setPill(pill, text, isOk) {
+      if (!pill) return;
+      pill.classList.remove("connected", "offline");
+      pill.classList.add(isOk ? "connected" : "offline");
+      var textNode = pill.lastChild;
+      if (textNode) textNode.textContent = text;
+    }
+
+    function updateView() {
+      selectedNumber.textContent = currentDigits || "—";
+      sendButton.disabled = (!currentDigits || !isConnected);
+    }
+
+    function connect() {
+      if (socket) {
+        try { socket.close(); } catch (e) {}
+        socket = null;
+      }
+
+      setPill(serverStatus, "కనెక్ట్ అవుతోంది…", false);
+      var protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+      var url = protocol + "//" + window.location.host + "/ws";
+
+      try {
+        socket = new window.WebSocket(url);
+      } catch (err) {
+        setPill(serverStatus, "కనెక్షన్ సమస్య", false);
+        scheduleRetry();
+        return;
+      }
+
+      socket.onopen = function () {
+        isConnected = true;
+        setPill(serverStatus, "సర్వర్ కనెక్ట్ అయింది", true);
+        updateView();
+      };
+
+      socket.onclose = function () {
+        isConnected = false;
+        socket = null;
+        setPill(serverStatus, "డిస్‌కనెక్ట్ అయింది", false);
+        updateView();
+        scheduleRetry();
+      };
+
+      socket.onerror = function () {
+        setPill(serverStatus, "కనెక్షన్ సమస్య", false);
+      };
+
+      socket.onmessage = function (event) {
+        var data;
+        try { data = JSON.parse(event.data); } catch (e) { return; }
+
+        if (data.onlineCount !== undefined) {
+          setPill(screenStatus, "కనెక్టెడ్: " + data.onlineCount, data.onlineCount > 1);
+        }
+
+        if (data.type === "state" && data.announcement && data.announcement.number) {
+          feedback.textContent = "ప్రస్తుత టోకెన్: " + data.announcement.number;
+        }
+      };
+    }
+
+    function scheduleRetry() {
+      if (retryTimer) return;
+      retryTimer = window.setTimeout(function () {
+        retryTimer = null;
+        connect();
+      }, 2000);
+    }
+
+    // Keypad handlers
+    document.querySelectorAll("[data-digit]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        if (currentDigits.length < 3) {
+          currentDigits += btn.getAttribute("data-digit");
+          updateView();
+        }
+      });
+    });
+
+    keyClear.addEventListener("click", function () {
+      currentDigits = "";
+      updateView();
+    });
+
+    keyBack.addEventListener("click", function () {
+      currentDigits = currentDigits.slice(0, -1);
+      updateView();
+    });
+
+    sendButton.addEventListener("click", function () {
+      if (!currentDigits || !socket || socket.readyState !== 1) return;
+      var num = currentDigits;
+      socket.send(JSON.stringify({ type: "call", number: num }));
+      feedback.textContent = "టోకెన్ " + num + " డిస్‌ప్లేకి పంపబడింది!";
+      currentDigits = "";
+      updateView();
+    });
+
+    connect();
+  })();
+  </script>
+</body>
+</html>

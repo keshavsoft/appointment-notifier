@@ -1,0 +1,13 @@
+node_modules/
+
+# Keep machine-specific settings and secrets out of Git.
+.env
+.env.*
+!.env.example
+
+npm-debug.log*
+*.log
+.DS_Store
+
+# Runtime WebSocket diagnostics (do not commit machine-specific logs)
+logs/

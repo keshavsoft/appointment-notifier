@@ -1,0 +1,17 @@
+{
+  "name": "appointment-notifier-v1",
+  "version": "1.0.0",
+  "description": "CareCall Smart Clinic Queue Notifier — Clean Version 1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "engines": {
+    "node": ">=20.6.0"
+  },
+  "dependencies": {
+    "sirv": "^3.0.2",
+    "ws": "^8.18.3"
+  }
+}
