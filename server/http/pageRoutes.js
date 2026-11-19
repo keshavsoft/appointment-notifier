@@ -29,6 +29,8 @@ const legacyPageRoutes = new Map([
     ["/desktop/testing/", "/desktop/testing/index.html"],
     ["/desktop/versions", "/desktop/versions/index.html"],
     ["/desktop/versions/", "/desktop/versions/index.html"],
+    ["/mobile/doctor", "/mobile/doctor/index.html"],
+    ["/mobile/doctor/", "/mobile/doctor/index.html"],
 
     // Legacy Aliases Mapped Directly to Clean Modern Routes
     ["/doctor", "/desktop/doctor/index.html"],
