@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="te">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#07131d">
+  <title>డాక్టర్ మొబైల్ V-1 | CareCall</title>
+  <link rel="stylesheet" href="css/base/reset.css">
+  <link rel="stylesheet" href="css/header/header.css">
+  <link rel="stylesheet" href="css/status/status.css">
+  <link rel="stylesheet" href="css/activeCard/activeCard.css">
+  <link rel="stylesheet" href="css/keypad/card.css">
+  <link rel="stylesheet" href="css/keypad/display.css">
+  <link rel="stylesheet" href="css/keypad/grid.css">
+  <link rel="stylesheet" href="css/keypad/actions.css">
+  <link rel="stylesheet" href="css/nav/nav.css">
+</head>
+<body>
+  <main class="mobile-app" id="mobileApp">
+    <header class="mobile-header" id="mobileHeader">
+      <div id="mobileBrandGroup">
+        <p class="brand" id="brandLogo">Care<span>Call</span></p>
+        <h1 id="mobileTitle">డాక్టర్ మొబైల్</h1>
+      </div>
+      <div id="headerActions">
+        <a class="desktop-link" id="desktopLink" href="/dr/" aria-label="డాక్టర్ కన్సోల్" title="డాక్టర్ కన్సోల్">🩺</a>
+        <a class="desktop-link" id="mobileBackLink" href="/" aria-label="Home" title="Home">←</a>
+      </div>
+    </header>
+
+    <section class="status-row" id="statusRow">
+      <span class="status-pill" id="serverStatus"><i></i>కనెక్ట్ అవుతోంది…</span>
+    </section>
+
+    <!-- Prominent Live TV Active Token Mirror -->
+    <section class="active-card" id="activeCard">
+      <div class="active-header" id="activeHeader">
+        <span class="active-badge" id="activeBadge"><i class="live-dot"></i>లైవ్ టీవీ స్క్రీన్ · NOW SERVING</span>
+        <span class="active-elapsed" id="activeElapsed">వేచి ఉంది…</span>
+      </div>
+      <div class="active-body" id="activeBody">
+        <div class="active-token-group" id="activeTokenGroup">
+          <span class="active-num" id="activeNum">--</span>
+          <span class="active-words" id="activeWords">కాల్ కోసం వేచి ఉంది</span>
+        </div>
+        <div class="active-actions" id="activeActions">
+          <button type="button" class="btn-recall" id="btnRecall" title="మళ్లీ టీవీలో బెల్ మోగించండి" disabled>
+            <span>🔔 మళ్లీ పిలవండి</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Keypad to Dial Next Token -->
+    <section class="call-card" id="callCard">
+      <div class="selected-bar" id="selectedBar">
+        <span class="selected-label" id="selectedLabel">తదుపరి నంబర్ · NEXT TOKEN</span>
+        <button type="button" class="btn-quick-next" id="btnQuickNext" title="తదుపరి టోకెన్ సెట్ చేయండి">+1 తదుపరి</button>
+      </div>
+      <output class="selected-number" id="selectedNumber">—</output>
+
+      <div class="keypad" id="keypadGrid">
+        <button type="button" data-digit="1">1</button>
+        <button type="button" data-digit="2">2</button>
+        <button type="button" data-digit="3">3</button>
+        <button type="button" data-digit="4">4</button>
+        <button type="button" data-digit="5">5</button>
+        <button type="button" data-digit="6">6</button>
+        <button type="button" data-digit="7">7</button>
+        <button type="button" data-digit="8">8</button>
+        <button type="button" data-digit="9">9</button>
+        <button type="button" class="key-clear" id="keyClear">C</button>
+        <button type="button" data-digit="0">0</button>
+        <button type="button" class="key-back" id="keyBack">⌫</button>
+      </div>
+
+      <button class="send-button" id="sendCall" type="button" disabled>
+        <span>డిస్‌ప్లేకి పంపండి</span><b aria-hidden="true">→</b>
+      </button>
+      <div class="feedback" id="feedback"></div>
+    </section>
+
+    <nav class="mobile-nav" id="mobileNav">
+      <a href="/mobile/v1/">📱 <span>మొబైల్ V-1</span></a>
+      <a href="/display/">📺 <span>డిస్‌ప్లే</span></a>
+      <a href="/dr/">🩺 <span>డాక్టర్</span></a>
+    </nav>
+  </main>
+
+  <script type="module" src="js/index.js"></script>
+</body>
+</html>
