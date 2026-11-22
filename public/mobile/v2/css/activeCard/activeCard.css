@@ -1,0 +1,94 @@
+#activeCard {
+  background: rgba(15, 23, 42, 0.95);
+  border: 1.5px solid rgba(56, 189, 248, 0.35);
+  border-radius: 18px;
+  padding: 10px 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+#activeHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+#activeBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #38bdf8;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #34d399;
+  box-shadow: 0 0 8px #34d399;
+  animation: pulse 1.8s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.85); }
+}
+#activeElapsed {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #94a3b8;
+}
+#activeBody {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+#activeTokenGroup {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+#activeNum {
+  font-size: 2.1rem;
+  font-weight: 900;
+  color: #ffffff;
+  line-height: 1;
+  text-shadow: 0 2px 14px rgba(56, 189, 248, 0.4);
+}
+#activeWords {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #60a5fa;
+}
+#activeActions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+#btnRecall {
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.25), rgba(3, 105, 161, 0.35));
+  border: 1px solid rgba(56, 189, 248, 0.5);
+  border-radius: 12px;
+  color: #38bdf8;
+  font-size: 0.78rem;
+  font-weight: 800;
+  padding: 7px 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.15s;
+}
+#btnRecall:active:not(:disabled) {
+  transform: scale(0.95);
+  background: #0284c7;
+  color: #fff;
+}
+#btnRecall:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}

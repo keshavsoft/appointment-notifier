@@ -1,0 +1,20 @@
+#selectedNumber {
+  min-height: clamp(52px, 9vh, 72px);
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  font-size: clamp(2.6rem, 13vw, 4.2rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -1px;
+  border-bottom: 2px solid rgba(56, 189, 248, 0.25);
+  text-shadow: 0 4px 20px rgba(56, 189, 248, 0.3);
+}
+#feedback {
+  min-height: 18px;
+  margin: 6px 4px 0;
+  color: #38bdf8;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-align: center;
+}
