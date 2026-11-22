@@ -1,0 +1,25 @@
+#keypadGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 10px 0;
+}
+#keypadGrid button {
+  aspect-ratio: 1.55 / 1;
+  min-height: 50px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.98));
+  color: #ffffff;
+  font-size: clamp(1.3rem, 6vw, 1.7rem);
+  font-weight: 800;
+  cursor: pointer;
+  touch-action: manipulation;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  transition: transform 0.1s, background 0.1s;
+}
+#keypadGrid button:active {
+  transform: scale(0.94);
+  background: #0284c7;
+  border-color: #38bdf8;
+}

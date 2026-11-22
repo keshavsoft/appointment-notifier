@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="te">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#07131d">
+  <title>డాక్టర్ కన్సోల్ | CareCall</title>
+  <link rel="stylesheet" href="css/base/reset.css">
+  <link rel="stylesheet" href="css/header/header.css">
+  <link rel="stylesheet" href="css/status/status.css">
+  <link rel="stylesheet" href="css/keypad/card.css">
+  <link rel="stylesheet" href="css/keypad/display.css">
+  <link rel="stylesheet" href="css/keypad/grid.css">
+  <link rel="stylesheet" href="css/keypad/actions.css">
+</head>
+<body>
+  <div class="app" id="appContainer">
+    <header id="drHeader">
+      <div id="drBrandGroup">
+        <p class="brand" id="brandLogo">Care<span>Call</span></p>
+        <h1 id="drTitle">డాక్టర్ కన్సోల్</h1>
+      </div>
+      <a href="/" class="back-link" id="drBackLink" title="Home">← Home</a>
+    </header>
+
+    <div class="status-row" id="statusRow">
+      <span class="status-pill" id="serverStatus"><i></i>కనెక్ట్ అవుతోంది…</span>
+    </div>
+
+    <div class="card" id="dialerCard">
+      <div class="card-top" id="cardTop">
+        <span class="label" id="nextLabel">తదుపరి టోకెన్ · NEXT TOKEN</span>
+        <button type="button" class="btn-quick-next" id="btnQuickNext">+1 తదుపరి</button>
+      </div>
+
+      <output class="number-display" id="dialedNumber">—</output>
+
+      <div class="keypad" id="keypadGrid">
+        <button type="button" data-digit="1">1</button>
+        <button type="button" data-digit="2">2</button>
+        <button type="button" data-digit="3">3</button>
+        <button type="button" data-digit="4">4</button>
+        <button type="button" data-digit="5">5</button>
+        <button type="button" data-digit="6">6</button>
+        <button type="button" data-digit="7">7</button>
+        <button type="button" data-digit="8">8</button>
+        <button type="button" data-digit="9">9</button>
+        <button type="button" class="btn-clear" id="btnClear">C</button>
+        <button type="button" data-digit="0">0</button>
+        <button type="button" class="btn-back" id="btnBack">⌫</button>
+      </div>
+
+      <button type="button" class="btn-send" id="btnSend" disabled>
+        <span>డిస్‌ప్లేకి పంపండి</span>
+        <span class="arrow">→</span>
+      </button>
+
+      <p class="feedback-msg" id="feedback"></p>
+    </div>
+  </div>
+
+  <script type="module" src="js/index.js"></script>
+</body>
+</html>

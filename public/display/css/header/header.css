@@ -1,0 +1,51 @@
+#displayHeader {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  background: rgba(7, 17, 28, 0.88);
+  border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+  backdrop-filter: blur(8px);
+  z-index: 100;
+}
+#connStatusPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(15, 23, 42, 0.88);
+  border: 2px solid #334e68;
+  border-radius: 999px;
+  padding: 6px 18px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #38bdf8;
+}
+#connStatusDot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: #34d399;
+  box-shadow: 0 0 10px #34d399;
+}
+#btnChangeKey {
+  background: rgba(30, 41, 59, 0.9);
+  border: 1px solid #38bdf8;
+  border-radius: 999px;
+  padding: 6px 16px;
+  font-size: 14px;
+  font-weight: 800;
+  color: #7dd3fc;
+  cursor: pointer;
+}
+#voiceToggle {
+  background: #0284c7;
+  color: #ffffff;
+  border: 2px solid #38bdf8;
+  border-radius: 999px;
+  padding: 7px 20px;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+}

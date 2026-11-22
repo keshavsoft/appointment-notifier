@@ -1,0 +1,57 @@
+#mobileHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+#brandLogo {
+  margin: 0 0 2px;
+  color: #38bdf8;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+#brandLogo span { color: #34d399; }
+#mobileTitle {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+#headerActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+#btnChangeKey {
+  background: rgba(30, 41, 59, 0.9);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #38bdf8;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+#btnChangeKey:active { transform: scale(0.96); }
+#desktopLink, #mobileBackLink {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 12px;
+  background: rgba(30, 41, 59, 0.82);
+  text-decoration: none;
+  font-size: 1.15rem;
+  color: #94a3b8;
+  transition: transform 0.15s, color 0.15s, border-color 0.15s;
+}
+#desktopLink:active, #mobileBackLink:active { transform: scale(0.95); }
+#mobileBackLink:hover {
+  color: #38bdf8;
+  border-color: #38bdf8;
+}

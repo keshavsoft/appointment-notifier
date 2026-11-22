@@ -1,0 +1,36 @@
+#keyClear {
+  color: #f59e0b !important;
+}
+#keyBack {
+  color: #38bdf8 !important;
+}
+#sendCall {
+  width: 100%;
+  min-height: 52px;
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  box-shadow: 0 8px 24px rgba(2, 132, 199, 0.4);
+  color: white;
+  font-size: 1.02rem;
+  font-weight: 800;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: transform 0.1s, opacity 0.2s;
+}
+#sendCall:active:not(:disabled) {
+  transform: scale(0.98);
+}
+#sendCall b {
+  font-size: 1.3rem;
+}
+#sendCall:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+  box-shadow: none;
+}

@@ -1,0 +1,48 @@
+#statusRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.status-pill {
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 4px 10px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.85);
+  color: #94a3b8;
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-align: center;
+}
+.status-pill i {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 8px;
+  border-radius: 50%;
+  background: #64748b;
+}
+
+#serverStatus.connected,
+#screenStatus.connected {
+  color: #86efac;
+  border-color: rgba(52, 211, 153, 0.4);
+}
+#serverStatus.connected i,
+#screenStatus.connected i {
+  background: #34d399;
+  box-shadow: 0 0 10px rgba(52, 211, 153, 0.8);
+}
+
+#serverStatus.offline,
+#screenStatus.offline {
+  color: #fda4af;
+  border-color: rgba(244, 63, 94, 0.4);
+}
+#serverStatus.offline i,
+#screenStatus.offline i {
+  background: #fb7185;
+}

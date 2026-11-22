@@ -1,0 +1,18 @@
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body {
+  margin: 0; padding: 0; width: 100%; height: 100%; min-height: 100vh;
+  overflow: hidden;
+  background-color: #06101c;
+  background-image: radial-gradient(ellipse at 50% 40%, #132a45 0%, #071526 60%, #030811 100%);
+  color: #ffffff;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Telugu", sans-serif;
+  -webkit-user-select: none; user-select: none;
+}
+#displayContainer {
+  position: fixed;
+  top: 64px; left: 0; right: 0; bottom: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 20px 36px;
+}

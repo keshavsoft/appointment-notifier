@@ -1,0 +1,24 @@
+#mobileNav {
+  height: 48px;
+  flex: 0 0 48px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.9);
+}
+#mobileNav a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #cbd5e1;
+  text-decoration: none;
+  font-size: 0.78rem;
+  font-weight: 700;
+  transition: color 0.15s;
+}
+#mobileNav a:hover,
+#mobileNav a:active {
+  color: #38bdf8;
+}

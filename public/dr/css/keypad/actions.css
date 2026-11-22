@@ -1,0 +1,38 @@
+#btnQuickNext {
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 999px;
+  color: #7dd3fc;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 3px 10px;
+  cursor: pointer;
+}
+#btnClear {
+  color: #f59e0b !important;
+}
+#btnBack {
+  color: #38bdf8 !important;
+}
+#btnSend {
+  width: 100%;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  box-shadow: 0 8px 24px rgba(2, 132, 199, 0.4);
+  color: white;
+  font-size: 1.05rem;
+  font-weight: 800;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+#btnSend:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+  box-shadow: none;
+}

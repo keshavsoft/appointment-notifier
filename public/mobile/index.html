@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="te">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#07131d">
+  <title>డాక్టర్ మొబైల్ కన్సోల్ | CareCall</title>
+  <link rel="stylesheet" href="css/base/reset.css">
+  <link rel="stylesheet" href="css/header/header.css">
+  <link rel="stylesheet" href="css/status/status.css">
+  <link rel="stylesheet" href="css/activeCard/activeCard.css">
+  <link rel="stylesheet" href="css/keypad/card.css">
+  <link rel="stylesheet" href="css/keypad/display.css">
+  <link rel="stylesheet" href="css/keypad/grid.css">
+  <link rel="stylesheet" href="css/keypad/actions.css">
+  <link rel="stylesheet" href="css/nav/nav.css">
+</head>
+<body>
+  <main class="mobile-app" id="mobileApp">
+    <header class="mobile-header" id="mobileHeader">
+      <div id="mobileBrandGroup">
+        <p class="brand" id="brandLogo">Care<span>Call</span></p>
+        <h1 id="mobileTitle">డాక్టర్ మొబైల్</h1>
+      </div>
+      <div id="headerActions">
+        <a class="desktop-link" id="desktopLink" href="/dr/" aria-label="డాక్టర్ కన్సోల్" title="డాక్టర్ కన్సోల్">🩺</a>
+        <a class="desktop-link" id="mobileBackLink" href="/" aria-label="Home" title="Home">←</a>
+      </div>
+    </header>
+
+    <section class="status-row" id="statusRow">
+      <span class="status-pill" id="serverStatus"><i></i>కనెక్ట్ అవుతోంది…</span>
+    </section>
+
+    <!-- Prominent Live TV Active Token Mirror -->
+    <section class="active-card" id="activeCard">
+      <div class="active-header" id="activeHeader">
+        <span class="active-badge" id="activeBadge"><i class="live-dot"></i>లైవ్ టీవీ స్క్రీన్ · NOW SERVING</span>
+        <span class="active-elapsed" id="activeElapsed">వేచి ఉంది…</span>
+      </div>
+      <div class="active-body" id="activeBody">
+        <div class="active-token-group" id="activeTokenGroup">
+          <span class="active-num" id="activeNum">--</span>
+          <span class="active-words" id="activeWords">కాల్ కోసం వేచి ఉంది</span>
+        </div>
+        <div class="active-actions" id="activeActions">
+          <button type="button" class="btn-recall" id="btnRecall" disabled>
+            <span class="recall-icon">🔔</span>
+            <span>మళ్లీ పిలవండి</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Touch Keypad Section -->
+    <section class="keypad-card" id="keypadCard">
+      <div class="keypad-header" id="keypadHeader">
+        <span class="keypad-label" id="keypadLabel">తదుపరి నంబర్ · NEXT TOKEN</span>
+        <button type="button" class="btn-quick-next" id="btnQuickNext">+1 తదుపరి</button>
+      </div>
+
+      <output class="display-box" id="selectedNumber" aria-live="polite">—</output>
+
+      <div class="key-grid" id="keyGrid" role="group" aria-label="కీప్యాడ్">
+        <button type="button" class="num-key" data-digit="1">1</button>
+        <button type="button" class="num-key" data-digit="2">2</button>
+        <button type="button" class="num-key" data-digit="3">3</button>
+        <button type="button" class="num-key" data-digit="4">4</button>
+        <button type="button" class="num-key" data-digit="5">5</button>
+        <button type="button" class="num-key" data-digit="6">6</button>
+        <button type="button" class="num-key" data-digit="7">7</button>
+        <button type="button" class="num-key" data-digit="8">8</button>
+        <button type="button" class="num-key" data-digit="9">9</button>
+        <button type="button" class="num-key action-clear" id="keyClear" aria-label="క్లియర్">C</button>
+        <button type="button" class="num-key" data-digit="0">0</button>
+        <button type="button" class="num-key action-back" id="keyBack" aria-label="వెనక్కి">⌫</button>
+      </div>
+
+      <button type="button" class="btn-send" id="sendCall" disabled>
+        <span>స్క్రీన్ పై పిలవండి</span>
+        <span class="btn-arrow">→</span>
+      </button>
+
+      <p class="status-hint" id="feedback" role="status" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <script type="module" src="js/index.js"></script>
+</body>
+</html>

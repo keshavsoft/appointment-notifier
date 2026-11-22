@@ -1,0 +1,50 @@
+#infoSection {
+  width: 50%; height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 36px;
+}
+#infoCard {
+  width: 100%;
+  max-width: 520px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 2px solid rgba(148, 163, 184, 0.24);
+  border-radius: 28px;
+  padding: 32px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+#infoTitle {
+  font-size: 20px;
+  font-weight: 800;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+#timeLabel {
+  font-size: 13px;
+  color: #94a3b8;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+#elapsedTime {
+  font-size: clamp(24px, 2.6vw, 36px);
+  font-weight: 800;
+  color: #f1f5f9;
+}
+#metaBox {
+  background: rgba(7, 17, 29, 0.85);
+  border: 1px solid #334e68;
+  border-radius: 18px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.meta-key { font-size: 13px; color: #94a3b8; font-weight: 700; }
+#metaRoomVal { font-size: 17px; color: #38bdf8; font-weight: 800; }
+#deptVal { font-size: 17px; color: #38bdf8; font-weight: 800; }

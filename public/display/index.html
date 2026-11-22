@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="te">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#06101c">
+  <title>వెయిటింగ్ ఏరియా డిస్‌ప్లే | CareCall</title>
+  <link rel="stylesheet" href="css/base/reset.css">
+  <link rel="stylesheet" href="css/header/header.css">
+  <link rel="stylesheet" href="css/token/token.css">
+  <link rel="stylesheet" href="css/info/infoCard.css">
+</head>
+<body>
+  <header id="displayHeader">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <a href="/" id="displayBackLink" title="Home" style="text-decoration: none; color: #94a3b8; font-size: 14px; font-weight: 700; background: rgba(15, 23, 42, 0.88); border: 1px solid #334e68; border-radius: 999px; padding: 6px 14px; display: inline-flex; align-items: center; gap: 6px;">
+        <span>← Home</span>
+      </a>
+      <div class="status-pill" id="connStatusPill">
+        <span class="status-dot" id="connStatusDot"></span>
+        <span id="connStatusText">డిస్‌ప్లే కనెక్ట్ అయింది</span>
+      </div>
+    </div>
+    <button class="audio-btn" id="voiceToggle" type="button">
+      🔊 వాయిస్ ఆన్
+    </button>
+  </header>
+
+  <main class="display-container" id="displayContainer">
+    <section class="split-left" id="tokenSection">
+      <span class="token-label" id="tokenLabel">టోకెన్ నంబర్ · TOKEN</span>
+      <h1 class="token-number" id="tokenNum">--</h1>
+      <div class="token-spelling" id="tokenSpell">కాల్ కోసం వేచి ఉంది…</div>
+    </section>
+
+    <section class="split-right" id="infoSection">
+      <div class="info-card" id="infoCard">
+        <div class="info-title" id="infoTitle">
+          <span>🏥</span>
+          <span>ప్రస్తుత పిలుపు</span>
+        </div>
+
+        <div id="timeBlock">
+          <span class="time-label" id="timeLabel">గడిచిన సమయం · ELAPSED TIME</span>
+          <div class="time-value" id="elapsedTime">తదుపరి కాల్ కోసం వేచి ఉంది</div>
+        </div>
+
+        <div class="meta-box" id="metaBox">
+          <div id="metaDeptBlock">
+            <div class="meta-key">విభాగం (Department)</div>
+            <div class="meta-val" id="metaDeptVal">జనరల్ ఓపీ (General OP)</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="js/index.js"></script>
+</body>
+</html>
