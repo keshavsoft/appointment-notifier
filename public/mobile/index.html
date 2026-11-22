@@ -44,45 +44,47 @@
           <span class="active-words" id="activeWords">కాల్ కోసం వేచి ఉంది</span>
         </div>
         <div class="active-actions" id="activeActions">
-          <button type="button" class="btn-recall" id="btnRecall" disabled>
-            <span class="recall-icon">🔔</span>
-            <span>మళ్లీ పిలవండి</span>
+          <button type="button" class="btn-recall" id="btnRecall" title="మళ్లీ టీవీలో బెల్ మోగించండి" disabled>
+            <span>🔔 మళ్లీ పిలవండి</span>
           </button>
         </div>
       </div>
     </section>
 
-    <!-- Touch Keypad Section -->
-    <section class="keypad-card" id="keypadCard">
-      <div class="keypad-header" id="keypadHeader">
-        <span class="keypad-label" id="keypadLabel">తదుపరి నంబర్ · NEXT TOKEN</span>
-        <button type="button" class="btn-quick-next" id="btnQuickNext">+1 తదుపరి</button>
+    <!-- Keypad to Dial Next Token -->
+    <section class="call-card" id="callCard">
+      <div class="selected-bar" id="selectedBar">
+        <span class="selected-label" id="selectedLabel">తదుపరి నంబర్ · NEXT TOKEN</span>
+        <button type="button" class="btn-quick-next" id="btnQuickNext" title="తదుపరి టోకెన్ సెట్ చేయండి">+1 తదుపరి</button>
+      </div>
+      <output class="selected-number" id="selectedNumber">—</output>
+
+      <div class="keypad" id="keypadGrid">
+        <button type="button" data-digit="1">1</button>
+        <button type="button" data-digit="2">2</button>
+        <button type="button" data-digit="3">3</button>
+        <button type="button" data-digit="4">4</button>
+        <button type="button" data-digit="5">5</button>
+        <button type="button" data-digit="6">6</button>
+        <button type="button" data-digit="7">7</button>
+        <button type="button" data-digit="8">8</button>
+        <button type="button" data-digit="9">9</button>
+        <button type="button" class="key-clear" id="keyClear">C</button>
+        <button type="button" data-digit="0">0</button>
+        <button type="button" class="key-back" id="keyBack">⌫</button>
       </div>
 
-      <output class="display-box" id="selectedNumber" aria-live="polite">—</output>
-
-      <div class="key-grid" id="keyGrid" role="group" aria-label="కీప్యాడ్">
-        <button type="button" class="num-key" data-digit="1">1</button>
-        <button type="button" class="num-key" data-digit="2">2</button>
-        <button type="button" class="num-key" data-digit="3">3</button>
-        <button type="button" class="num-key" data-digit="4">4</button>
-        <button type="button" class="num-key" data-digit="5">5</button>
-        <button type="button" class="num-key" data-digit="6">6</button>
-        <button type="button" class="num-key" data-digit="7">7</button>
-        <button type="button" class="num-key" data-digit="8">8</button>
-        <button type="button" class="num-key" data-digit="9">9</button>
-        <button type="button" class="num-key action-clear" id="keyClear" aria-label="క్లియర్">C</button>
-        <button type="button" class="num-key" data-digit="0">0</button>
-        <button type="button" class="num-key action-back" id="keyBack" aria-label="వెనక్కి">⌫</button>
-      </div>
-
-      <button type="button" class="btn-send" id="sendCall" disabled>
-        <span>స్క్రీన్ పై పిలవండి</span>
-        <span class="btn-arrow">→</span>
+      <button class="send-button" id="sendCall" type="button" disabled>
+        <span>డిస్‌ప్లేకి పంపండి</span><b aria-hidden="true">→</b>
       </button>
-
-      <p class="status-hint" id="feedback" role="status" aria-live="polite"></p>
+      <div class="feedback" id="feedback"></div>
     </section>
+
+    <nav class="mobile-nav" id="mobileNav">
+      <a href="/mobile/">📱 <span>మొబైల్</span></a>
+      <a href="/display/">📺 <span>డిస్‌ప్లే</span></a>
+      <a href="/dr/">🩺 <span>డాక్టర్</span></a>
+    </nav>
   </main>
 
   <script type="module" src="js/index.js"></script>
