@@ -34,6 +34,7 @@ const server = http.createServer((req, res) => {
   else if (path === "/display" || path === "/display/") req.url = "/display/index.html";
   else if (path === "/mobile/v1" || path === "/mobile/v1/") req.url = "/mobile/v1/index.html";
   else if (path === "/mobile/v2" || path === "/mobile/v2/") req.url = "/mobile/v2/index.html";
+  else if (path === "/mobile/v3" || path === "/mobile/v3/") req.url = "/mobile/v3/index.html";
   else if (path === "/mobile" || path === "/mobile/") req.url = "/mobile/index.html";
 
   serveStatic(req, res);

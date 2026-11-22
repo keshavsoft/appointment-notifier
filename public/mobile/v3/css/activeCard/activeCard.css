@@ -1,0 +1,148 @@
+#activeCard {
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border: 1.5px solid rgba(56, 189, 248, 0.35);
+  border-radius: 16px;
+  background: rgba(15, 23, 42, 0.95);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+}
+#activeHeader {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+#activeBadge {
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #38bdf8;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.live-dot {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  border-radius: 50%;
+  background: #34d399;
+  box-shadow: 0 0 8px #34d399;
+  animation: pulse 1.8s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.85); }
+}
+#activeElapsed {
+  flex: 0 0 auto;
+  color: #94a3b8;
+  font-size: 0.66rem;
+  font-weight: 700;
+}
+#activeBody {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+#activeTokenGroup {
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+}
+#activeNum {
+  flex: 0 0 auto;
+  color: #ffffff;
+  font-size: 1.8rem;
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: 0 2px 14px rgba(56, 189, 248, 0.4);
+  white-space: nowrap;
+}
+#activeWords {
+  min-width: 0;
+  color: #60a5fa;
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+#activeActions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+#btnRecall {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 8px;
+  border: 1px solid rgba(56, 189, 248, 0.5);
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.25), rgba(3, 105, 161, 0.35));
+  color: #38bdf8;
+  font-size: 0.68rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+#btnRecall:active:not(:disabled) {
+  transform: scale(0.95);
+  background: #0284c7;
+  color: #fff;
+}
+#btnRecall:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+@media (max-width: 380px) {
+  #activeCard {
+    gap: 5px;
+    padding: 7px;
+  }
+  #activeHeader {
+    gap: 3px;
+  }
+  #activeBadge {
+    gap: 3px;
+    font-size: 0.58rem;
+    letter-spacing: 0;
+  }
+  #activeElapsed {
+    font-size: 0.58rem;
+  }
+  #activeBody {
+    gap: 4px;
+  }
+  #activeTokenGroup {
+    gap: 4px;
+  }
+  #activeNum {
+    font-size: 1.5rem;
+  }
+  #activeWords {
+    font-size: 0.72rem;
+  }
+  #btnRecall {
+    width: 32px;
+    height: 30px;
+    justify-content: center;
+    padding: 0;
+  }
+  #btnRecall span {
+    display: none;
+  }
+  #btnRecall::before {
+    content: "🔔";
+  }
+}
