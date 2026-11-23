@@ -1,6 +1,7 @@
 # ✚ CareCall — Smart Clinic Queue Notifier
 
-> **Single-channel, multi-screen, real-time appointment calling system for clinics, hospitals, and service desks.**
+> **Single-channel, multi-screen, real-time appointment calling system for clinics, hospitals, and service desks.**  
+> 🌐 **Live Website & Story:** [keshavsoft.github.io/carecall-website](https://keshavsoft.github.io/carecall-website/)
 
 CareCall is a lightweight, self-hosted queue-call notifier. Doctors or staff dial a token number on any device — a large desktop console, a mobile phone, or a tablet — and every waiting-area display screen instantly shows and announces that number with bilingual (Telugu + English) voice.
 
