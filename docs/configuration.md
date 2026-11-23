@@ -1,23 +1,89 @@
-# Local configuration
+# CareCall — Configuration Guide
 
-## Optional `.env` file
+## Port Configuration
 
-`.env.example` is a tracked template. The real `.env` file is optional and ignored by Git. To choose a custom port locally, copy the template:
+### Default port
+
+The server defaults to port **3001** if no `PORT` environment variable is set.
+
+### Custom port via `.env`
+
+`.env.example` is a tracked template. The real `.env` file is optional and Git-ignored. To choose a custom port:
 
 ```powershell
 Copy-Item .env.example .env
+# Edit .env and set:
+PORT=3001
 ```
 
-The server reads `PORT` from `.env` when the file exists. A `PORT` value supplied by the operating system takes precedence. If neither source provides a port, the server defaults to `2004`. No dotenv package or Node command-line env-file option is required.
+The server reads `PORT` from `.env` automatically when the file exists (Node.js 20.6+ native env loading — no `dotenv` package needed).
 
-## Port and network access
+> **Priority**: OS environment variable > `.env` file > built-in default (3001)
 
-```dotenv
-PORT=2004
+---
+
+## Network Binding
+
+```
+server.listen(PORT, "0.0.0.0")
 ```
 
-The same port serves the web pages and the WebSocket endpoint. It must be an integer from 1 through 65535. The server calls `server.listen(PORT)` without a host argument, so Node listens on the unspecified address across the machine's network interfaces. The operating system's assigned IP is then used in the URL; no `HOST` setting is needed.
+The server binds to **all network interfaces** (`0.0.0.0`). The same port serves both the HTTP pages and the WebSocket endpoint (`/ws`).
 
-On the server computer, open `http://localhost:2004/doctor`. On another device on the same network, use the server computer's LAN IP, for example `http://192.168.1.25:2004/doctor`. The Display and Reception paths are `/display` and `/reception`; V3 uses `/v3/doctor` and `/v3/display`. The browser builds its WebSocket URL from the page's host and port.
+| Client | URL |
+|---|---|
+| Local browser | `http://localhost:3001/` |
+| LAN device (phone, TV) | `http://<server-LAN-IP>:3001/` |
+| VPS (behind Caddy) | `https://yourclinic.example.com/` |
 
-Because the app listens on all interfaces, network reachability depends on the firewall and network rules. For LAN use, allow the port only on the private network. For a VPS, put the app behind a reverse proxy such as Caddy and expose the proxy's HTTPS ports; this prototype has no user authentication or TLS of its own.
+---
+
+## Screen URLs (all on one port)
+
+| Screen | URL |
+|---|---|
+| Home gateway | `http://localhost:3001/` |
+| Waiting Display | `http://localhost:3001/display/` |
+| Doctor Console | `http://localhost:3001/dr/` |
+| Doctor Mobile (picker) | `http://localhost:3001/mobile/` |
+| Doctor Mobile V-1 | `http://localhost:3001/mobile/v1/` |
+| Doctor Mobile V-2 | `http://localhost:3001/mobile/v2/` |
+| Doctor Mobile V-3 | `http://localhost:3001/mobile/v3/` |
+
+---
+
+## Windows Firewall (LAN / TV access)
+
+To allow a Samsung TV or another device on your Wi-Fi to reach the server, run the included helper **as Administrator**:
+
+```powershell
+# Right-click → Run as Administrator
+.\allow-firewall.bat
+```
+
+This opens ports 3000 and 3001, allows Node.js through the firewall, and sets the Wi-Fi network profile to **Private** (required for inbound connections on Windows).
+
+After running the script, open `http://<your-PC-LAN-IP>:3001/display/` in the TV's browser.
+
+---
+
+## VPS / Public Internet
+
+For public deployment, place CareCall behind a reverse proxy with HTTPS and WSS. The recommended setup uses **Caddy** on a Linux VPS:
+
+```
+Browser ──HTTPS──▶ Caddy (443) ──HTTP──▶ CareCall (3001)
+              └──WSS──▶ Caddy (443) ──WS──▶ CareCall (3001 /ws)
+```
+
+See the full **[VPS Publishing Runbook](publish-to-vps.html)** for step-by-step instructions.
+
+---
+
+## Environment Reference
+
+| Variable | Type | Default | Description |
+|---|---|---|---|
+| `PORT` | integer | `3001` | TCP port for HTTP and WebSocket |
+
+No other environment variables are currently used.

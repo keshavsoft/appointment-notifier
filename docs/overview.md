@@ -1,56 +1,95 @@
-# Project story and technical overview
+# CareCall — System Overview
 
-## Why this exists
+## Why This Exists
 
-CareCall Appointment Notifier is a small calling system for a clinic or service desk. Staff enter a number on the Doctor screen and choose whether it should appear on the Display screen or the Reception screen. The receiving screen announces the number, speaks it aloud in the browser, and shows how long ago it arrived.
+CareCall is a small, plug-and-play calling system for a clinic, hospital, or service desk. A doctor or staff member taps a token number on any Doctor screen (desktop console or mobile keypad). Every connected Waiting Display instantly shows that number, announces it in Telugu and English, and starts an elapsed-time counter.
 
-The application handles calling and displaying numbers only. It does not create appointments, maintain patient records, or save a history of calls.
+The system handles **calling and displaying token numbers only**. It does not create appointments, maintain patient records, or save a history of calls.
 
-## What happens when a number is sent
+---
 
-1. A browser loads `/doctor`, `/display`, or `/reception` from the Node.js server.
+## Screens & Roles
+
+| Screen | URL | Role |
+|---|---|---|
+| Home Gateway | `/` | Navigation launcher (no WebSocket) |
+| Waiting Display | `/display/` | Passive receiver — shows token, speaks audio |
+| Doctor Console | `/dr/` | Sender — desktop keypad |
+| Doctor Mobile V-1 | `/mobile/v1/` | Sender — original mobile keypad |
+| Doctor Mobile V-2 | `/mobile/v2/` | Sender — compact (no header band) |
+| Doctor Mobile V-3 | `/mobile/v3/` | Sender — status row + live card + bottom nav |
+
+---
+
+## What Happens When a Number Is Sent
+
+1. A browser opens any screen from the Node.js server (e.g. `/dr/`, `/display/`).
 2. Each screen opens a WebSocket connection to `/ws` on the same host and port.
-3. The Doctor screen sends a small JSON message with a target channel (`display` or `reception`) and the number.
-4. The server broadcasts the announcement to connected screens in that channel. It keeps the connected screens in in-memory sets, so restarting the server clears those connections and there is no call history to restore.
-5. The receiving browser updates its page, speaks the number using browser speech synthesis, and starts its elapsed-time display.
+3. A Doctor screen sends `{ "type": "call", "number": "7" }` over that WebSocket.
+4. The server stores the call in memory and **broadcasts the new state to every connected client** simultaneously — no role filtering, no channel separation.
+5. Every receiving browser (Display screens and other Doctors) updates its UI, speaks the number using Telugu audio clips + Web Speech API, and starts the elapsed-time display.
 
 ```mermaid
 flowchart LR
-    Doctor[Doctor screen] -->|HTTP page and WebSocket message| Server[Node.js server]
-    Server -->|announcement to display channel| Display[Display screen]
-    Server -->|announcement to reception channel| Reception[Reception screen]
-    Server -->|static HTML, CSS, and JS| Doctor
+    Doctor["🩺 Doctor\n(/dr/ or /mobile/)"] -->|"call: {number: 7}"| WS["WebSocket /ws\n(Node.js server)"]
+    WS -->|state broadcast| D1["📺 Display 1\n(Waiting Room TV)"]
+    WS -->|state broadcast| D2["📺 Display 2\n(Hallway Monitor)"]
+    WS -->|state broadcast| D3["📱 Display 3\n(Tablet)"]
+    D1 --> A1["🔊 Telugu audio"]
+    D2 --> A2["🔊 Telugu audio"]
+    D3 --> A3["🔊 English speech"]
 ```
 
-## Technical choices
+---
 
-- **Node.js built-in `http`:** serves the static files and handles the WebSocket upgrade on one port. Express is not used.
-- **`ws`:** the only runtime dependency. It implements the WebSocket server and keeps a live connection open so announcements can be pushed immediately.
-- **Plain browser code:** HTML and CSS define the screens; JavaScript sends and receives messages. English speech uses the browser's built-in speech synthesis. V4 and V5 Telugu speech play WAV files served locally from their versioned `audio/te/` folders.
-- **In-memory channel sets:** the server tracks currently connected display and reception screens. There is no database, login, persistence, or audit log.
-- **npm:** installs the dependency and runs the app. This code is an application rather than a reusable npm library, and `package.json` marks it private to prevent accidental publication.
+## Technical Choices
 
-## Server code layout
+- **Node.js built-in `http`** — serves static files and handles WebSocket upgrade on one port. No Express, no framework.
+- **`ws` library** — the only runtime WebSocket dependency. Keeps persistent connections so announcements are pushed instantly.
+- **`sirv`** — lightweight static file server for the `public/` folder.
+- **Plain browser code** — HTML, CSS, and vanilla JavaScript. No build step, no bundler.
+- **Telugu audio clips** — `.wav` and `.mp3` files in `public/audio/te/` for numbers 1–30+. Numbers 1–10 say "నంబర్ [word]".
+- **Web Speech API** — English browser speech synthesis for numbers beyond the Telugu clip range.
+- **In-memory state** — `ws/state.js` holds `{ number, sentAt }` for the current call. No database, no login, no audit log.
 
-The server is split by responsibility so the startup path reads in order:
+---
 
-1. **app.js** loads the port configuration, creates the HTTP server, attaches the WebSocket endpoint, and starts listening.
-2. **server/config.js** reads an optional .env port and validates the final port setting.
-3. **server/http/createHttpServer.js** creates the HTTP server; **pageRoutes.js** maps friendly URLs to versioned pages, and **serveStaticFile.js** serves pages and browser assets from public/.
-4. **ws/attachWebSocketServer.js** accepts the /ws upgrade and directs each connection to the matching handler. **handleConnection.js** and **handleV3Connection.js** contain the messaging behavior for the existing flows.
-5. **server/startServer.js** binds the configured port and prints the local entry points.
+## Server Code Layout
 
-This keeps the entry file focused on how the pieces fit together while the modules explain what each part does.
+```
+app.js                        Entry point: HTTP server + WebSocket + listen
+ws/
+  attachWebSocketServer.js    Mounts WSS on /ws, starts 25-second heartbeat
+  handleConnection.js         Routes ws events to handlers
+  handlers/
+    onConnect/index.js        Sends current state snapshot; notifies presence
+    onMessage/handleCall.js   Saves call; broadcasts to all clients
+    onClose/index.js          Notifies presence on disconnect
+  broadcast.js                JSON send loop over wss.clients
+  state.js                    setCurrentCall / getCurrentCall
+  heartbeat.js                ping/pong every 25 s to keep TV connections alive
+public/
+  index.html                  Home gateway
+  display/                    Waiting area display screen
+  dr/                         Doctor console (desktop)
+  mobile/v1/ v2/ v3/          Doctor mobile keypad versions
+  audio/te/                   Telugu WAV/MP3 clips
+```
 
-## Frontend versions
+---
 
-The application includes versioned frontends in `public/`. Earlier versions are preserved for historical reference:
-- Legacy `/doctor`, `/display`, and `/reception` routes open V2.
-- Focused Doctor-and-Display flows exist from V3 through V14.
-- **V14** (`/v14/doctor` and `/v14/display`) is the primary version: it introduces unlimited concurrent display connections with simultaneous audio broadcasting across all connected screens. See **[V14 Multi-Display Story](v14-multi-display-story.md)** for architecture details.
+## Browser Audio Policy
 
-V4 through V14 feature persistent voice controls, English speech synthesis, and high-clarity Telugu audio clips for numbers 1–10. The Telugu clips say “నంబర్” followed by each number word, from one through ten. Listen to the clips on the intended speakers and confirm pronunciation before using them with patients.
+Modern browsers block audio until the user interacts with the page. CareCall handles this with:
+1. A global `click / touchstart / keydown` listener that marks audio as unlocked.
+2. A 🔊 **Voice** toggle button on the Display screen for explicit unlock.
+3. Error-handling callbacks that show a "Tap screen to enable audio" instruction.
 
-## Current limits
+---
 
-The `role` value in a WebSocket URL only selects a screen channel; it does not authenticate users. The server listens on all network interfaces and uses plain HTTP/WebSocket without TLS or access control. Keep it on a trusted network, and use firewall rules to limit access. For a VPS, put it behind a reverse proxy with HTTPS/WSS until authentication is added.
+## Current Limits
+
+- No authentication — the WebSocket role parameter selects behaviour only, not security.
+- No TLS — plain HTTP/WS. Run on a trusted LAN or behind a reverse proxy (Caddy) for HTTPS.
+- No persistence — restarting the server clears the current token.
+- See **[VPS Publishing Runbook](publish-to-vps.html)** for a full Caddy + Linux deployment guide.
